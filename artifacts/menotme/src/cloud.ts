@@ -57,6 +57,54 @@ const esc = (s: string) =>
 
 const clerk = new Clerk(clerkPubKey, clerkProxyUrl ? { proxyUrl: clerkProxyUrl } : undefined);
 
+// ---------- analytics (guest-friendly funnel events) ----------
+const ANON_KEY = "mnm_anon_id";
+function anonId(): string {
+  let id = localStorage.getItem(ANON_KEY);
+  if (!id) {
+    id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem(ANON_KEY, id);
+  }
+  return id;
+}
+const SENT_KEY = "mnm_sent_events";
+function track(event: string, opts: { once?: boolean } = {}) {
+  try {
+    if (opts.once) {
+      const sent: string[] = JSON.parse(localStorage.getItem(SENT_KEY) || "[]");
+      if (sent.includes(event)) return;
+      sent.push(event);
+      localStorage.setItem(SENT_KEY, JSON.stringify(sent));
+    }
+    void fetch(`${BASE}/api/analytics/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ anonId: anonId(), events: [{ event }] }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* analytics must never break the game */
+  }
+}
+
+// ---------- game state access (read-only peek at the game's localStorage) ----------
+interface PeekState {
+  me: number;
+  notme: number;
+  ended: boolean;
+  selected: number | null;
+  assets: { name: string; done: boolean; scored: boolean }[];
+  liabilities: { name: string; addressed: boolean; avoided: boolean }[];
+  weekly: { meWins: number; notMeWins: number; history: unknown[] };
+}
+function peekState(): PeekState | null {
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
 // ---------- custom black & white auth overlay (Clerk headless API) ----------
 let overlay: HTMLDivElement | null = null;
 
@@ -69,27 +117,29 @@ function authField(placeholder: string, type = "text"): HTMLInputElement {
   return i;
 }
 
-function showAuthOverlay() {
+let authDismissible = true;
+function showAuthOverlay(mode: "in" | "up" = "up", heading?: string) {
   if (overlay) return;
   overlay = el("div", "mnm-overlay") as HTMLDivElement;
   document.body.appendChild(overlay);
-  renderAuth("in");
+  renderAuth(mode, heading);
+  track("signup_started", { once: true });
 }
 function hideAuthOverlay() {
   overlay?.remove();
   overlay = null;
 }
 
-function renderAuth(mode: "in" | "up" | "forgot") {
+function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
   if (!overlay) return;
   overlay.innerHTML = "";
   overlay.appendChild(el("h1", undefined, "MeNotMe"));
-  overlay.appendChild(el("p", "mnm-slogan", "Play for the person you want to become."));
+  overlay.appendChild(el("p", "mnm-slogan", esc(heading ?? "Save your progress. Protect your streak. Play on any device.")));
 
   if (mode !== "forgot") {
     const toggle = el("div", "mnm-auth-toggle");
     const bIn = el("button", mode === "in" ? "active" : undefined, "SIGN IN");
-    const bUp = el("button", mode === "up" ? "active" : undefined, "SIGN UP");
+    const bUp = el("button", mode === "up" ? "active" : undefined, "CREATE FREE ACCOUNT");
     bIn.onclick = () => renderAuth("in");
     bUp.onclick = () => renderAuth("up");
     toggle.append(bIn, bUp);
@@ -118,6 +168,27 @@ function renderAuth(mode: "in" | "up" | "forgot") {
     r.appendChild(n);
     form.appendChild(r);
   };
+
+  // Google OAuth (works for both sign-in and sign-up via transfer flow)
+  if (mode !== "forgot") {
+    const google = el("button", "mnm-btn solid", "CONTINUE WITH GOOGLE");
+    google.onclick = async () => {
+      google.disabled = true;
+      try {
+        sessionStorage.setItem("mnm_oauth_pending", "1");
+        await clerk.client!.signIn.authenticateWithRedirect({
+          strategy: "oauth_google",
+          redirectUrl: window.location.href.split("#")[0],
+          redirectUrlComplete: window.location.href.split("#")[0],
+        });
+      } catch (e) {
+        showError(e);
+        google.disabled = false;
+      }
+    };
+    row(google);
+    row(el("p", "mnm-muted", "— or use email —"));
+  }
 
   if (mode === "in") {
     row(email);
@@ -148,7 +219,7 @@ function renderAuth(mode: "in" | "up" | "forgot") {
     row(email);
     password.autocomplete = "new-password";
     row(password);
-    const go = el("button", "mnm-btn solid", "CREATE ACCOUNT");
+    const go = el("button", "mnm-btn solid", "CREATE FREE ACCOUNT");
     const codeInput = authField("Verification code");
     go.onclick = async () => {
       go.disabled = true;
@@ -261,6 +332,43 @@ function renderAuth(mode: "in" | "up" | "forgot") {
     row(back);
   }
   form.appendChild(err);
+
+  if (authDismissible) {
+    const guest = el("button", "mnm-btn ghost", "CONTINUE AS GUEST");
+    guest.onclick = () => {
+      hideAuthOverlay();
+      track("continued_as_guest", { once: true });
+    };
+    overlay.appendChild(guest);
+  }
+}
+
+// ---------- single saveState hook registry ----------
+// Multiple features (cloud sync, guest triggers, onboarding shot watcher)
+// need to observe game saves. Wrap window.saveState exactly once and
+// dispatch to a listener set so hooks can be added/removed independently.
+type SaveListener = () => void;
+const saveListeners = new Set<SaveListener>();
+let saveHookInstalled = false;
+function onGameSave(fn: SaveListener): () => void {
+  if (!saveHookInstalled) {
+    const orig = window.saveState;
+    if (typeof orig === "function") {
+      window.saveState = () => {
+        orig();
+        for (const l of [...saveListeners]) {
+          try {
+            l();
+          } catch {
+            /* a listener must never break the game's save */
+          }
+        }
+      };
+      saveHookInstalled = true;
+    }
+  }
+  saveListeners.add(fn);
+  return () => saveListeners.delete(fn);
 }
 
 // ---------- cloud sync ----------
@@ -279,12 +387,7 @@ async function pushState() {
   }
 }
 function hookSaveState() {
-  const orig = window.saveState;
-  if (typeof orig !== "function") return;
-  window.saveState = () => {
-    orig();
-    scheduleSync();
-  };
+  onGameSave(scheduleSync);
 }
 async function pullCloudState() {
   // 1) one-time import of pre-account local progress (idempotent server-side)
@@ -580,26 +683,323 @@ async function renderAccount() {
   }
 }
 
+// ---------- guest-mode signup triggers ----------
+let unhookGuestTriggers: (() => void) | null = null;
+const FLAG_ONBOARDED = "mnm_onboarded_v1";
+const FLAG_PROMPT_WIN = "mnm_prompt_first_win";
+const FLAG_PROMPT_3D = "mnm_prompt_three_days";
+
+function signupPrompt(title: string, body: string, cta: string) {
+  if (overlay || document.querySelector(".mnm-onb")) return;
+  track("signup_prompt_shown");
+  const wrap = el("div", "mnm-onb") as HTMLDivElement;
+  const card = el("div", "mnm-panel mnm-onb-card");
+  card.appendChild(el("h3", undefined, esc(title)));
+  card.appendChild(el("p", "mnm-muted", esc(body)));
+  const go = el("button", "mnm-btn solid", esc(cta));
+  go.onclick = () => {
+    wrap.remove();
+    showAuthOverlay("up");
+  };
+  const later = el("button", "mnm-btn ghost", "CONTINUE AS GUEST");
+  later.onclick = () => {
+    wrap.remove();
+    track("continued_as_guest", { once: true });
+  };
+  const r1 = el("div", "mnm-row");
+  r1.appendChild(go);
+  const r2 = el("div", "mnm-row");
+  r2.appendChild(later);
+  card.append(r1, r2);
+  wrap.appendChild(card);
+  document.body.appendChild(wrap);
+}
+
+/** Watches guest saves for value moments worth a signup prompt. Returns an unsubscribe. */
+function watchGuestTriggers(): () => void {
+  let prevEnded = peekState()?.ended ?? false;
+  return onGameSave(() => {
+    const s = peekState();
+    if (!s) return;
+    // Trigger A — first daily win
+    if (!prevEnded && s.ended && s.me > s.notme && !localStorage.getItem(FLAG_PROMPT_WIN)) {
+      localStorage.setItem(FLAG_PROMPT_WIN, "1");
+      setTimeout(
+        () => signupPrompt("TEAM ME WON TODAY", "Save your progress and protect your streak.", "CREATE FREE ACCOUNT"),
+        2200,
+      );
+    }
+    prevEnded = s.ended;
+    // Trigger B — 3 days of playing
+    if (s.weekly.history.length >= 3 && !localStorage.getItem(FLAG_PROMPT_3D)) {
+      localStorage.setItem(FLAG_PROMPT_3D, "1");
+      setTimeout(
+        () =>
+          signupPrompt("Your streak is growing.", "Create a free account so you never lose your progress.", "SAVE MY PROGRESS"),
+        1200,
+      );
+    }
+  });
+}
+
+// ---------- onboarding (over the live game) ----------
+const DEFAULT_ASSET_NAMES = ["Morning Workout", "Read 20 Pages", "Meditation", "Cold Shower"];
+function needsOnboarding(): boolean {
+  if (localStorage.getItem(FLAG_ONBOARDED)) return false;
+  const s = peekState();
+  if (!s) return true;
+  const hasProgress = s.me > 0 || s.notme > 0 || s.ended || s.weekly.history.length > 0;
+  // custom tags = the player already built their teams (e.g. partially onboarded)
+  const hasCustomTags =
+    s.assets.length !== DEFAULT_ASSET_NAMES.length ||
+    s.assets.some((a, i) => a.name !== DEFAULT_ASSET_NAMES[i]);
+  if (hasProgress || hasCustomTags) {
+    localStorage.setItem(FLAG_ONBOARDED, "1");
+    return false;
+  }
+  return true;
+}
+
+function applyTags(assets: string[], liabilities: string[]) {
+  const s = peekState();
+  if (!s) return;
+  s.assets = assets.map((name) => ({ name, done: false, scored: false }));
+  s.liabilities = liabilities.map((name) => ({ name, addressed: false, avoided: true }));
+  s.selected = null;
+  localStorage.setItem(KEY, JSON.stringify(s));
+  window.loadState?.();
+  window.render?.();
+}
+
+function onbCard(): { wrap: HTMLDivElement; card: HTMLDivElement } {
+  document.querySelector(".mnm-onb")?.remove();
+  const wrap = el("div", "mnm-onb") as HTMLDivElement;
+  const card = el("div", "mnm-panel mnm-onb-card") as HTMLDivElement;
+  wrap.appendChild(card);
+  document.body.appendChild(wrap);
+  return { wrap, card };
+}
+
+function tagInputs(card: HTMLDivElement, placeholders: string[]): HTMLInputElement[] {
+  return placeholders.map((ph) => {
+    const r = el("div", "mnm-row");
+    const i = el("input") as HTMLInputElement;
+    i.type = "text";
+    i.placeholder = ph;
+    i.maxLength = 40;
+    r.appendChild(i);
+    card.appendChild(r);
+    return i;
+  });
+}
+
+function runOnboarding() {
+  track("onboarding_started", { once: true });
+  step1();
+
+  function step1() {
+    const { card } = onbCard();
+    card.appendChild(el("h3", undefined, "TEAM ME vs TEAM NOT ME"));
+    card.appendChild(
+      el(
+        "p",
+        "mnm-muted",
+        "Team Me is the person you want to become.<br>Team Not Me is everything trying to pull you backwards.",
+      ),
+    );
+    const go = el("button", "mnm-btn solid", "LET'S PLAY");
+    go.onclick = step2;
+    const r = el("div", "mnm-row");
+    r.appendChild(go);
+    card.appendChild(r);
+  }
+
+  function step2() {
+    const { card } = onbCard();
+    card.appendChild(el("h3", undefined, "Build your Team Me"));
+    card.appendChild(el("p", "mnm-muted", "Add 3 things you want more of in your life."));
+    const inputs = tagInputs(card, ["e.g. Go to the gym", "e.g. Read a book", "e.g. Spend time with family"]);
+    const err = el("p", "mnm-muted", "");
+    const go = el("button", "mnm-btn solid", "NEXT");
+    go.onclick = () => {
+      const vals = inputs.map((i) => i.value.trim()).filter(Boolean);
+      if (vals.length < 3) {
+        err.textContent = "Add all 3 to build your team.";
+        return;
+      }
+      vals.forEach((_, i) => track(`asset_${i + 1}_created`, { once: true }));
+      step3(vals);
+    };
+    const r = el("div", "mnm-row");
+    r.appendChild(go);
+    card.append(r, err);
+    inputs[0]?.focus();
+  }
+
+  function step3(assets: string[]) {
+    const { card } = onbCard();
+    card.appendChild(el("h3", undefined, "Choose your opponents"));
+    card.appendChild(el("p", "mnm-muted", "Add 3 things you want less of in your life."));
+    const inputs = tagInputs(card, ["e.g. Smoking", "e.g. Procrastination", "e.g. Mindless scrolling"]);
+    const err = el("p", "mnm-muted", "");
+    const go = el("button", "mnm-btn solid", "START THE GAME");
+    go.onclick = () => {
+      const vals = inputs.map((i) => i.value.trim()).filter(Boolean);
+      if (vals.length < 3) {
+        err.textContent = "Add all 3 to know your opponents.";
+        return;
+      }
+      vals.forEach((_, i) => track(`liability_${i + 1}_created`, { once: true }));
+      applyTags(assets, vals);
+      document.querySelector(".mnm-onb")?.remove();
+      teachFirstShot();
+    };
+    const r = el("div", "mnm-row");
+    r.appendChild(go);
+    card.append(r, err);
+    inputs[0]?.focus();
+  }
+}
+
+function hint(msg: string) {
+  document.querySelector(".mnm-hint")?.remove();
+  const h = el("div", "mnm-hint", esc(msg));
+  document.body.appendChild(h);
+}
+function clearHint() {
+  document.querySelector(".mnm-hint")?.remove();
+}
+function highlightFirstAsset(on: boolean) {
+  document.querySelectorAll("#assets .tag").forEach((b, i) => b.classList.toggle("mnm-glow", on && i === 0));
+}
+
+function teachFirstShot() {
+  let phase: "select" | "shoot" | "done" = "select";
+  highlightFirstAsset(true);
+  hint("Did you do this today? Tap it.");
+
+  // #assets is re-rendered on every render(); keep the glow alive
+  const assetsEl = document.getElementById("assets");
+  const mo = new MutationObserver(() => {
+    if (phase === "select") highlightFirstAsset(true);
+  });
+  if (assetsEl) mo.observe(assetsEl, { childList: true });
+
+  let attempted = false;
+  const paper = document.getElementById("paper");
+  const onAttempt = () => {
+    if (!attempted && phase === "shoot") {
+      attempted = true;
+      track("first_shot_attempted", { once: true });
+    }
+  };
+  paper?.addEventListener("pointerup", onAttempt);
+  document.getElementById("shoot")?.addEventListener("click", onAttempt);
+
+  const unhook = onGameSave(() => {
+    const s = peekState();
+    if (!s) return;
+    if (phase === "select" && s.selected !== null) {
+      phase = "shoot";
+      track("first_asset_selected", { once: true });
+      highlightFirstAsset(false);
+      document.getElementById("paper")?.classList.add("mnm-glow");
+      document.getElementById("shoot")?.classList.add("mnm-glow-ring");
+      hint("Pull back and flick.");
+    }
+    if (phase !== "done" && s.me >= 1) {
+      phase = "done";
+      mo.disconnect();
+      unhook();
+      track("first_shot_scored", { once: true });
+      clearHint();
+      document.getElementById("paper")?.classList.remove("mnm-glow");
+      document.getElementById("shoot")?.classList.remove("mnm-glow-ring");
+      setTimeout(celebrateFirstBasket, 900);
+    }
+  });
+}
+
+function celebrateFirstBasket() {
+  const { card } = onbCard();
+  card.appendChild(el("h3", undefined, "YOU JUST SCORED FOR TEAM ME"));
+  card.appendChild(el("p", "mnm-muted", "Every decision changes the score."));
+  const go = el("button", "mnm-btn solid", "KEEP PLAYING");
+  go.onclick = () => {
+    document.querySelector(".mnm-onb")?.remove();
+    localStorage.setItem(FLAG_ONBOARDED, "1");
+    track("onboarding_completed", { once: true });
+  };
+  const r = el("div", "mnm-row");
+  r.appendChild(go);
+  card.appendChild(r);
+}
+
+// ---------- guest fab (single "save progress" button) ----------
+function guestFab() {
+  const wrap = el("div", "mnm-fab");
+  const save = el("button", undefined, "&#9786;");
+  save.setAttribute("aria-label", "Save your progress");
+  wrap.appendChild(save);
+  document.body.appendChild(wrap);
+  save.onclick = () =>
+    signupPrompt(
+      "Save your progress",
+      "Create a free account to unlock friend challenges, full history and playing on any device.",
+      "CREATE FREE ACCOUNT",
+    );
+  return wrap;
+}
+
 // ---------- boot ----------
 (async () => {
+  track("landing_game_loaded");
   try {
     await clerk.load();
   } catch (e) {
     console.error("Clerk failed to load", e);
-    return; // leave the game playable locally rather than blocking it
-  }
-
-  if (!clerk.user) {
-    showAuthOverlay();
+    // Clerk down — game still fully playable as guest
+    if (needsOnboarding()) runOnboarding();
     return;
   }
-  onSignedIn();
+
+  // returning from Google OAuth redirect?
+  if (sessionStorage.getItem("mnm_oauth_pending") && !clerk.user) {
+    sessionStorage.removeItem("mnm_oauth_pending");
+    try {
+      await clerk.handleRedirectCallback({});
+    } catch {
+      /* not an OAuth callback or it failed — continue as guest */
+    }
+  } else {
+    sessionStorage.removeItem("mnm_oauth_pending");
+  }
+
+  if (clerk.user) {
+    await onSignedIn();
+    return;
+  }
+
+  // Guest mode: play first, sign up later.
+  unhookGuestTriggers = watchGuestTriggers();
+  guestFab();
+  if (needsOnboarding()) runOnboarding();
 })();
 
 async function onSignedIn() {
+  // guest-mode hooks must not fire once authenticated
+  unhookGuestTriggers?.();
+  unhookGuestTriggers = null;
+  document.querySelector(".mnm-fab")?.remove();
+  document.querySelector(".mnm-onb")?.remove();
+  track("signup_completed", { once: true });
+  const hadLocal = !!localStorage.getItem(KEY);
   hookSaveState();
   await pullCloudState();
+  if (hadLocal) track("guest_data_migrated", { once: true });
   fab();
   refreshUnread();
   setInterval(refreshUnread, 60_000);
+  // brand-new registered user with no prior guest data → same onboarding
+  if (needsOnboarding()) runOnboarding();
 }

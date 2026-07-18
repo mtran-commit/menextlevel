@@ -199,6 +199,20 @@ export const appConfigTable = pgTable("app_config", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ---------- Analytics events (onboarding funnel etc.) ----------
+export const analyticsEventsTable = pgTable(
+  "analytics_events",
+  {
+    id: serial("id").primaryKey(),
+    anonId: text("anon_id"),
+    userId: text("user_id"),
+    event: text("event").notNull(),
+    props: jsonb("props"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("analytics_events_event_idx").on(t.event, t.createdAt)],
+);
+
 // ---------- Audit logs ----------
 export const auditLogsTable = pgTable(
   "audit_logs",

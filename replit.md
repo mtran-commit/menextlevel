@@ -37,7 +37,10 @@ A black-and-white premium neon basketball habit game: complete Assets to shoot f
 ## Product
 
 - The game itself (locked prototype UI): daily Assets/Liabilities, shots for Team Me, Final Bell, streaks, ceremonies at 7/30/60/90 days, 90-day seasons.
-- Accounts (Clerk, email+password with email-code verification and password reset) — custom black/white headless auth overlay in `src/cloud.ts`; game is gated behind sign-in.
+- Play-first landing: the game itself IS the homepage. No auth gate — new visitors get a 3-step onboarding overlay over the live game (Team Me vs Team Not Me intro → 3 custom Assets → 3 custom Liabilities, replacing the defaults) then a guided first shot with highlights and a celebration card. Guests play fully locally (Guest Mode); returning visitors never see onboarding again (`mnm_onboarded_v1` flag + progress/custom-tag heuristics).
+- Signup prompts only at value moments: first daily win, 3 days of history, or tapping the guest ☺ fab. Auth overlay is always dismissible ("CONTINUE AS GUEST").
+- Accounts (Clerk, headless): Continue with Google (OAuth redirect + `handleRedirectCallback`) or email+password with email-code verification and password reset — custom black/white forms in `src/cloud.ts`. On first sign-in, guest progress migrates idempotently; logout intentionally clears the local copy (cloud remains source of truth; restored on next sign-in).
+- Onboarding funnel analytics: whitelisted events → `POST /api/analytics/events` (public, rate-limited 30/min per anonId+IP, 3000/min global) → `analytics_events` table.
 - Cloud sync: localStorage stays the runtime store; every `saveState()` is debounced to `PUT /api/game/state`. First login idempotently imports local progress (`POST /api/game/migrate`); afterwards cloud is source of truth.
 - In-app notification center (bell) + optional browser web-push (VAPID keys auto-generated, stored in `app_config` table). Per-type in-app/push toggles in the account panel.
 - Retention reminders + timezone-aware daily resets run in a 5-min scheduler inside the API server (`lib/game.ts`): auto Final Bell at local midnight (mirrors app.js incl. the 30-day gate block), reminders (final bell approaching, liabilities ignored, Not Me winning, one-more-asset, streak at risk, 7-day milestone).

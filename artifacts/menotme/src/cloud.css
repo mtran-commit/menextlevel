@@ -27,3 +27,14 @@
 .mnm-muted{font-size:10px;color:#888}
 .mnm-toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#fff;color:#000;font-size:11px;font-weight:700;border-radius:999px;padding:7px 16px;z-index:10000}
 .mnm-switch{display:inline-flex;gap:6px;align-items:center;font-size:10px;color:#aaa}
+/* onboarding & signup prompts — game stays visible behind */
+.mnm-onb{position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:20px}
+.mnm-onb-card{position:static;width:min(340px,92vw);text-align:center;box-shadow:0 0 40px rgba(255,255,255,.12)}
+.mnm-onb-card h3{justify-content:center;text-align:center}
+.mnm-onb-card .mnm-row{justify-content:center}
+.mnm-onb-card input{text-align:center}
+.mnm-btn.ghost{border-color:#555;color:#aaa}
+.mnm-hint{position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:9700;background:#000;border:1px solid #fff;color:#fff;font-size:11px;letter-spacing:1px;border-radius:999px;padding:8px 18px;animation:mnmPulse 1.6s ease-in-out infinite}
+.mnm-glow{box-shadow:0 0 0 2px #fff,0 0 18px rgba(255,255,255,.85)!important;animation:mnmPulse 1.6s ease-in-out infinite}
+.mnm-glow-ring{outline:2px solid #fff;outline-offset:2px;box-shadow:0 0 22px rgba(255,255,255,.7);animation:mnmPulse 1.6s ease-in-out infinite;border-radius:50%}
+@keyframes mnmPulse{0%,100%{opacity:1}50%{opacity:.55}}
