@@ -167,7 +167,10 @@ button{cursor:pointer}
 .menu-list button{padding:11px;border-radius:12px}
 
 /* ---------- Travelling neon court energy ---------- */
-@supports (mask-mode: luminance) {
+/* arena-mask.png = arena artwork with luminance baked into the ALPHA channel (lines opaque,
+   floor transparent). Alpha masking works identically in all browsers — mobile Safari ignores
+   mask-mode:luminance on -webkit-mask, which used to leak the full gradient as white rectangles. */
+@supports (mask-image: url("")) or (-webkit-mask-image: url("")) {
   .court-pulse{
     position:absolute;inset:0;z-index:2;pointer-events:none;
     background-image:
@@ -175,10 +178,9 @@ button{cursor:pointer}
       linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.35) 48%,rgba(255,255,255,.7) 50%,rgba(255,255,255,.35) 52%,rgba(255,255,255,0) 56%,rgba(255,255,255,0) 100%);
     background-size:280% 100%,280% 100%;
     background-repeat:no-repeat;
-    mask-image:url(assets/arena.png);-webkit-mask-image:url(assets/arena.png);
+    mask-image:url(assets/arena-mask.png);-webkit-mask-image:url(assets/arena-mask.png);
     mask-size:100% 153.75%;-webkit-mask-size:100% 153.75%;
     mask-position:0% 64.8%;-webkit-mask-position:0% 64.8%;
-    mask-mode:luminance;
     filter:drop-shadow(0 0 6px rgba(255,255,255,.8)) drop-shadow(0 0 14px rgba(255,255,255,.45));
     animation:courtPulse 3.4s linear infinite;
   }
