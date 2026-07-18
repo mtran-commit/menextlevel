@@ -232,3 +232,8 @@ button{cursor:pointer}
 .stage.lights-pulse{animation:lightsPulse 1.4s ease-in-out 2}
 @keyframes ledReset{0%,40%{opacity:.15}10%,30%,60%{opacity:1}20%,50%{opacity:.4}100%{opacity:1}}
 .led-reset{animation:ledReset .8s steps(1) 1}
+.io-mic{opacity:0;font-size:11px;letter-spacing:.3em;color:#ccc;margin:4px 0 0;transition:opacity .4s}
+.io-mic.io-show{opacity:1;animation:micBlink 1.2s ease-in-out infinite}
+@keyframes micBlink{0%,100%{opacity:1}50%{opacity:.45}}
+#ioSkip{position:absolute;right:18px;bottom:16px;background:transparent;border:1px solid rgba(255,255,255,.35);color:#bbb;border-radius:999px;padding:7px 14px;font-size:10px;letter-spacing:.16em;cursor:pointer}
+#ioSkip:hover{color:#fff;border-color:#fff}

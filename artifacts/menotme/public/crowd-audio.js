@@ -11,10 +11,13 @@ const FILES={};
 FAN_KEYS.forEach(k=>{FILES["fan_"+k+"_m"]=A+"fan_"+k+"_m.mp3";FILES["fan_"+k+"_f"]=A+"fan_"+k+"_f.mp3"});
 DOUBT_KEYS.forEach(k=>{FILES["doubt_"+k+"_m"]=A+"doubt_"+k+"_m.mp3";FILES["doubt_"+k+"_f"]=A+"doubt_"+k+"_f.mp3"});
 ["ambience_loop","beat_loop","cheer_small","cheer_big","groan","jeer","chant_teamme","chant_onemore","intro_rhythm"].forEach(k=>FILES[k]=A+k+".mp3");
+// Match commentator library (fictional MeNotMe announcer voice; no private names ever spoken)
+["comm_greet_1","comm_greet_2","comm_greet_3","comm_new_1","comm_win_1","comm_win_2","comm_loss_1","comm_loss_2","comm_streak_1","comm_streakbig_1","comm_neutral_1","comm_milestone_1","comm_out_1","comm_out_2","comm_out_3"].forEach(k=>FILES[k]=A+k+".mp3");
 
 function ensureAudioPrefs(){
   if(!state.audio)state.audio={master:true,crowd:true,fanVoices:true,doubterVoices:true,music:false};
   if(state.audio.gameIntro===undefined)state.audio.gameIntro=true;
+  if(state.audio.commentator===undefined)state.audio.commentator=true;
 }
 ensureAudioPrefs();
 
@@ -124,15 +127,41 @@ function applyPrefs(){
   if(a.master&&a.crowd)startLoop("amb");else stopLoop("amb");
   if(a.master&&a.music)startLoop("beat");else stopLoop("beat");
 }
-const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"]];
+const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"],["prefCommentator","commentator"]];
+
+/* ---------- Intro audio (rhythm + commentator), stoppable via Skip ---------- */
+let introStopped=false;const introSrcs=[];
+window.stopIntroAudio=function(){introStopped=true;introSrcs.forEach(s=>{try{s.stop()}catch(e){}});introSrcs.length=0};
+window.commentaryEnabled=function(){ensureAudioPrefs();return !!(state.audio.master&&state.audio.commentator)};
+// Plays clips back-to-back; resolves when finished (or immediately if disabled/stopped).
+window.playCommentary=function(keys){
+  ensureAudioPrefs();introStopped=false;
+  initCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+  if(!ctx||!state.audio.master||!state.audio.commentator)return Promise.resolve();
+  return keys.reduce((p,k)=>p.then(()=>new Promise(res=>{
+    if(introStopped)return res();
+    buf(k).then(b=>{
+      if(!b||introStopped)return res();
+      const s=ctx.createBufferSource();s.buffer=b;
+      const g=ctx.createGain();g.gain.value=1;s.connect(g);g.connect(voiceBus);
+      if(ambGain){ambGain.gain.cancelScheduledValues(ctx.currentTime);ambGain.gain.setValueAtTime(ambLevel()*.35,ctx.currentTime)}
+      introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1);setTimeout(res,120)};s.start();
+    });
+  })),Promise.resolve()).then(()=>{if(ambGain&&ctx)ambGain.gain.linearRampToValueAtTime(ambLevel(),ctx.currentTime+.8)});
+};
 
 // New-day intro rhythm (TUM-TA-TUM-TUM-TA → cheer + chant). Called from intro.js
 // after a user tap, so autoplay policy is satisfied.
 window.playIntroSound=function(){
   ensureAudioPrefs();
   initCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
-  if(!ctx||!state.audio.master||!state.audio.gameIntro)return;
-  shot("intro_rhythm",crowdBus,.95);
+  if(!ctx||!state.audio.master||!state.audio.gameIntro||introStopped)return;
+  buf("intro_rhythm").then(b=>{
+    if(!b||introStopped)return;
+    const s=ctx.createBufferSource();s.buffer=b;
+    const g=ctx.createGain();g.gain.value=.95;s.connect(g);g.connect(crowdBus);
+    introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1)};s.start();
+  });
 };
 PREFS.forEach(([id,key])=>{
   const el=document.getElementById(id);if(!el)return;

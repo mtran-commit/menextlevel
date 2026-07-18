@@ -102,3 +102,39 @@ id = "vYStb5YpbH5-YK925QmPi"
 uri = "file://artifacts/menotme/public/assets/audio/intro_rhythm.mp3"
 type = "audio"
 title = "arena intro rhythm"
+
+[[outputs]]
+id = "AiGdlt3yQuT9-Tr4NBi3R"
+uri = "file://artifacts/menotme/public/assets/audio/comm_win_1.mp3"
+type = "audio"
+title = "comm_win_1"
+
+[[outputs]]
+id = "em_tsqZht_vGDP2qWPUfK"
+uri = "file://artifacts/menotme/public/assets/audio/comm_new_1.mp3"
+type = "audio"
+title = "comm_new_1"
+
+[[outputs]]
+id = "QpyVaU7T0GHBQWDPC4_xE"
+uri = "file://artifacts/menotme/public/assets/audio/comm_loss_2.mp3"
+type = "audio"
+title = "comm_loss_2"
+
+[[outputs]]
+id = "q3MxwnTpix_KfKjP3vVXY"
+uri = "file://artifacts/menotme/public/assets/audio/comm_streakbig_1.mp3"
+type = "audio"
+title = "comm_streakbig_1"
+
+[[outputs]]
+id = "f_rfa0ohuBNxGFMF8eN0_"
+uri = "file://artifacts/menotme/public/assets/audio/comm_streak_1.mp3"
+type = "audio"
+title = "comm_streak_1"
+
+[[outputs]]
+id = "c8ERbbF_QMEX7GSPPB4X2"
+uri = "file://artifacts/menotme/public/assets/audio/comm_out_1.mp3"
+type = "audio"
+title = "comm_out_1"
