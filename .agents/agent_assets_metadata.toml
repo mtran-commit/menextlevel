@@ -96,3 +96,9 @@ id = "KHFuijy9BAP3hKUOpbhph"
 uri = "file://artifacts/menotme/public/assets/audio/beat_loop.mp3"
 type = "audio"
 title = "arena beat loop"
+
+[[outputs]]
+id = "vYStb5YpbH5-YK925QmPi"
+uri = "file://artifacts/menotme/public/assets/audio/intro_rhythm.mp3"
+type = "audio"
+title = "arena intro rhythm"

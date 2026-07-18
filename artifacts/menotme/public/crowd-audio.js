@@ -10,10 +10,11 @@ const DOUBT_KEYS=["youllmiss","nottoday","cantkeepup","proveit","letssee"];
 const FILES={};
 FAN_KEYS.forEach(k=>{FILES["fan_"+k+"_m"]=A+"fan_"+k+"_m.mp3";FILES["fan_"+k+"_f"]=A+"fan_"+k+"_f.mp3"});
 DOUBT_KEYS.forEach(k=>{FILES["doubt_"+k+"_m"]=A+"doubt_"+k+"_m.mp3";FILES["doubt_"+k+"_f"]=A+"doubt_"+k+"_f.mp3"});
-["ambience_loop","beat_loop","cheer_small","cheer_big","groan","jeer","chant_teamme","chant_onemore"].forEach(k=>FILES[k]=A+k+".mp3");
+["ambience_loop","beat_loop","cheer_small","cheer_big","groan","jeer","chant_teamme","chant_onemore","intro_rhythm"].forEach(k=>FILES[k]=A+k+".mp3");
 
 function ensureAudioPrefs(){
   if(!state.audio)state.audio={master:true,crowd:true,fanVoices:true,doubterVoices:true,music:false};
+  if(state.audio.gameIntro===undefined)state.audio.gameIntro=true;
 }
 ensureAudioPrefs();
 
@@ -123,7 +124,16 @@ function applyPrefs(){
   if(a.master&&a.crowd)startLoop("amb");else stopLoop("amb");
   if(a.master&&a.music)startLoop("beat");else stopLoop("beat");
 }
-const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"]];
+const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"]];
+
+// New-day intro rhythm (TUM-TA-TUM-TUM-TA → cheer + chant). Called from intro.js
+// after a user tap, so autoplay policy is satisfied.
+window.playIntroSound=function(){
+  ensureAudioPrefs();
+  initCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+  if(!ctx||!state.audio.master||!state.audio.gameIntro)return;
+  shot("intro_rhythm",crowdBus,.95);
+};
 PREFS.forEach(([id,key])=>{
   const el=document.getElementById(id);if(!el)return;
   el.checked=!!state.audio[key];

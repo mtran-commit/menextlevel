@@ -214,3 +214,21 @@ button{cursor:pointer}
   /* cinematic edge vignette; also hides banner slivers cut by the crop window */
   .stage::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 9%,rgba(0,0,0,0) 91%,#000 100%)}
 }
+
+/* ---------- New-day arena intro ---------- */
+#introOverlay{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.88);transition:opacity .6s}
+#introOverlay.io-out{opacity:0;pointer-events:none}
+.io-card{text-align:center;padding:28px 34px;max-width:420px}
+.io-label{font-size:11px;letter-spacing:.35em;color:#9aa;margin:0 0 10px}
+.io-score{font-family:"Courier New",monospace;font-size:44px;font-weight:900;color:#ff0033;text-shadow:0 0 14px rgba(255,0,51,.8);margin:0}
+.io-winner{font-size:12px;letter-spacing:.22em;color:#fff;margin:10px 0 0}
+#ioResult{transition:opacity .5s,transform .5s}
+#ioResult.io-gone{opacity:0;transform:translateY(-14px)}
+.io-new{opacity:0;transform:scale(.85);font-size:34px;font-weight:900;letter-spacing:.14em;color:#fff;text-shadow:0 0 22px rgba(255,255,255,.55);line-height:1.25;margin:6px 0 18px;transition:opacity .45s,transform .45s}
+.io-new.io-show{opacity:1;transform:scale(1)}
+#ioStart{margin-top:22px;background:#fff;color:#000;border:0;border-radius:999px;padding:12px 26px;font-weight:800;letter-spacing:.14em;font-size:12px;cursor:pointer}
+#ioStart:hover{box-shadow:0 0 18px rgba(255,255,255,.5)}
+@keyframes lightsPulse{0%,100%{filter:brightness(1)}12%{filter:brightness(1.45)}24%{filter:brightness(.9)}38%{filter:brightness(1.5)}52%{filter:brightness(1)}66%{filter:brightness(1.4)}82%{filter:brightness(1.1)}}
+.stage.lights-pulse{animation:lightsPulse 1.4s ease-in-out 2}
+@keyframes ledReset{0%,40%{opacity:.15}10%,30%,60%{opacity:1}20%,50%{opacity:.4}100%{opacity:1}}
+.led-reset{animation:ledReset .8s steps(1) 1}
