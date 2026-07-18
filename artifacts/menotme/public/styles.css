@@ -14,7 +14,7 @@ button{cursor:pointer}
 .mask-best{right:2.8%;top:53%;width:15%;height:19%;border-radius:16px}
 .mask-crowd{left:0;right:0;bottom:5.8%;height:8.7%}
 .live{position:absolute;z-index:5}
-.score{top:12.15%;width:15%;text-align:center;font-weight:800;font-size:clamp(34px,8.2vw,72px);line-height:1;text-shadow:0 0 9px rgba(255,255,255,.9),0 0 26px rgba(255,255,255,.35)}
+.score{top:12.15%;width:15%;text-align:center;font-weight:800;font-size:clamp(34px,8.2vw,72px);line-height:1;color:#ff1744;text-shadow:0 0 6px rgba(255,23,68,.9),0 0 14px rgba(255,23,68,.55)}
 .score.me{left:8.8%} .score.notme{right:8.8%}
 .team-label{top:9.5%;font-size:clamp(9px,1.8vw,15px);letter-spacing:.12em;text-transform:uppercase;text-align:center;width:22%}
 .team-label.me{left:5%} .team-label.notme{right:5%}
