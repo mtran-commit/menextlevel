@@ -54,3 +54,30 @@ button{cursor:pointer}
 .history-panel{display:none;position:absolute;inset:8% 4% 12%;z-index:55;background:#050505;border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto} .history-panel.show{display:block}
 .history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .history-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .gate{display:none;position:absolute;left:50%;top:19%;transform:translateX(-50%);z-index:50;width:64%;padding:10px;border:1px solid #fff;border-radius:12px;background:#000;text-align:center;font-size:clamp(8px,1.5vw,12px)} .gate.show{display:block}
+
+/* Neon court-line energy pulse: a travelling highlight masked by the court art itself,
+   so light only appears on the existing white lines. Clipped to the court area. */
+@supports (mask-mode: luminance) {
+  .stage::before{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background-image:
+      linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 42%,rgba(255,255,255,.5) 47%,rgba(255,255,255,1) 50%,rgba(255,255,255,.5) 53%,rgba(255,255,255,0) 58%,rgba(255,255,255,0) 100%),
+      linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.35) 48%,rgba(255,255,255,.7) 50%,rgba(255,255,255,.35) 52%,rgba(255,255,255,0) 56%,rgba(255,255,255,0) 100%);
+    background-size:280% 100%,280% 100%;
+    background-repeat:no-repeat;
+    mask-image:url(assets/mockup.png);
+    -webkit-mask-image:url(assets/mockup.png);
+    mask-size:100% 100%;-webkit-mask-size:100% 100%;
+    mask-mode:luminance;
+    clip-path:inset(41.5% 0 46.5% 0);
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.8)) drop-shadow(0 0 14px rgba(255,255,255,.45));
+    animation:courtPulse 3.4s linear infinite;
+  }
+  @keyframes courtPulse{
+    0%{background-position:-40% 0,60% 0}
+    100%{background-position:140% 0,240% 0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .stage::before{display:none;animation:none}
+  }
+}
