@@ -1,87 +1,216 @@
-:root{--white:#fff;--black:#000;--glass:rgba(0,0,0,.94);--line:rgba(255,255,255,.24);}
+:root{--white:#fff;--black:#000;--line:rgba(255,255,255,.24);--led:#ff0033}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{display:flex;justify-content:center}
 button,input{font:inherit}
 button{cursor:pointer}
-.app{width:min(100vw,768px);position:relative;background:#000;min-height:100vh;overflow:hidden}
-.stage{position:relative;width:100%;aspect-ratio:2/3;overflow:hidden;background:#000}
-.mockup{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;user-select:none}
-.mask{position:absolute;background:#000;z-index:3}
-.mask-scores{left:5.5%;right:5.5%;top:8.6%;height:14.2%}
-.mask-assets{left:1.6%;top:22.7%;width:23%;height:20.5%;border-radius:16px}
-.mask-liabilities{right:1.6%;top:22.7%;width:23%;height:20.5%;border-radius:16px}
-.mask-best{right:2.8%;top:53%;width:15%;height:19%;border-radius:16px}
-.mask-crowd{left:0;right:0;bottom:5.8%;height:8.7%}
-.live{position:absolute;z-index:5}
-.score{top:12.15%;width:15%;text-align:center;font-weight:800;font-size:clamp(34px,8.2vw,72px);line-height:1;color:#ff1744;text-shadow:0 0 6px rgba(255,23,68,.9),0 0 14px rgba(255,23,68,.55)}
-.score.me{left:8.8%} .score.notme{right:8.8%}
-.team-label{top:9.5%;font-size:clamp(9px,1.8vw,15px);letter-spacing:.12em;text-transform:uppercase;text-align:center;width:22%}
-.team-label.me{left:5%} .team-label.notme{right:5%}
-.team-note{top:17.4%;font-size:clamp(7px,1.3vw,11px);font-weight:800;text-align:center;width:20%}
-.team-note.me{left:6%} .team-note.notme{right:6%}
-.clock{top:9.45%;left:50%;transform:translateX(-50%);width:18%;min-width:84px;padding:.6% .4%;border:1px solid var(--line);border-radius:14px;background:#050505;text-align:center;box-shadow:0 0 20px rgba(255,255,255,.08)}
-.clock small{display:block;font-size:clamp(6px,1vw,9px);color:#aaa} .clock strong{font-size:clamp(16px,3.4vw,29px)}
-.streak{top:2.65%;left:9.8%;font-size:clamp(9px,1.7vw,14px);font-weight:700}
-.panel{top:22.7%;width:23%;height:20.5%;padding:1%;overflow:hidden;background:#020202;border:1px solid var(--line);border-radius:16px;box-shadow:0 0 18px rgba(255,255,255,.05)}
-.panel.assets{left:1.6%} .panel.liabilities{right:1.6%}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4%}
-.panel h2{margin:0;font-size:clamp(8px,1.5vw,13px);letter-spacing:.08em;text-transform:uppercase}
-.plus{width:24px;height:24px;border-radius:50%;border:1px solid #666;background:#090909;color:#fff;display:grid;place-items:center}
-.tag-list{height:82%;overflow:auto;scrollbar-width:none} .tag-list::-webkit-scrollbar{display:none}
-.tag{width:100%;margin-bottom:3%;border:1px solid rgba(255,255,255,.22);background:#030303;color:#fff;border-radius:8px;padding:4% 5%;font-size:clamp(7px,1.3vw,11px);display:flex;gap:6px;align-items:center;text-align:left}
-.tag.active{background:#fff;color:#000;box-shadow:0 0 10px rgba(255,255,255,.45)} .tag.scored{opacity:.35}
-.tag small{margin-left:auto;font-size:.75em}
-.best{right:2.8%;top:53%;width:15%;height:19%;padding:2%;background:#020202;border:1px solid var(--line);border-radius:16px;text-align:center}
-.best small{display:block;font-size:clamp(6px,1vw,9px);color:#aaa;text-transform:uppercase} .best strong{display:block;font-size:clamp(24px,4.8vw,44px);margin:2% 0 12%} .best b{display:block;font-size:clamp(10px,1.7vw,16px);margin-top:5%}
-.paper{left:50%;top:62.4%;width:10.7%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:45% 55% 48% 52%/58% 43% 57% 42%;background:linear-gradient(135deg,#fff,#c8c8c8);border:2px solid #fff;box-shadow:0 0 11px #fff,0 0 28px rgba(255,255,255,.45);color:#111;display:grid;place-items:center;padding:1.2%;font-size:clamp(7px,1.15vw,11px);font-weight:800;text-align:center;touch-action:none;cursor:grab;z-index:10}
-.paper.dragging{cursor:grabbing} .paper.flying{transition:left .62s cubic-bezier(.18,.82,.22,1),top .62s cubic-bezier(.18,.82,.22,1),transform .62s ease,opacity .22s ease}
-.power{left:4.3%;top:57.6%;width:4%;height:13%;display:flex;flex-direction:column-reverse;gap:4%;padding:.5%;z-index:7}
-.power i{display:block;height:7%;border-radius:999px;background:#111} .power i.on{background:#fff;box-shadow:0 0 7px #fff}
-.crowd{left:11.6%;bottom:8.7%;width:20%;height:1.1%;background:#111;overflow:hidden;border-radius:999px} .crowd-fill{height:100%;width:65%;background:#fff;box-shadow:0 0 8px #fff}
-.crowd-label{left:3%;bottom:8.35%;font-size:clamp(6px,1.1vw,10px);text-transform:uppercase} .crowd-pct{left:32.5%;bottom:8.2%;font-size:clamp(8px,1.4vw,12px)}
-.combo{right:13.5%;bottom:8.1%;font-weight:800;font-size:clamp(15px,3.5vw,31px)}
-.hotspot{position:absolute;z-index:9;border:0;background:transparent;color:transparent} .hotspot:focus-visible{outline:2px solid #fff}
-.add-asset{left:26%;top:74.5%;width:15%;height:7%} .shoot{left:42.5%;top:72.8%;width:15%;height:9%} .add-liability{left:59%;top:74.5%;width:15%;height:7%} .liability-list{left:75%;top:74.5%;width:15%;height:7%} .final-bell{left:43%;top:8.3%;width:14%;height:9%} .share{right:4%;top:1.2%;width:7%;height:5%}
-.toast{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) scale(.8);z-index:40;opacity:0;border:1px solid #fff;border-radius:999px;padding:10px 16px;background:#000;font-weight:900} .toast.show{animation:pop .9s ease}
-@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
-.confetti{position:absolute;width:7px;height:13px;background:#fff;z-index:35;animation:fall 1.3s ease-out forwards} @keyframes fall{to{transform:translateY(270px) rotate(720deg);opacity:0}}
-.modal,.ceremony{display:none;position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.9);align-items:center;justify-content:center;padding:20px} .modal.show,.ceremony.show{display:flex}
-.modal-card,.ceremony-card{width:min(92%,430px);border:1px solid var(--line);border-radius:18px;background:#070709;padding:18px;text-align:center;box-shadow:0 0 26px rgba(255,255,255,.1)}
-.modal-card input{width:100%;border:1px solid var(--line);background:#020202;color:#fff;border-radius:12px;padding:12px}
-.actions{display:flex;gap:10px;margin-top:12px} .actions button{flex:1;border-radius:12px;padding:11px;font-weight:700} .secondary{background:#060606;color:#fff;border:1px solid var(--line)} .primary{background:#fff;color:#000;border:1px solid #fff}
-.ceremony-icon{font-size:72px;margin:12px} .signature{font-family:"Brush Script MT","Segoe Script",cursive;font-size:34px;margin:14px}
-.history-panel{display:none;position:absolute;inset:8% 4% 12%;z-index:55;background:#050505;border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto} .history-panel.show{display:block}
-.history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .history-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
-.gate{display:none;position:absolute;left:50%;top:19%;transform:translateX(-50%);z-index:50;width:64%;padding:10px;border:1px solid #fff;border-radius:12px;background:#000;text-align:center;font-size:clamp(8px,1.5vw,12px)} .gate.show{display:block}
+.app{width:min(100vw,1180px);position:relative;background:#000;min-height:100vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
 
-/* Neon court-line energy pulse: a travelling highlight masked by the court art itself,
-   so light only appears on the existing white lines. Clipped to the court area. */
+/* ---------- Header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px 6px}
+.top-left,.top-right{display:flex;align-items:center;gap:10px;flex:1 1 0;min-width:0}
+.top-right{justify-content:flex-end}
+.iconbtn{width:38px;height:38px;flex:0 0 auto;border:1px solid var(--line);border-radius:10px;background:#050505;color:#fff;display:grid;place-items:center;padding:0}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn:hover{box-shadow:0 0 10px rgba(255,255,255,.25)}
+.streak-chip{border:1px solid var(--line);border-radius:10px;background:#050505;padding:8px 10px;font-size:clamp(9px,1.4vw,12px);font-weight:800;letter-spacing:.06em;white-space:nowrap}
+.brand{text-align:center;flex:0 1 auto}
+.brand h1{margin:0;font-size:clamp(20px,3.4vw,30px);letter-spacing:.16em;font-weight:800;text-shadow:0 0 14px rgba(255,255,255,.35)}
+.brand p{margin:2px 0 0;font-size:clamp(7px,1.1vw,11px);letter-spacing:.14em;text-transform:uppercase;color:#bbb}
+
+/* ---------- Scoreboard ---------- */
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:6px 4% 10px}
+.team{text-align:center}
+.tl{font-size:clamp(9px,1.6vw,15px);letter-spacing:.14em;font-weight:700}
+.tn{font-size:clamp(7px,1.2vw,11px);font-weight:800;letter-spacing:.1em;color:#ddd}
+.score{font-weight:800;font-family:"Courier New",ui-monospace,monospace;font-size:clamp(38px,7.4vw,84px);line-height:1;color:var(--led);text-shadow:0 0 6px rgba(255,0,51,.9),0 0 16px rgba(255,0,51,.55),0 0 34px rgba(255,0,51,.3)}
+.bell{width:clamp(78px,11vw,120px);aspect-ratio:1;border-radius:50%;border:2px solid #fff;background:#030303;color:#fff;box-shadow:0 0 16px rgba(255,255,255,.35),inset 0 0 14px rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.bell small{font-size:clamp(6px,1vw,10px);letter-spacing:.12em;color:#ccc}
+.bell strong{font-size:clamp(16px,2.8vw,28px)}
+
+/* ---------- Arena stage ---------- */
+.arena-wrap{position:relative;width:100%}
+.stage{position:relative;width:100%;aspect-ratio:1536/666;overflow:hidden;background-color:#000;background-image:url(assets/arena.png);background-repeat:no-repeat;background-size:100% 153.75%;background-position:0% 64.8%}
+.live{position:absolute;z-index:5}
+
+.aud-label{position:absolute;top:1.6%;z-index:6;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.82);padding:.5% 1.2%;font-size:clamp(6px,1vw,12px);font-weight:800;letter-spacing:.1em}
+.aud-label.fansl{left:1.4%}
+.aud-label.doubl{right:1.4%;color:#aaa}
+
+/* Fan / doubter signs (dynamic, cover the baked example signs) */
+.sign{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:800;letter-spacing:.03em;font-size:clamp(5px,0.78vw,11px);line-height:1.15;padding:1px 2px;border-radius:3px;transform:rotate(-2deg);overflow:hidden;pointer-events:none}
+.sign.light{background:#f2f2f2;color:#000;box-shadow:0 0 8px rgba(255,255,255,.35)}
+.sign.dark{background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.sign.doubt{background:#060606;color:#8a8a8a;border:1px solid rgba(255,255,255,.16);box-shadow:none;transform:rotate(1.5deg)}
+.sign .who{font-size:.72em;font-weight:600;opacity:.7;margin-top:1px}
+.sign .ava{width:22%;aspect-ratio:1;border-radius:50%;object-fit:cover;margin-bottom:1px}
+.sign.s1{left:4.10%;top:6.76%;width:6.64%;height:9.01%}
+.sign.s2{left:11.52%;top:6.76%;width:5.86%;height:10.21%}
+.sign.s3{left:18.03%;top:7.96%;width:5.86%;height:6.76%}
+.sign.s4{left:24.41%;top:9.01%;width:5.34%;height:9.01%}
+.sign.s5{left:31.25%;top:9.76%;width:5.66%;height:9.46%}
+.sign.d1{left:63.93%;top:9.76%;width:5.40%;height:9.01%}
+.sign.d2{left:70.12%;top:9.01%;width:5.27%;height:9.01%}
+.sign.d3{left:78.13%;top:7.96%;width:5.34%;height:9.01%}
+.sign.d4{left:84.77%;top:7.96%;width:5.53%;height:9.01%}
+.sign.d5{left:92.25%;top:9.01%;width:5.40%;height:9.76%}
+@keyframes signLift{0%{transform:translateY(0) rotate(-2deg)}30%{transform:translateY(-16%) rotate(1deg)}60%{transform:translateY(-10%) rotate(-1deg)}100%{transform:translateY(0) rotate(-2deg)}}
+.sign.lift{animation:signLift .9s ease;box-shadow:0 0 14px rgba(255,255,255,.7)}
+.flash{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;z-index:4;opacity:0;animation:flashPop .5s ease-out forwards;pointer-events:none}
+@keyframes flashPop{0%{opacity:0;box-shadow:0 0 2px 1px rgba(255,255,255,.4)}30%{opacity:1;box-shadow:0 0 14px 5px rgba(255,255,255,.85)}100%{opacity:0;box-shadow:0 0 2px 1px rgba(255,255,255,0)}}
+
+/* Hoop occlusion / net layers: pixel copies of the arena art */
+.hoop-fx{position:absolute;pointer-events:none}
+#rimFront{left:48.05%;top:16.37%;width:3.78%;height:1.80%;z-index:11;background-image:url(assets/arena.png);background-repeat:no-repeat;background-size:2648.3% 8533.3%;background-position:49.93% 33.70%}
+#netWrap{left:48.44%;top:18.02%;width:2.99%;height:4.95%;z-index:9;background:#000;overflow:hidden}
+#netImg{position:absolute;inset:0;transform-origin:50% 0;background-image:url(assets/arena.png);background-repeat:no-repeat;background-size:3339.1% 3103.0%;background-position:49.93% 35.52%}
+@keyframes netSwish{0%{transform:none}28%{transform:translateY(10%) scaleY(1.16)}50%{transform:translateY(6%) translateX(3%) scaleY(1.09)}74%{transform:translateY(2%) translateX(-2%) scaleY(1.03)}100%{transform:none}}
+.net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}
+
+/* Paper ball (sits exactly over the baked ball in the art) */
+.paper{left:65.17%;top:70.42%;width:9.24%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:45% 55% 48% 52%/58% 43% 57% 42%;background:linear-gradient(135deg,#fff,#c8c8c8);border:2px solid #fff;box-shadow:0 0 11px #fff,0 0 28px rgba(255,255,255,.45);color:#111;display:grid;place-items:center;padding:1.2%;font-size:clamp(6px,0.9vw,11px);font-weight:800;text-align:center;touch-action:none;cursor:grab;z-index:10}
+.paper.dragging{cursor:grabbing}
+
+.power{left:1.8%;top:50%;width:2.6%;height:28%;display:flex;flex-direction:column-reverse;gap:4%;padding:.4%;z-index:7}
+.power i{display:block;height:7%;border-radius:999px;background:#111}
+.power i.on{background:#fff;box-shadow:0 0 7px #fff}
+
+/* ---------- Action bar ---------- */
+.actionbar{position:absolute;left:28.32%;top:80.78%;width:43.42%;height:17.72%;z-index:8;display:flex;align-items:center;justify-content:space-evenly;background:rgba(4,4,4,.82);border:1px solid var(--line);border-radius:16px;box-shadow:0 0 18px rgba(255,255,255,.07)}
+.ab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;background:none;border:0;color:#fff;font-size:clamp(5px,0.72vw,10px);font-weight:700;letter-spacing:.06em;height:100%;padding:1% 0;flex:1}
+.ab .ic{width:36%;max-width:34px;aspect-ratio:1;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:1.5em;line-height:1}
+.ab:disabled{opacity:.4}
+.shootbtn{position:relative;flex:1.25}
+.shootbtn .ball{width:74%;max-width:64px;aspect-ratio:1;border-radius:50%;border:2px solid #fff;box-shadow:0 0 16px rgba(255,255,255,.65);background:radial-gradient(circle at 40% 32%,#fff 0%,#cfcfcf 38%,#6a6a6a 72%,#2c2c2c 100%);margin-top:-34%}
+.shootbtn span:last-child{font-size:1.15em;font-weight:800}
+
+/* ---------- Panels ---------- */
+.panels{display:contents}
+.panel{position:absolute;z-index:6;background:rgba(2,2,2,.9);border:1px solid var(--line);border-radius:14px;padding:1%;overflow:hidden;box-shadow:0 0 18px rgba(255,255,255,.06)}
+.panel.assets{left:1.95%;top:35.4%;width:15.43%;height:54.6%}
+.panel.liabilities{left:81.05%;top:35.4%;width:17.12%;height:54.6%}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4%}
+.panel h2{margin:0;font-size:clamp(7px,0.85vw,12px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plus{width:22px;height:22px;border-radius:50%;border:1px solid #666;background:#090909;color:#fff;display:grid;place-items:center;padding:0}
+.tag-list{height:84%;overflow:auto;scrollbar-width:none}
+.tag-list::-webkit-scrollbar{display:none}
+.tag{width:100%;margin-bottom:3%;border:1px solid rgba(255,255,255,.22);background:#030303;color:#fff;border-radius:8px;padding:4% 5%;font-size:clamp(7px,0.95vw,11px);display:flex;gap:6px;align-items:center;text-align:left}
+.tag.active{background:#fff;color:#000;box-shadow:0 0 10px rgba(255,255,255,.45)}
+.tag.scored{opacity:.35}
+.tag small{margin-left:auto;font-size:.75em}
+
+/* ---------- Crowd energy / combo row ---------- */
+.meter-row{display:flex;align-items:center;gap:10px;padding:10px 4%;border-top:1px solid rgba(255,255,255,.08)}
+.crowd-label{font-size:clamp(7px,1.1vw,11px);letter-spacing:.14em;font-weight:700;white-space:nowrap}
+.crowd{flex:1;max-width:340px;height:8px;background:#111;overflow:hidden;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
+.crowd-fill{height:100%;width:65%;background:#fff;box-shadow:0 0 8px #fff}
+.crowd-pct{font-size:clamp(8px,1.2vw,12px);font-weight:700}
+.combo-wrap{margin-left:auto;font-size:clamp(8px,1.2vw,12px);letter-spacing:.14em;font-weight:700;display:flex;align-items:baseline;gap:8px}
+.combo{font-weight:800;font-size:clamp(16px,2.6vw,28px)}
+
+/* ---------- Bottom nav ---------- */
+.bottomnav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 3% calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.08)}
+.nb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:12px;color:#9a9a9a;font-size:clamp(6px,1vw,10px);font-weight:700;letter-spacing:.08em;padding:7px 2px}
+.nb svg{width:20px;height:20px}
+.nb.active,.nb:hover{color:#fff;border-color:var(--line);background:#050505;box-shadow:0 0 12px rgba(255,255,255,.12)}
+
+/* ---------- Overlays (unchanged mechanics) ---------- */
+.gate{display:none;position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:50;width:64%;padding:10px;border:1px solid #fff;border-radius:12px;background:#000;text-align:center;font-size:clamp(8px,1.5vw,12px)}
+.gate.show{display:block}
+.toast{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(.8);z-index:40;opacity:0;border:1px solid #fff;border-radius:999px;padding:10px 16px;background:#000;font-weight:900}
+.toast.show{animation:pop .9s ease}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+.confetti{position:absolute;width:7px;height:13px;background:#fff;z-index:35;animation:fall 1.3s ease-out forwards}
+@keyframes fall{to{transform:translateY(270px) rotate(720deg);opacity:0}}
+.modal,.ceremony{display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.9);align-items:center;justify-content:center;padding:20px}
+.modal.show,.ceremony.show{display:flex}
+.modal-card,.ceremony-card{width:min(92%,430px);border:1px solid var(--line);border-radius:18px;background:#070709;padding:18px;text-align:center;box-shadow:0 0 26px rgba(255,255,255,.1)}
+.modal.wide .modal-card{width:min(96%,520px)}
+.modal-card input{width:100%;border:1px solid var(--line);background:#020202;color:#fff;border-radius:12px;padding:12px}
+.actions{display:flex;gap:10px;margin-top:12px}
+.actions button{flex:1;border-radius:12px;padding:11px;font-weight:700}
+.secondary{background:#060606;color:#fff;border:1px solid var(--line)}
+.primary{background:#fff;color:#000;border:1px solid #fff}
+.ceremony-icon{font-size:72px;margin:12px}
+.signature{font-family:"Brush Script MT","Segoe Script",cursive;font-size:34px;margin:14px}
+.history-panel{display:none;position:fixed;inset:6% 4%;max-width:900px;margin:0 auto;z-index:55;background:#050505;border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto}
+.history-panel.show{display:block}
+.history-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.history-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.history-card b{display:block;margin-top:4px}
+
+/* Manage My Arena */
+.arena-card{text-align:left}
+.arena-card h3{text-align:center}
+.arena-scroll{max-height:min(58vh,460px);overflow:auto;padding-right:4px}
+.arena-card h4{margin:14px 0 2px;letter-spacing:.08em}
+.hint{margin:2px 0 8px;font-size:11px;color:#999}
+.fan-form{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
+.filelabel{font-size:11px;color:#bbb;display:flex;flex-direction:column;gap:4px}
+.fan-row{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:6px 8px;margin-bottom:6px;font-size:13px}
+.fan-row img{width:26px;height:26px;border-radius:50%;object-fit:cover}
+.fan-row .fx{margin-left:auto;background:none;border:1px solid var(--line);color:#fff;border-radius:8px;padding:2px 8px;font-size:11px}
+.fan-row small{color:#999}
+.pref{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.menu-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.menu-list button{padding:11px;border-radius:12px}
+
+/* ---------- Travelling neon court energy ---------- */
 @supports (mask-mode: luminance) {
-  .stage::before{
-    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  .court-pulse{
+    position:absolute;inset:0;z-index:2;pointer-events:none;
     background-image:
       linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 42%,rgba(255,255,255,.5) 47%,rgba(255,255,255,1) 50%,rgba(255,255,255,.5) 53%,rgba(255,255,255,0) 58%,rgba(255,255,255,0) 100%),
       linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.35) 48%,rgba(255,255,255,.7) 50%,rgba(255,255,255,.35) 52%,rgba(255,255,255,0) 56%,rgba(255,255,255,0) 100%);
     background-size:280% 100%,280% 100%;
     background-repeat:no-repeat;
-    mask-image:url(assets/mockup.png);
-    -webkit-mask-image:url(assets/mockup.png);
-    mask-size:100% 100%;-webkit-mask-size:100% 100%;
+    mask-image:url(assets/arena.png);-webkit-mask-image:url(assets/arena.png);
+    mask-size:100% 153.75%;-webkit-mask-size:100% 153.75%;
+    mask-position:0% 64.8%;-webkit-mask-position:0% 64.8%;
     mask-mode:luminance;
-    clip-path:inset(41.5% 0 46.5% 0);
     filter:drop-shadow(0 0 6px rgba(255,255,255,.8)) drop-shadow(0 0 14px rgba(255,255,255,.45));
     animation:courtPulse 3.4s linear infinite;
   }
+  .court-pulse.pa{clip-path:inset(36% 0 43.5% 0)}
+  .court-pulse.pb{clip-path:inset(56.5% 42.4% 10.2% 35.7%);animation-delay:-1.3s}
   @keyframes courtPulse{
     0%{background-position:-40% 0,60% 0}
     100%{background-position:140% 0,240% 0}
   }
   @media (prefers-reduced-motion: reduce){
-    .stage::before{display:none;animation:none}
+    .court-pulse{display:none;animation:none}
+    .sign.lift,.flash{animation:none}
   }
 }
 
-/* Net swish reaction: rest -> stretch down -> slight sway -> bounce back */
-@keyframes netSwish{0%{transform:none}28%{transform:translateY(10%) scaleY(1.16)}50%{transform:translateY(6%) translateX(3%) scaleY(1.09)}74%{transform:translateY(2%) translateX(-2%) scaleY(1.03)}100%{transform:none}}
-.net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}
+/* ---------- Mobile (portrait) : centre-cropped arena window ---------- */
+@media (max-width:680px){
+  .stage{aspect-ratio:856/666;background-size:179.44% 153.75%;background-position:50% 64.8%}
+  .court-pulse{mask-size:179.44% 153.75%;-webkit-mask-size:179.44% 153.75%;mask-position:50% 64.8%;-webkit-mask-position:50% 64.8%}
+  .court-pulse.pb{clip-path:inset(56.5% 36.3% 10.2% 24.3%)}
+  #rimFront{left:46.50%;width:6.78%}
+  #netWrap{left:47.20%;width:5.37%}
+  .paper{left:77.22%;width:16.59%;font-size:clamp(6px,1.9vw,11px)}
+  .actionbar{left:11.10%;width:77.92%}
+  .ab{font-size:clamp(5px,1.55vw,10px)}
+  .power{display:none}
+  .sign{font-size:clamp(5px,1.35vw,10px)}
+  .sign.s1,.sign.s2,.sign.s3,.sign.d3,.sign.d4,.sign.d5{display:none}
+  .sign.s4{left:4.09%;width:9.58%}
+  .sign.s5{left:16.36%;width:10.16%}
+  .sign.d1{left:75.00%;width:9.70%}
+  .sign.d2{left:86.10%;width:9.46%}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
+  .panel.assets,.panel.liabilities{position:static;left:auto;top:auto;width:auto;height:230px;padding:8px}
+  .tag{font-size:11px}
+  .panel h2{font-size:10px}
+  .brand p{display:none}
+  .brand h1{font-size:17px;letter-spacing:.1em}
+  .top{gap:6px;padding:8px 8px 4px}
+  .top-left,.top-right{gap:6px}
+  .iconbtn{width:32px;height:32px;border-radius:8px}
+  .iconbtn svg{width:17px;height:17px}
+  .streak-chip{font-size:8px;padding:5px 6px;letter-spacing:.02em}
+  /* cinematic edge vignette; also hides banner slivers cut by the crop window */
+  .stage::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 9%,rgba(0,0,0,0) 91%,#000 100%)}
+}

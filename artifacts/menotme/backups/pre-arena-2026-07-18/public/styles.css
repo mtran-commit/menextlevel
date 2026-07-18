@@ -1,0 +1,87 @@
+:root{--white:#fff;--black:#000;--glass:rgba(0,0,0,.94);--line:rgba(255,255,255,.24);}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{display:flex;justify-content:center}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{width:min(100vw,768px);position:relative;background:#000;min-height:100vh;overflow:hidden}
+.stage{position:relative;width:100%;aspect-ratio:2/3;overflow:hidden;background:#000}
+.mockup{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;user-select:none}
+.mask{position:absolute;background:#000;z-index:3}
+.mask-scores{left:5.5%;right:5.5%;top:8.6%;height:14.2%}
+.mask-assets{left:1.6%;top:22.7%;width:23%;height:20.5%;border-radius:16px}
+.mask-liabilities{right:1.6%;top:22.7%;width:23%;height:20.5%;border-radius:16px}
+.mask-best{right:2.8%;top:53%;width:15%;height:19%;border-radius:16px}
+.mask-crowd{left:0;right:0;bottom:5.8%;height:8.7%}
+.live{position:absolute;z-index:5}
+.score{top:12.15%;width:15%;text-align:center;font-weight:800;font-size:clamp(34px,8.2vw,72px);line-height:1;color:#ff1744;text-shadow:0 0 6px rgba(255,23,68,.9),0 0 14px rgba(255,23,68,.55)}
+.score.me{left:8.8%} .score.notme{right:8.8%}
+.team-label{top:9.5%;font-size:clamp(9px,1.8vw,15px);letter-spacing:.12em;text-transform:uppercase;text-align:center;width:22%}
+.team-label.me{left:5%} .team-label.notme{right:5%}
+.team-note{top:17.4%;font-size:clamp(7px,1.3vw,11px);font-weight:800;text-align:center;width:20%}
+.team-note.me{left:6%} .team-note.notme{right:6%}
+.clock{top:9.45%;left:50%;transform:translateX(-50%);width:18%;min-width:84px;padding:.6% .4%;border:1px solid var(--line);border-radius:14px;background:#050505;text-align:center;box-shadow:0 0 20px rgba(255,255,255,.08)}
+.clock small{display:block;font-size:clamp(6px,1vw,9px);color:#aaa} .clock strong{font-size:clamp(16px,3.4vw,29px)}
+.streak{top:2.65%;left:9.8%;font-size:clamp(9px,1.7vw,14px);font-weight:700}
+.panel{top:22.7%;width:23%;height:20.5%;padding:1%;overflow:hidden;background:#020202;border:1px solid var(--line);border-radius:16px;box-shadow:0 0 18px rgba(255,255,255,.05)}
+.panel.assets{left:1.6%} .panel.liabilities{right:1.6%}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4%}
+.panel h2{margin:0;font-size:clamp(8px,1.5vw,13px);letter-spacing:.08em;text-transform:uppercase}
+.plus{width:24px;height:24px;border-radius:50%;border:1px solid #666;background:#090909;color:#fff;display:grid;place-items:center}
+.tag-list{height:82%;overflow:auto;scrollbar-width:none} .tag-list::-webkit-scrollbar{display:none}
+.tag{width:100%;margin-bottom:3%;border:1px solid rgba(255,255,255,.22);background:#030303;color:#fff;border-radius:8px;padding:4% 5%;font-size:clamp(7px,1.3vw,11px);display:flex;gap:6px;align-items:center;text-align:left}
+.tag.active{background:#fff;color:#000;box-shadow:0 0 10px rgba(255,255,255,.45)} .tag.scored{opacity:.35}
+.tag small{margin-left:auto;font-size:.75em}
+.best{right:2.8%;top:53%;width:15%;height:19%;padding:2%;background:#020202;border:1px solid var(--line);border-radius:16px;text-align:center}
+.best small{display:block;font-size:clamp(6px,1vw,9px);color:#aaa;text-transform:uppercase} .best strong{display:block;font-size:clamp(24px,4.8vw,44px);margin:2% 0 12%} .best b{display:block;font-size:clamp(10px,1.7vw,16px);margin-top:5%}
+.paper{left:50%;top:62.4%;width:10.7%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:45% 55% 48% 52%/58% 43% 57% 42%;background:linear-gradient(135deg,#fff,#c8c8c8);border:2px solid #fff;box-shadow:0 0 11px #fff,0 0 28px rgba(255,255,255,.45);color:#111;display:grid;place-items:center;padding:1.2%;font-size:clamp(7px,1.15vw,11px);font-weight:800;text-align:center;touch-action:none;cursor:grab;z-index:10}
+.paper.dragging{cursor:grabbing} .paper.flying{transition:left .62s cubic-bezier(.18,.82,.22,1),top .62s cubic-bezier(.18,.82,.22,1),transform .62s ease,opacity .22s ease}
+.power{left:4.3%;top:57.6%;width:4%;height:13%;display:flex;flex-direction:column-reverse;gap:4%;padding:.5%;z-index:7}
+.power i{display:block;height:7%;border-radius:999px;background:#111} .power i.on{background:#fff;box-shadow:0 0 7px #fff}
+.crowd{left:11.6%;bottom:8.7%;width:20%;height:1.1%;background:#111;overflow:hidden;border-radius:999px} .crowd-fill{height:100%;width:65%;background:#fff;box-shadow:0 0 8px #fff}
+.crowd-label{left:3%;bottom:8.35%;font-size:clamp(6px,1.1vw,10px);text-transform:uppercase} .crowd-pct{left:32.5%;bottom:8.2%;font-size:clamp(8px,1.4vw,12px)}
+.combo{right:13.5%;bottom:8.1%;font-weight:800;font-size:clamp(15px,3.5vw,31px)}
+.hotspot{position:absolute;z-index:9;border:0;background:transparent;color:transparent} .hotspot:focus-visible{outline:2px solid #fff}
+.add-asset{left:26%;top:74.5%;width:15%;height:7%} .shoot{left:42.5%;top:72.8%;width:15%;height:9%} .add-liability{left:59%;top:74.5%;width:15%;height:7%} .liability-list{left:75%;top:74.5%;width:15%;height:7%} .final-bell{left:43%;top:8.3%;width:14%;height:9%} .share{right:4%;top:1.2%;width:7%;height:5%}
+.toast{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) scale(.8);z-index:40;opacity:0;border:1px solid #fff;border-radius:999px;padding:10px 16px;background:#000;font-weight:900} .toast.show{animation:pop .9s ease}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+.confetti{position:absolute;width:7px;height:13px;background:#fff;z-index:35;animation:fall 1.3s ease-out forwards} @keyframes fall{to{transform:translateY(270px) rotate(720deg);opacity:0}}
+.modal,.ceremony{display:none;position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.9);align-items:center;justify-content:center;padding:20px} .modal.show,.ceremony.show{display:flex}
+.modal-card,.ceremony-card{width:min(92%,430px);border:1px solid var(--line);border-radius:18px;background:#070709;padding:18px;text-align:center;box-shadow:0 0 26px rgba(255,255,255,.1)}
+.modal-card input{width:100%;border:1px solid var(--line);background:#020202;color:#fff;border-radius:12px;padding:12px}
+.actions{display:flex;gap:10px;margin-top:12px} .actions button{flex:1;border-radius:12px;padding:11px;font-weight:700} .secondary{background:#060606;color:#fff;border:1px solid var(--line)} .primary{background:#fff;color:#000;border:1px solid #fff}
+.ceremony-icon{font-size:72px;margin:12px} .signature{font-family:"Brush Script MT","Segoe Script",cursive;font-size:34px;margin:14px}
+.history-panel{display:none;position:absolute;inset:8% 4% 12%;z-index:55;background:#050505;border:1px solid var(--line);border-radius:18px;padding:16px;overflow:auto} .history-panel.show{display:block}
+.history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px} .history-card{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.gate{display:none;position:absolute;left:50%;top:19%;transform:translateX(-50%);z-index:50;width:64%;padding:10px;border:1px solid #fff;border-radius:12px;background:#000;text-align:center;font-size:clamp(8px,1.5vw,12px)} .gate.show{display:block}
+
+/* Neon court-line energy pulse: a travelling highlight masked by the court art itself,
+   so light only appears on the existing white lines. Clipped to the court area. */
+@supports (mask-mode: luminance) {
+  .stage::before{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background-image:
+      linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 42%,rgba(255,255,255,.5) 47%,rgba(255,255,255,1) 50%,rgba(255,255,255,.5) 53%,rgba(255,255,255,0) 58%,rgba(255,255,255,0) 100%),
+      linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.35) 48%,rgba(255,255,255,.7) 50%,rgba(255,255,255,.35) 52%,rgba(255,255,255,0) 56%,rgba(255,255,255,0) 100%);
+    background-size:280% 100%,280% 100%;
+    background-repeat:no-repeat;
+    mask-image:url(assets/mockup.png);
+    -webkit-mask-image:url(assets/mockup.png);
+    mask-size:100% 100%;-webkit-mask-size:100% 100%;
+    mask-mode:luminance;
+    clip-path:inset(41.5% 0 46.5% 0);
+    filter:drop-shadow(0 0 6px rgba(255,255,255,.8)) drop-shadow(0 0 14px rgba(255,255,255,.45));
+    animation:courtPulse 3.4s linear infinite;
+  }
+  @keyframes courtPulse{
+    0%{background-position:-40% 0,60% 0}
+    100%{background-position:140% 0,240% 0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .stage::before{display:none;animation:none}
+  }
+}
+
+/* Net swish reaction: rest -> stretch down -> slight sway -> bounce back */
+@keyframes netSwish{0%{transform:none}28%{transform:translateY(10%) scaleY(1.16)}50%{transform:translateY(6%) translateX(3%) scaleY(1.09)}74%{transform:translateY(2%) translateX(-2%) scaleY(1.03)}100%{transform:none}}
+.net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}

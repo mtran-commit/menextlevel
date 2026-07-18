@@ -1,0 +1,723 @@
+I am uploading the new approved MeNotMe Arena Mockup.
+
+This image is now the LOCKED VISUAL SOURCE OF TRUTH for the main MeNotMe game screen.
+
+Your task is to update the existing clickable MeNotMe application to visually match this mockup as closely as technically possible, while preserving all existing functionality, backend systems, game mechanics, accounts, database, scoring, streaks, achievements and responsive behaviour.
+
+CRITICAL RULE
+
+Do not reinterpret this design.
+
+Do not create a design "inspired by" the mockup.
+
+Do not simplify it.
+
+Do not replace it with generic Replit-generated UI components.
+
+Reproduce the mockup as closely as possible using real HTML/CSS/SVG/Canvas elements so the interface remains interactive and responsive.
+
+Do not use the mockup itself as one large static background image with invisible buttons placed over it.
+
+The arena, audience, court, scoreboard, panels and controls should be implemented as proper layered UI elements wherever practical.
+
+1. Overall visual direction
+
+The entire experience is a premium futuristic black-and-white basketball arena.
+
+Maintain:
+
+Pure black/dark background
+White neon court lines
+White neon glow
+Subtle glass-style panels
+Red digital LED score numbers
+Cinematic arena depth
+First-person perspective
+Premium monochrome aesthetic
+Subtle audience lighting
+No unnecessary colours
+
+The interface should feel like the user is physically standing on the basketball court.
+
+2. Header
+
+Recreate the header exactly according to the mockup.
+
+Left
+
+Hamburger menu.
+
+Next to it:
+
+DAY [X] STREAK 🔥
+
+This must dynamically display the user's real current streak.
+
+Centre
+
+MeNotMe
+
+Underneath:
+
+Play for the person you want to become.
+
+Use the existing approved MeNotMe branding and slogan rather than changing the product slogan.
+
+Right
+
+Keep the existing interactive icons:
+
+Trophy / achievements
+Stats
+Share
+
+Maintain the spacing and premium outlined-button styling from the mockup.
+
+The header must never overlap at mobile or desktop widths.
+
+3. Main scoreboard
+
+At the upper centre of the arena:
+
+Left
+
+TEAM ME
+
+Large red digital LED score.
+
+Underneath:
+
+YOU GOT THIS
+
+Centre
+
+FINAL BELL
+
+Dynamic countdown timer.
+
+Right
+
+TEAM NOT ME
+
+Large red digital LED score.
+
+Underneath:
+
+NOT TODAY
+
+Use a digital LED scoreboard appearance for the two numeric scores.
+
+Suggested score colour:
+
+#ff0033
+
+Use a subtle red glow.
+
+Do not make other interface text red.
+
+The Final Bell remains white.
+
+All values must come from the real game state.
+
+Do not use static mockup values.
+
+4. Full basketball arena
+
+Transform the existing court presentation into the cinematic arena shown in the reference.
+
+The court must remain interactive.
+
+Include:
+
+Central basketball hoop
+Backboard
+Realistic net
+Perspective court
+Three-point line
+Key
+Free-throw area
+Court boundaries
+Reflective dark floor
+White neon markings
+
+The hoop should sit visually at the far end of the court.
+
+The user's hands and paper ball remain in first-person perspective at the bottom foreground.
+
+Do not remove the existing shot mechanics.
+
+5. Travelling neon court energy
+
+The existing white court lines should have subtle animated light travelling through them.
+
+Effect:
+
+dim white glow → travelling bright pulse → dim white glow
+
+The light should move continuously through:
+
+Court boundaries
+Three-point line
+Key
+Free-throw arc
+
+Do not make the entire court blink.
+
+Use a smooth 2–4 second animation.
+
+Stagger the pulses slightly.
+
+Keep performance optimised for mobile.
+
+Respect prefers-reduced-motion.
+
+6. YOUR FANS — Team Me audience
+
+Create the audience section on the Team Me / left side of the arena.
+
+Label:
+
+★ YOUR FANS
+
+The user's Fans sit primarily in the front rows.
+
+Display the user's actual saved Fans.
+
+Each Fan may have:
+
+Name
+Nickname
+Avatar/photo if provided
+Support message
+
+Fan signs can dynamically display messages such as:
+
+GO [USER NAME]!
+
+YOU'VE GOT THIS!
+
+TEAM ME
+
+KEEP GOING!
+
+SO PROUD OF YOU!
+
+Under the audience display:
+
+FRONT ROW — YOUR SUPPORTERS
+
+The Fans should visually feel closer and brighter than the general background audience.
+
+Do not make them cartoonish.
+
+Use premium monochrome silhouettes or realistic stylised audience figures consistent with the reference.
+
+7. Fan reactions
+
+Fans must react to gameplay.
+
+When Team Me scores:
+
+Selected Fans stand briefly
+Some raise their arms
+Signs lift
+Crowd energy increases
+Subtle camera flashes occur
+Cheer sound plays
+
+Animations should be short and subtle.
+
+Do not animate every audience member simultaneously.
+
+Randomise small groups to make the crowd feel alive.
+
+For consecutive Team Me scores, increase crowd intensity.
+
+8. THE DOUBTERS — Team Not Me audience
+
+Create the Team Not Me / right-side audience.
+
+Label:
+
+× THE DOUBTERS
+
+This represents people the user feels did not believe in them.
+
+Doubters should appear as darker, more subtle silhouettes.
+
+Do not require profile photos.
+
+The user can privately add a name or nickname.
+
+This data remains private.
+
+Underneath display:
+
+THEY DOUBT YOU. PROVE THEM WRONG.
+
+The Doubters side should visually contrast with the Fans:
+
+Fans:
+
+Slightly brighter
+More energetic
+Signs raised during scores
+
+Doubters:
+
+Darker
+More static
+Visually subdued
+
+Do not create hostile or abusive animations.
+
+9. Doubter signs
+
+Do NOT copy negative personal attacks from the visual reference as user-facing defaults.
+
+Instead use motivational framing such as:
+
+PROVE THEM WRONG
+
+KEEP PLAYING
+
+NOT TODAY
+
+SHOW THEM
+
+The purpose is motivation, not harassment or humiliation.
+
+Never publicly expose Doubter names.
+
+10. Asset panel
+
+Position the Asset panel on the lower left as shown.
+
+Title:
+
+★ ASSETS (TEAM ME)
+
+Display the user's real Asset tags.
+
+Each Asset should have:
+
+Icon
+Name
+Completion state
+Selectable state
+
+Examples from suggestions:
+
+Workout
+Read
+Drink Water
+Eat Healthy
+Sleep Well
+Work on My Goals
+Quality Time
+
+Bottom:
+
++ ADD ASSET
+
+This must remain fully interactive.
+
+Do not use static example Asset data when the user has real data.
+
+11. Liability panel
+
+Position the Liability panel on the lower right.
+
+Title:
+
+LIABILITIES (TEAM NOT ME)
+
+Display the user's real Liability tags.
+
+Examples:
+
+Mindless Scrolling
+Unnecessary Spending
+Too Much Sugar
+Self-Doubt
+Negative Vibes
+Procrastination
+Smoking
+
+Show each Liability's current daily state.
+
+Bottom:
+
++ ADD LIABILITY
+
+Keep the existing Liability scoring mechanics.
+
+12. First-person hands and paper ball
+
+Maintain the first-person perspective from the reference.
+
+At the bottom centre, show hands holding the crumpled paper.
+
+The paper represents the currently selected Asset.
+
+The user must be able to:
+
+Pull back
+Flick
+Shoot
+
+Do not make the hands block the action controls.
+
+The hands and paper should feel integrated into the arena rather than floating over the UI.
+
+13. Shot animation
+
+For successful shots:
+
+Paper leaves the user's hands.
+Travels in a realistic curved arc.
+Gradually becomes smaller with distance.
+Enters the centre of the hoop.
+Passes behind the front edge of the rim.
+Net stretches and moves.
+Paper travels visibly through the net.
+Paper exits below the net.
+Paper fades/disappears.
+Net returns naturally to rest.
+
+Trigger the score exactly when the paper crosses the rim.
+
+At that moment:
+
+Team Me +1
+Swish sound
+Fans cheer
+Crowd Energy increases
+Confetti for appropriate moments
+
+For rim-in:
+
+Paper hits rim → slight bounce → falls through → net reacts.
+
+For miss:
+
+Paper misses → no net movement → no score → retry allowed.
+
+Use actual responsive hoop coordinates.
+
+Do not use fixed screen coordinates.
+
+14. Main action controls
+
+Recreate the central action bar from the reference.
+
+Buttons:
+
+ASSET SHOT
+
+ADD ASSET
+
+Large centre:
+
+SHOOT
+
+ADD LIABILITY
+
+LIABILITY LIST
+
+Maintain the neon outlined styling.
+
+The Shoot button should be visually dominant.
+
+All buttons must remain functional.
+
+15. Crowd Energy
+
+Below the main game controls:
+
+CROWD ENERGY
+
+Display a dynamic horizontal meter.
+
+Crowd Energy increases based on:
+
+Team Me scoring
+Consecutive successful shots
+Combo
+Daily streak
+Milestone achievements
+
+Crowd Energy can decrease after:
+
+Misses
+Team Not Me points
+
+Keep this primarily a visual engagement mechanic unless existing game logic specifies otherwise.
+
+16. Combo
+
+Display:
+
+COMBO X3
+
+or the user's current real combo.
+
+Successful consecutive shots increase the combo.
+
+A miss resets or reduces the combo according to existing game logic.
+
+Do not use static mockup values.
+
+17. Bottom navigation
+
+Recreate the navigation shown:
+
+HOME
+
+WALL OF FAME
+
+CALENDAR
+
+STATS
+
+PROFILE
+
+The navigation must occupy its own dedicated row.
+
+It must never overlap:
+
+Crowd Energy
+Combo
+Game action controls
+
+Support iPhone safe areas.
+
+18. Fan and Doubter management
+
+Inside Profile or Settings add:
+
+Manage My Arena
+
+Sections:
+
+My Fans
+Add Fan
+Edit Fan
+Delete Fan
+Add optional avatar
+Add optional support message
+My Doubters
+Add name/nickname
+Edit
+Delete
+Arena Preferences
+Show Fans
+Hide Fans
+Show Doubters
+Hide Doubters
+Show Fan Signs
+Crowd Reactions On/Off
+
+Do not clutter the main game screen with management controls.
+
+19. Privacy
+
+Fans and Doubters are private by default.
+
+Do not expose:
+
+Names
+Photos
+Messages
+
+through:
+
+Friend challenges
+Public sharing
+Leaderboards
+Shared screenshots generated by the application
+
+unless the user explicitly chooses to share them.
+
+Store Fan photos securely.
+
+20. Milestone integration
+
+Integrate Fans into existing ceremonies.
+
+7-day streak
+
+Fans appear during the paparazzi/autograph celebration.
+
+30-day Championship
+
+Fans celebrate when the Championship Cup is presented.
+
+60-day Wall of Fame
+
+Fans appear during the Wall of Fame ceremony.
+
+90-day Retirement
+
+Full arena celebration.
+
+Fans stand and applaud.
+
+Arena lights intensify.
+
+The retirement ceremony should feel like the user's biggest achievement.
+
+21. Responsive behaviour
+
+The desktop/tablet version should reproduce the wide cinematic composition shown in the reference.
+
+For mobile portrait:
+
+Do not simply shrink the entire desktop interface.
+
+Maintain:
+
+Scoreboard visibility
+Hoop visibility
+Court perspective
+Asset/Liability access
+Fans/Doubters atmosphere
+Hands/paper
+Action controls
+
+Secondary panels can collapse or open as drawers on smaller screens if necessary, but the core arena must remain visible.
+
+Test:
+
+320px
+375px
+390px
+393px
+430px
+768px
+Desktop widescreen
+
+No elements may overlap.
+
+22. Performance
+
+The audience should not consist of hundreds of heavy individual DOM elements.
+
+Use efficient rendering:
+
+Layered SVG
+CSS silhouettes
+Canvas
+Optimised image layers
+
+as appropriate.
+
+Only animate the audience members currently reacting.
+
+Maintain smooth shot physics and flick gestures.
+
+Target smooth mobile performance.
+
+23. Existing functionality
+
+Do not break or remove any existing functionality, including:
+
+Guest mode
+Accounts
+Authentication
+Database
+Cloud sync
+Asset creation
+Liability creation
+Daily scoring
+Final Bell
+Streaks
+Daily reset
+Yesterday's Result
+7-day ceremony
+30-day Championship
+60-day Wall of Fame
+90-day Retirement
+Calendar
+Stats
+Friend challenges
+Notifications
+Sounds
+Haptics
+Offline support
+PWA
+Super Admin
+
+This task is primarily a visual arena upgrade plus Fans/Doubters feature.
+
+24. Implementation workflow
+
+Do not change everything at once.
+
+Stage 1
+
+Save a backup/version of the current working application.
+
+Stage 2
+
+Implement the arena visual structure without changing game logic.
+
+Stage 3
+
+Connect existing real game data to the new scoreboard and panels.
+
+Stage 4
+
+Implement Fans and Doubters database models and management.
+
+Stage 5
+
+Add audience rendering.
+
+Stage 6
+
+Add Fan reactions and Crowd Energy integration.
+
+Stage 7
+
+Connect shot physics to the new hoop coordinates.
+
+Stage 8
+
+Test all existing game functionality.
+
+Stage 9
+
+Test responsive layouts.
+
+Stage 10
+
+Compare the final running application side-by-side with the uploaded reference mockup.
+
+FINAL ACCEPTANCE REQUIREMENT
+
+The uploaded Arena Mockup is the visual target.
+
+The final application should immediately feel like the same arena when viewed side-by-side with the reference.
+
+Prioritise matching:
+
+Arena depth and perspective
+Audience placement
+Fans on the left
+Doubters on the right
+Central hoop
+Neon court
+Scoreboard composition
+Asset and Liability panels
+First-person hands and paper
+Action controls
+Crowd Energy and Combo
+Bottom navigation
+Overall black-and-white cinematic atmosphere
+
+Do not redesign or reinterpret the reference.
+
+If an exact visual element cannot be reproduced technically, preserve the closest possible appearance and report the limitation before substituting a different design.
+
+All dynamic information must use actual application data rather than static text from the mockup.

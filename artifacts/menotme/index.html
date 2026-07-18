@@ -3,40 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MeNotMe Complete Premium Game</title>
+<title>MeNotMe — Arena</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app">
-<div class="stage" id="stage">
-  <img class="mockup" src="assets/mockup.png" alt="MeNotMe premium arcade interface">
-  <div class="mask mask-scores"></div><div class="mask mask-assets"></div><div class="mask mask-liabilities"></div><div class="mask mask-best"></div><div class="mask mask-crowd"></div>
 
-  <div class="live streak">DAY <span id="streak">1</span> STREAK</div>
-  <div class="live team-label me">TEAM ME</div><div class="live score me" id="meScore">0</div><div class="live team-note me">YOU GOT THIS</div>
-  <div class="live clock"><small>FINAL BELL IN</small><strong id="clock">23:59</strong></div>
-  <div class="live team-label notme">TEAM NOT ME</div><div class="live score notme" id="notMeScore">0</div><div class="live team-note notme">NOT TODAY</div>
+<header class="top">
+  <div class="top-left">
+    <button class="iconbtn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="streak-chip">🔥 DAY <span id="streak">1</span> STREAK</div>
+  </div>
+  <div class="brand"><h1>MeNotMe</h1><p>Play for the person you want to become.</p></div>
+  <div class="top-right">
+    <button class="iconbtn" id="trophyBtn" aria-label="Achievements"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 5H5a3 3 0 0 0 3 4M16 5h3a3 3 0 0 1-3 4M12 13v4M8 21h8M10 17h4"/></svg></button>
+    <button class="iconbtn" id="statsBtn" aria-label="Stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V10M12 20V4M19 20v-7" stroke-linecap="round"/></svg></button>
+    <button class="iconbtn" id="share" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15V4M8 8l4-4 4 4M6 12v7h12v-7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</header>
 
-  <section class="live panel assets"><div class="panel-head"><h2>Assets</h2><button class="plus" id="panelAddAsset">+</button></div><div class="tag-list" id="assets"></div></section>
-  <section class="live panel liabilities"><div class="panel-head"><h2>Liabilities</h2><button class="plus" id="panelAddLiability">+</button></div><div class="tag-list" id="liabilities"></div></section>
-
-  <div class="live best"><small>Best Streak</small><strong id="bestStreak">0</strong><small>Today's Winner</small><b id="winner">DRAW</b></div>
-  <div class="live power" id="power"></div>
-  <div class="live crowd-label">Crowd Energy</div><div class="live crowd"><div class="crowd-fill" id="crowd"></div></div><div class="live crowd-pct" id="crowdPct">65%</div><div class="live combo" id="combo">X0</div>
-  <div class="live paper" id="paper">PAPER</div>
-  <div class="gate" id="gate">Add one new Asset and one new Liability to unlock the next game.</div>
-
-  <button class="hotspot add-asset" id="addAsset" aria-label="Add asset"></button><button class="hotspot shoot" id="shoot" aria-label="Shoot"></button><button class="hotspot add-liability" id="addLiability" aria-label="Add liability"></button><button class="hotspot liability-list" id="liabilityList" aria-label="History and challenge"></button><button class="hotspot final-bell" id="finalBell" aria-label="Final bell"></button><button class="hotspot share" id="share" aria-label="Share"></button>
-  <div class="toast" id="toast">SWISH +1</div>
-
-  <div class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">Add Asset</h3><input id="tagInput" placeholder="Enter a tag"><div class="actions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Add</button></div></div></div>
-
-  <div class="ceremony" id="ceremony"><div class="ceremony-card"><h2 id="ceremonyTitle">Achievement</h2><div class="ceremony-icon" id="ceremonyIcon">🏆</div><p id="ceremonyText"></p><div class="signature" id="ceremonySignature">Team Me</div><div class="actions"><button class="secondary" id="editSignature">Edit Signature</button><button class="primary" id="closeCeremony">Continue</button></div></div></div>
-
-  <div class="history-panel" id="historyPanel"><h2>Weekly History & Friend Challenge</h2><div class="history-grid"><div class="history-card"><small>Team Me Wins</small><strong id="weekMe">0</strong></div><div class="history-card"><small>Team Not Me Wins</small><strong id="weekNotMe">0</strong></div><div class="history-card"><small>Current Streak</small><strong id="weekStreak">0</strong></div></div><h3>Last 7 Days</h3><div id="historyList"></div><h3>Friend Challenge</h3><input id="friendName" placeholder="Friend's name"><input id="friendScore" type="number" min="0" placeholder="Friend's Team Me score" style="margin-top:8px"><div class="actions"><button class="secondary" id="closeHistory">Close</button><button class="primary" id="saveFriend">Save Challenge</button></div><p id="friendResult"></p></div>
+<div class="scoreboard">
+  <div class="team">
+    <div class="tl">TEAM ME</div>
+    <div class="score" id="meScore">0</div>
+    <div class="tn">YOU GOT THIS</div>
+  </div>
+  <button class="bell" id="finalBell" aria-label="Final bell">
+    <small>FINAL BELL</small><strong id="clock">23:59</strong>
+  </button>
+  <div class="team">
+    <div class="tl">TEAM NOT ME</div>
+    <div class="score" id="notMeScore">0</div>
+    <div class="tn">NOT TODAY</div>
+  </div>
 </div>
+
+<div class="arena-wrap">
+  <div class="stage" id="stage">
+    <div class="court-pulse pa"></div>
+    <div class="court-pulse pb"></div>
+    <div class="aud-label fansl">★ YOUR FANS</div>
+    <div class="aud-label doubl">✕ THE DOUBTERS</div>
+    <div id="signs"></div>
+    <div class="hoop-fx" id="rimFront"></div>
+    <div class="hoop-fx" id="netWrap"><div id="netImg"></div></div>
+    <div class="live paper" id="paper">PAPER</div>
+    <div class="live power" id="power"></div>
+
+    <div class="actionbar">
+      <button class="ab" id="assetShot"><span class="ic">★</span><span>ASSET SHOT</span></button>
+      <button class="ab" id="addAsset"><span class="ic">＋</span><span>ADD ASSET</span></button>
+      <button class="ab shootbtn" id="shoot"><span class="ball"></span><span>SHOOT</span></button>
+      <button class="ab" id="addLiability"><span class="ic">＋</span><span>ADD LIABILITY</span></button>
+      <button class="ab" id="liabilityList"><span class="ic">◈</span><span>LIABILITY LIST</span></button>
+    </div>
+
+    <div class="gate" id="gate">Add one new Asset and one new Liability to unlock the next game.</div>
+    <div class="toast" id="toast">SWISH +1</div>
+  </div>
+
+  <div class="panels">
+    <section class="panel assets"><div class="panel-head"><h2>★ Assets (Team Me)</h2><button class="plus" id="panelAddAsset">+</button></div><div class="tag-list" id="assets"></div></section>
+    <section class="panel liabilities"><div class="panel-head"><h2>Liabilities (Team Not Me)</h2><button class="plus" id="panelAddLiability">+</button></div><div class="tag-list" id="liabilities"></div></section>
+  </div>
+</div>
+
+<div class="meter-row">
+  <span class="crowd-label">CROWD ENERGY</span>
+  <div class="crowd"><div class="crowd-fill" id="crowd"></div></div>
+  <span class="crowd-pct" id="crowdPct">65%</span>
+  <span class="combo-wrap">COMBO <b class="combo" id="combo">X0</b></span>
+</div>
+
+<nav class="bottomnav">
+  <button class="nb active" id="navHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4v-9z" stroke-linejoin="round"/></svg>HOME</button>
+  <button class="nb" id="navFame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="9" r="4"/><path d="M6 21c1.5-3 3.5-4 6-4s4.5 1 6 4" stroke-linecap="round"/></svg>WALL OF FAME</button>
+  <button class="nb" id="navCalendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>CALENDAR</button>
+  <button class="nb" id="navStats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V10M12 20V4M19 20v-7" stroke-linecap="round"/></svg>STATS</button>
+  <button class="nb" id="navProfile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.7-3.5 4.4-5 8-5s6.3 1.5 8 5" stroke-linecap="round"/></svg>PROFILE</button>
+</nav>
+
+<div class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">Add Asset</h3><input id="tagInput" placeholder="Enter a tag"><div class="actions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Add</button></div></div></div>
+
+<div class="ceremony" id="ceremony"><div class="ceremony-card"><h2 id="ceremonyTitle">Achievement</h2><div class="ceremony-icon" id="ceremonyIcon">🏆</div><p id="ceremonyText"></p><div class="signature" id="ceremonySignature">Team Me</div><div class="actions"><button class="secondary" id="editSignature">Edit Signature</button><button class="primary" id="closeCeremony">Continue</button></div></div></div>
+
+<div class="history-panel" id="historyPanel"><h2>Weekly History & Friend Challenge</h2><div class="history-grid"><div class="history-card"><small>Team Me Wins</small><strong id="weekMe">0</strong></div><div class="history-card"><small>Team Not Me Wins</small><strong id="weekNotMe">0</strong></div><div class="history-card"><small>Current Streak</small><strong id="weekStreak">0</strong></div><div class="history-card"><small>Best Streak</small><strong id="bestStreak">0</strong></div><div class="history-card"><small>Today's Winner</small><b id="winner">DRAW</b></div></div><h3>Last 7 Days</h3><div id="historyList"></div><h3>Friend Challenge</h3><input id="friendName" placeholder="Friend's name"><input id="friendScore" type="number" min="0" placeholder="Friend's Team Me score" style="margin-top:8px"><div class="actions"><button class="secondary" id="closeHistory">Close</button><button class="primary" id="saveFriend">Save Challenge</button></div><p id="friendResult"></p></div>
+
+<div class="modal" id="fameModal"><div class="modal-card"><h3>Wall of Fame</h3><div id="fameList"></div><div class="actions"><button class="primary" id="closeFame">Close</button></div></div></div>
+
+<div class="modal wide" id="arenaModal"><div class="modal-card arena-card">
+  <h3>Manage My Arena</h3>
+  <div class="arena-scroll">
+    <h4>★ My Fans</h4>
+    <p class="hint">Your supporters in the front row. Private — never shared.</p>
+    <div id="fanList"></div>
+    <div class="fan-form">
+      <input id="fanName" placeholder="Name" maxlength="30">
+      <input id="fanNick" placeholder="Nickname (optional)" maxlength="20">
+      <input id="fanMsg" placeholder="Support message (optional)" maxlength="26">
+      <label class="filelabel">Photo (optional) <input type="file" id="fanPhoto" accept="image/*"></label>
+      <button class="secondary" id="addFan">+ Add Fan</button>
+    </div>
+    <h4>✕ My Doubters</h4>
+    <p class="hint">Names stay private and are never shown on signs.</p>
+    <div id="doubterList"></div>
+    <div class="fan-form">
+      <input id="doubterName" placeholder="Name or nickname" maxlength="30">
+      <button class="secondary" id="addDoubter">+ Add Doubter</button>
+    </div>
+    <h4>Arena Preferences</h4>
+    <label class="pref"><input type="checkbox" id="prefFans" checked> Show Fans</label>
+    <label class="pref"><input type="checkbox" id="prefDoubters" checked> Show Doubters</label>
+    <label class="pref"><input type="checkbox" id="prefSigns" checked> Show Fan Signs</label>
+    <label class="pref"><input type="checkbox" id="prefReactions" checked> Crowd Reactions</label>
+  </div>
+  <div class="actions"><button class="primary" id="closeArena">Done</button></div>
+</div></div>
+
+<div class="modal" id="menuModal"><div class="modal-card">
+  <h3>Menu</h3>
+  <div class="menu-list">
+    <button class="secondary" id="menuArena">Manage My Arena</button>
+    <button class="secondary" id="menuFame">Wall of Fame</button>
+    <button class="secondary" id="menuHistory">History & Friend Challenge</button>
+  </div>
+  <div class="actions"><button class="primary" id="closeMenu">Close</button></div>
+</div></div>
+
 </div>
 <script src="app.js"></script>
+<script src="arena.js"></script>
 <script type="module" src="./src/cloud.ts"></script>
 </body>
 </html>

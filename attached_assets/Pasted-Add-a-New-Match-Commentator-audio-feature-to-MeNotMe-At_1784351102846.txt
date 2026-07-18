@@ -1,0 +1,52 @@
+Add a New Match Commentator audio feature to MeNotMe.
+
+At the beginning of each new daily game, introduce the match with a professional, energetic basketball-arena-style commentator voice.
+
+The commentator should use dynamic game data where available, including:
+
+User's first name
+Current streak
+Yesterday's result
+Team Me vs Team Not Me
+Important milestone proximity
+
+Example new-user introduction:
+
+“Ladies and gentlemen, welcome to the arena! It's Team Me versus Team Not Me. A new day. A new game. Let's play!”
+
+Example returning user:
+
+“Welcome back to the arena! Team Me is on a seven-day winning streak. But Team Not Me is back for another shot. The scoreboard is reset. Let's play!”
+
+Example after yesterday's loss:
+
+“A tough result yesterday, but today the scoreboard is back to zero. Team Me versus Team Not Me. A new game starts now!”
+
+Example approaching a milestone:
+
+“This is a big one! Team Me is one victory away from the Championship. The arena is ready. Let's play!”
+
+Then trigger the arena sequence:
+
+Commentator introduction → TUM-TA-TUM-TUM-TA arena rhythm → Fans cheer → arena lights/neon court pulse → scoreboard visually resets to 0–0 → NEW DAY. NEW GAME. → gameplay begins.
+
+Keep the complete sequence short, ideally 5–8 seconds maximum, with a Skip Intro option.
+
+Do not play the same commentary every day. Create multiple variations and select them based on the actual game state.
+
+Add settings:
+
+Commentator On/Off
+Game Intro Sound On/Off
+Crowd Audio On/Off
+Master Sound On/Off
+
+The commentator must never announce private Asset names, Liability names, Fan names or Doubter names without explicit user permission.
+
+Use an original or properly licensed/generated commentator voice suitable for commercial use. Do not imitate or clone the voice of a real sports commentator.
+
+Cache/preload common commentary audio where possible so the game introduction starts quickly.
+
+For personalised dynamic commentary, use an approved text-to-speech system with a consistent fictional MeNotMe commentator voice.
+
+Do not change the existing arena design or gameplay while implementing this feature.

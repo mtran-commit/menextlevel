@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MeNotMe Complete Premium Game</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+<div class="stage" id="stage">
+  <img class="mockup" src="assets/mockup.png" alt="MeNotMe premium arcade interface">
+  <div class="mask mask-scores"></div><div class="mask mask-assets"></div><div class="mask mask-liabilities"></div><div class="mask mask-best"></div><div class="mask mask-crowd"></div>
+
+  <div class="live streak">DAY <span id="streak">1</span> STREAK</div>
+  <div class="live team-label me">TEAM ME</div><div class="live score me" id="meScore">0</div><div class="live team-note me">YOU GOT THIS</div>
+  <div class="live clock"><small>FINAL BELL IN</small><strong id="clock">23:59</strong></div>
+  <div class="live team-label notme">TEAM NOT ME</div><div class="live score notme" id="notMeScore">0</div><div class="live team-note notme">NOT TODAY</div>
+
+  <section class="live panel assets"><div class="panel-head"><h2>Assets</h2><button class="plus" id="panelAddAsset">+</button></div><div class="tag-list" id="assets"></div></section>
+  <section class="live panel liabilities"><div class="panel-head"><h2>Liabilities</h2><button class="plus" id="panelAddLiability">+</button></div><div class="tag-list" id="liabilities"></div></section>
+
+  <div class="live best"><small>Best Streak</small><strong id="bestStreak">0</strong><small>Today's Winner</small><b id="winner">DRAW</b></div>
+  <div class="live power" id="power"></div>
+  <div class="live crowd-label">Crowd Energy</div><div class="live crowd"><div class="crowd-fill" id="crowd"></div></div><div class="live crowd-pct" id="crowdPct">65%</div><div class="live combo" id="combo">X0</div>
+  <div class="live paper" id="paper">PAPER</div>
+  <div class="gate" id="gate">Add one new Asset and one new Liability to unlock the next game.</div>
+
+  <button class="hotspot add-asset" id="addAsset" aria-label="Add asset"></button><button class="hotspot shoot" id="shoot" aria-label="Shoot"></button><button class="hotspot add-liability" id="addLiability" aria-label="Add liability"></button><button class="hotspot liability-list" id="liabilityList" aria-label="History and challenge"></button><button class="hotspot final-bell" id="finalBell" aria-label="Final bell"></button><button class="hotspot share" id="share" aria-label="Share"></button>
+  <div class="toast" id="toast">SWISH +1</div>
+
+  <div class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">Add Asset</h3><input id="tagInput" placeholder="Enter a tag"><div class="actions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Add</button></div></div></div>
+
+  <div class="ceremony" id="ceremony"><div class="ceremony-card"><h2 id="ceremonyTitle">Achievement</h2><div class="ceremony-icon" id="ceremonyIcon">🏆</div><p id="ceremonyText"></p><div class="signature" id="ceremonySignature">Team Me</div><div class="actions"><button class="secondary" id="editSignature">Edit Signature</button><button class="primary" id="closeCeremony">Continue</button></div></div></div>
+
+  <div class="history-panel" id="historyPanel"><h2>Weekly History & Friend Challenge</h2><div class="history-grid"><div class="history-card"><small>Team Me Wins</small><strong id="weekMe">0</strong></div><div class="history-card"><small>Team Not Me Wins</small><strong id="weekNotMe">0</strong></div><div class="history-card"><small>Current Streak</small><strong id="weekStreak">0</strong></div></div><h3>Last 7 Days</h3><div id="historyList"></div><h3>Friend Challenge</h3><input id="friendName" placeholder="Friend's name"><input id="friendScore" type="number" min="0" placeholder="Friend's Team Me score" style="margin-top:8px"><div class="actions"><button class="secondary" id="closeHistory">Close</button><button class="primary" id="saveFriend">Save Challenge</button></div><p id="friendResult"></p></div>
+</div>
+</div>
+<script src="app.js"></script>
+<script type="module" src="./src/cloud.ts"></script>
+</body>
+</html>
