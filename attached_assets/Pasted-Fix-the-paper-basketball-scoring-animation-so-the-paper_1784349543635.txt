@@ -1,0 +1,37 @@
+Fix the paper basketball scoring animation so the paper visibly travels through the hoop and into the net.
+
+When the user makes a successful shot, animate this exact sequence:
+
+1. Flight: The crunched paper travels in a smooth curved arc toward the centre of the basketball rim. As it gets farther from the player, gradually reduce its scale to create realistic depth.
+
+2. Enter the hoop: The paper must pass inside the physical opening of the rim, not stop in front of the hoop or disappear above it. Align the final trajectory precisely with the centre of the existing hoop.
+
+3. Layering: As the paper reaches the rim, change its visual layering so it appears to pass behind the front edge of the rim but in front of/inside the net. The rim should briefly occlude part of the paper. This is essential to create the illusion that the paper actually entered the basket.
+
+4. Net reaction: The moment the paper crosses the rim, animate the net moving downward and expanding slightly, like a real basketball swish. Add a quick elastic movement:
+
+rest → stretch downward → slight side movement → bounce back → rest
+
+The net movement should last approximately 400–600ms.
+
+5. Paper continues through net: Do not make the paper disappear immediately at the rim. Show it travelling downward through the inside of the net while becoming slightly smaller.
+
+6. Disappear: Only after the paper has visibly exited the bottom of the net, quickly fade and scale it down until it disappears.
+
+7. Celebration timing: Trigger the +1 score, swish sound, crowd cheer and confetti at the exact moment the paper passes through the rim, not when the shot animation begins.
+
+The complete visual sequence should be:
+
+Throw → curved flight → paper enters centre of rim → rim overlaps front of paper → net stretches/moves → paper falls through net → paper disappears below net → net bounces back to normal.
+
+For a rim-in shot, the paper should briefly contact the rim, bounce slightly upward or sideways, then fall through the hoop and trigger the same net animation.
+
+For a miss, the paper must travel past or bounce away from the rim and must not animate the net.
+
+Important: Use the exact coordinates of the visible hoop in the existing responsive game container. Do not use fixed page coordinates. Calculate the trajectory relative to the hoop/rim element using getBoundingClientRect() so the paper enters the centre of the hoop correctly on all screen sizes, including 320px, 375px, 390px, 430px and 768px.
+
+Do not redesign or reposition the existing hoop or court. Fix only the shot trajectory, depth/layering, net physics and scoring-animation timing.
+
+Test successful swish, rim-in and miss animations separately on both desktop and mobile.
+
+The layering at the rim is the most important part. If the front of the rim briefly appears in front of the paper, while the paper continues down through the moving net, it will immediately look much more like a real basket.

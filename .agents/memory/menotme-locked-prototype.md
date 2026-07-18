@@ -10,3 +10,5 @@ The user uploaded a finished interactive prototype (`attached_assets/menotme_com
 **Why:** Explicit, emphatic user instruction — "When uncertain, preserve the original code rather than changing it. Do not make unsolicited improvements."
 
 **How to apply:** Any change to `artifacts/menotme` must preserve exact visual/behavioral parity with the original file. The app was split verbatim into `index.html` + `public/styles.css` + `public/app.js` + `public/assets/mockup.png` (base64 mockup extracted to PNG). Persistence is localStorage (`menotme_complete_v1`); no backend/auth until the user approves.
+
+User-approved amendments (July 2026): red LED score numbers (`.score` color/glow), court-line light pulse (luminance-masked `.stage::before`), and a rewritten `shoot()` scoring animation in app.js (WAAPI arc into rim, `#rimFront`/`#netWrap` pixel-copy occlusion layers, net swish keyframes). `saveState`/`loadState`/`render` signatures unchanged — cloud.ts wrappers depend on them. The hoop/net are pixels in mockup.png; occlusion layers are background-image copies of those exact regions (rim ~x 46–54%, y 27.4–29%; net to ~33.8%).

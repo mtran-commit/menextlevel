@@ -81,3 +81,7 @@ button{cursor:pointer}
     .stage::before{display:none;animation:none}
   }
 }
+
+/* Net swish reaction: rest -> stretch down -> slight sway -> bounce back */
+@keyframes netSwish{0%{transform:none}28%{transform:translateY(10%) scaleY(1.16)}50%{transform:translateY(6%) translateX(3%) scaleY(1.09)}74%{transform:translateY(2%) translateX(-2%) scaleY(1.03)}100%{transform:none}}
+.net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}

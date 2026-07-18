@@ -28,9 +28,26 @@ function render(){
 function selectAsset(i){if(state.ended||!gateComplete())return;state.selected=i;state.assets[i].done=true;$("paper").textContent=state.assets[i].name;tone(360,.06,"square",.02);render()}
 function toggleLiability(i){if(state.ended||!gateComplete())return;const l=state.liabilities[i];if(!l.addressed){l.addressed=true;l.avoided=true}else if(l.avoided)l.avoided=false;else{l.addressed=false;l.avoided=true}render()}
 function outcome(power){const r=Math.random(),skill=Math.max(0,1-Math.abs(power-.72));if(skill>.72&&r<.62)return"swish";if(skill>.45&&r<.82)return"rim";return"miss"}
-function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete())return;const p=$("paper"),o=outcome(power);p.classList.add("flying");p.style.left=o==="miss"?(Math.random()<.5?"42%":"58%"):"50%";p.style.top=o==="miss"?"36%":"38.5%";p.style.transform="translate(-50%,-50%) scale(.42) rotate(720deg)";
- setTimeout(()=>{if(o==="miss"){missSound();$("toast").textContent="MISSED";$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show");state.combo=0;state.crowd=Math.max(0,state.crowd-5);p.className="live paper";p.removeAttribute("style");p.textContent=state.assets[state.selected].name;render();return}
- if(o==="rim")rimSound();else tone(980,.13,"sine",.04);p.style.opacity="0";state.me++;state.combo++;state.crowd=Math.min(100,state.crowd+(o==="swish"?10:6));state.assets[state.selected].scored=true;state.selected=null;cheer();confetti();$("toast").textContent=o==="swish"?"SWISH +1":"RIM IN +1";$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show");render();setTimeout(()=>{p.className="live paper";p.removeAttribute("style");p.textContent="PAPER"},650)},620)
+function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete())return;const p=$("paper");if(p.dataset.flying)return;const o=outcome(power);
+ // trajectory computed from the live rim element so it lands dead-centre at every screen size
+ const st=$("stage").getBoundingClientRect(),rf=$("rimFront").getBoundingClientRect(),nw=$("netWrap").getBoundingClientRect();
+ const cx=(rf.left+rf.width/2-st.left)/st.width*100,cy=(rf.top+rf.height/2-st.top)/st.height*100,nb=(nw.bottom-st.top)/st.height*100;
+ const TR="translate(-50%,-50%)";p.dataset.flying="1";
+ const done=()=>{p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");p.textContent=state.selected===null?"PAPER":state.assets[state.selected].name};
+ const showToast=t=>{$("toast").textContent=t;$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show")};
+ // scoring fires the moment the paper crosses the rim — not when the shot starts
+ const scoreNow=()=>{if(o==="swish")tone(980,.13,"sine",.04);state.me++;state.combo++;state.crowd=Math.min(100,state.crowd+(o==="swish"?10:6));state.assets[state.selected].scored=true;state.selected=null;cheer();confetti();const n=$("netImg");n.classList.remove("net-anim");void n.offsetWidth;n.classList.add("net-anim");showToast(o==="swish"?"SWISH +1":"RIM IN +1");render()};
+ // fall through the inside of the net, shrink, fade only below the net's bottom
+ const fall=()=>{p.animate([{left:cx+"%",top:cy+"%",transform:TR+" scale(.32) rotate(540deg)",opacity:1},{left:cx+"%",top:(nb-.6)+"%",transform:TR+" scale(.2) rotate(600deg)",opacity:1,offset:.72},{left:cx+"%",top:(nb+1.6)+"%",transform:TR+" scale(.13) rotate(640deg)",opacity:0}],{duration:430,easing:"cubic-bezier(.5,0,.8,.4)",fill:"forwards"}).onfinish=()=>{setTimeout(done,60)}};
+ if(o==="miss"){const side=Math.random()<.5?-1:1,mx=cx+side*9;
+  p.animate([{left:"50%",top:"62.4%",transform:TR+" scale(1) rotate(0deg)"},{left:(50+side*3)+"%",top:(cy+14)+"%",transform:TR+" scale(.62) rotate(360deg)",offset:.55},{left:mx+"%",top:(cy-1)+"%",transform:TR+" scale(.4) rotate(560deg)"}],{duration:600,easing:"cubic-bezier(.18,.82,.22,1)",fill:"forwards"}).onfinish=()=>{
+   missSound();showToast("MISSED");state.combo=0;state.crowd=Math.max(0,state.crowd-5);render();
+   p.animate([{left:mx+"%",top:(cy-1)+"%",transform:TR+" scale(.4) rotate(560deg)",opacity:1},{left:(mx+side*5)+"%",top:(cy+15)+"%",transform:TR+" scale(.3) rotate(680deg)",opacity:0}],{duration:360,easing:"cubic-bezier(.5,0,.8,.4)",fill:"forwards"}).onfinish=done};return}
+ const curve=Math.random()<.5?-6:6;
+ p.animate([{left:"50%",top:"62.4%",transform:TR+" scale(1) rotate(0deg)"},{left:(50+curve)+"%",top:(cy+15)+"%",transform:TR+" scale(.6) rotate(300deg)",offset:.55},{left:cx+"%",top:(cy-(o==="rim"?.8:0))+"%",transform:TR+" scale(.34) rotate(540deg)"}],{duration:620,easing:"cubic-bezier(.18,.82,.22,1)",fill:"forwards"}).onfinish=()=>{
+  if(o==="rim"){rimSound();
+   p.animate([{left:cx+"%",top:(cy-.8)+"%",transform:TR+" scale(.34) rotate(540deg)"},{left:(cx+1.6)+"%",top:(cy-2.6)+"%",transform:TR+" scale(.33) rotate(580deg)",offset:.5},{left:cx+"%",top:cy+"%",transform:TR+" scale(.32) rotate(600deg)"}],{duration:300,easing:"ease-out",fill:"forwards"}).onfinish=()=>{scoreNow();fall()}
+  }else{scoreNow();fall()}}
 }
 function finalBell(){if(state.ended||!gateComplete())return;state.liabilities.forEach(l=>{if(l.addressed&&l.avoided)state.me++;else state.notme++});state.ended=true;const meWon=state.me>state.notme;if(meWon){state.streak++;state.best=Math.max(state.best,state.streak);state.weekly.meWins++;cheer();confetti()}else{state.streak=1;state.weekly.notMeWins++;boo()}state.weekly.history.push({date:today,me:state.me,notme:state.notme});checkCeremonies();render()}
 function checkCeremonies(){const s=state.streak;if(s>=90&&!state.shown[90]){state.shown[90]=true;showCeremony("90 Days Straight","🎽","Retirement Ceremony — Team Me retires the jersey.")}else if(s>=60&&!state.shown[60]){state.shown[60]=true;showCeremony("60 Days Straight","🖼️","Welcome to the Wall of Fame.")}else if(s>=30&&!state.shown[30]){state.shown[30]=true;state.gate={required:true,asset:false,liability:false};showCeremony("30 Days Straight","🏆","MeNotMe Champion. Add one new Asset and one new Liability for the next challenge.")}else if(s>=7&&!state.shown[7]){state.shown[7]=true;showCeremony("7 Days Straight","📸","Paparazzi are waiting. Sign your autograph.")}}
@@ -46,3 +63,12 @@ $("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeH
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`MeNotMe score: Team Me ${state.me} — ${state.notme} Team Not Me`;try{if(navigator.share)await navigator.share({title:"MeNotMe",text:t})}catch(e){}};
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);
+// Hoop FX layers: exact copies of the rim-front and net pixels from the court art.
+// They render the same pixels in the same place (invisible normally) but give the
+// rim a z-index above the flying paper (occlusion) and make the net animatable.
+(function(){const mk="assets/mockup.png";
+ function part(id,l,t,w,h,z){const d=document.createElement("div");d.id=id;d.style.cssText="position:absolute;pointer-events:none;left:"+l+"%;top:"+t+"%;width:"+w+"%;height:"+h+"%;z-index:"+z;$("stage").appendChild(d);return d}
+ function bg(d,l,t,w,h){d.style.backgroundImage="url("+mk+")";d.style.backgroundRepeat="no-repeat";d.style.backgroundSize=(10000/w)+"% "+(10000/h)+"%";d.style.backgroundPosition=(100*l/(100-w))+"% "+(100*t/(100-h))+"%"}
+ const rim=part("rimFront",46,27.4,8,1.6,11);bg(rim,46,27.4,8,1.6);
+ const wrap=part("netWrap",46.2,28.6,7.6,5.2,9);wrap.style.background="#000";wrap.style.overflow="hidden";
+ const net=document.createElement("div");net.id="netImg";net.style.cssText="position:absolute;inset:0;transform-origin:50% 0";wrap.appendChild(net);bg(net,46.2,28.6,7.6,5.2);net.addEventListener("animationend",()=>net.classList.remove("net-anim"))})();
