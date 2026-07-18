@@ -278,3 +278,9 @@ button{cursor:pointer}
   .sp-ribbon{display:none}
 }
 @media (prefers-reduced-motion:reduce){.sp-ribbon-track{animation:none}.sp-face.sp-in,.sp-face.sp-out{animation-duration:.01s}}
+
+/* ---------- Quick master audio toggle (meter row, beside Crowd Energy / Combo) ---------- */
+.audio-quick{margin-left:12px;background:#000;color:#fff;border:1px solid #555;border-radius:999px;padding:4px 12px;font-size:clamp(8px,1vw,11px);font-weight:800;letter-spacing:.12em;cursor:pointer;white-space:nowrap;flex:none}
+.audio-quick:hover{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.25)}
+.audio-quick.off{color:#888;border-color:#444}
+@media (max-width:680px){.audio-quick{padding:3px 8px;margin-left:6px}}

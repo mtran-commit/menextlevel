@@ -18,6 +18,13 @@ function ensureAudioPrefs(){
   if(!state.audio)state.audio={master:true,crowd:true,fanVoices:true,doubterVoices:true,music:false};
   if(state.audio.gameIntro===undefined)state.audio.gameIntro=true;
   if(state.audio.commentator===undefined)state.audio.commentator=true;
+  if(state.audio.sfx===undefined)state.audio.sfx=true;       // swish/rim/miss/cheer/boo/bell tones
+  if(state.audio.haptics===undefined)state.audio.haptics=true; // vibration — separate from audio, NOT muted by master
+}
+function buzz(pattern){
+  ensureAudioPrefs();
+  if(!state.audio.haptics)return;
+  try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}
 }
 ensureAudioPrefs();
 
@@ -127,7 +134,30 @@ function applyPrefs(){
   if(a.master&&a.crowd)startLoop("amb");else stopLoop("amb");
   if(a.master&&a.music)startLoop("beat");else stopLoop("beat");
 }
-const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"],["prefCommentator","commentator"]];
+const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"],["prefCommentator","commentator"],["prefSoundFx","sfx"],["prefHaptics","haptics"]];
+
+/* ---------- Quick HUD master audio toggle (🔊 / 🔇) ---------- */
+function renderQuickAudio(){
+  const b=document.getElementById("audioQuick");if(!b)return;
+  ensureAudioPrefs();
+  const on=!!state.audio.master;
+  b.textContent=on?"🔊 AUDIO ON":"🔇 AUDIO OFF";
+  b.classList.toggle("off",!on);
+  b.setAttribute("aria-pressed",on?"true":"false");
+  const c=document.getElementById("prefSoundMaster");if(c)c.checked=on;
+}
+(function(){
+  const b=document.getElementById("audioQuick");if(!b)return;
+  b.onclick=function(){
+    ensureAudioPrefs();
+    // Only the master flag flips; individual prefs are untouched, so turning
+    // audio back ON restores the user's previous per-channel choices.
+    state.audio.master=!state.audio.master;
+    saveState();initCtx();applyPrefs();renderQuickAudio();
+    if(!state.audio.master&&window.stopIntroAudio)window.stopIntroAudio();
+  };
+  renderQuickAudio();
+})();
 
 /* ---------- Intro audio (rhythm + commentator), stoppable via Skip ---------- */
 let introStopped=false;const introSrcs=[];
@@ -166,7 +196,7 @@ window.playIntroSound=function(){
 PREFS.forEach(([id,key])=>{
   const el=document.getElementById(id);if(!el)return;
   el.checked=!!state.audio[key];
-  el.onchange=e=>{ensureAudioPrefs();state.audio[key]=e.target.checked;saveState();initCtx();applyPrefs()};
+  el.onchange=e=>{ensureAudioPrefs();state.audio[key]=e.target.checked;saveState();initCtx();applyPrefs();renderQuickAudio();if(key==="master"&&!state.audio.master&&window.stopIntroAudio)window.stopIntroAudio()};
 });
 // keep checkboxes in sync when the Manage modal opens
 const _openBtns=["navProfile","menuArena"];
@@ -179,10 +209,11 @@ function unlock(){initCtx();if(ctx&&ctx.state==="suspended")ctx.resume();applyPr
 /* ---------- Game event hooks (wrap app.js globals; mechanics untouched) ---------- */
 function crowdOn(){ensureAudioPrefs();return ctx&&state.audio.master&&state.audio.crowd}
 const _tone=tone;
-tone=function(f,d,type,v,delay){ensureAudioPrefs();if(!state.audio.master)return;_tone(f,d,type,v,delay)};
+tone=function(f,d,type,v,delay){ensureAudioPrefs();if(!state.audio.master||!state.audio.sfx)return;_tone(f,d,type,v,delay)};
 const _cheer=cheer;
 cheer=function(){
   _cheer();
+  buzz(state.ended?[60,50,90]:30); // haptics: separate from audio, honors its own pref only
   if(state.ended){ // final bell — Team Me won: eruption
     if(crowdOn())shot("cheer_big",crowdBus,.9);
     say("fan",1,{chant:true});
@@ -196,6 +227,7 @@ cheer=function(){
 const _missSound=missSound;
 missSound=function(){
   _missSound();
+  buzz(20);
   if(crowdOn())shot("groan",crowdBus,.5,.15);
   say("doubt",state.notme>state.me?.75:.5);
 };
