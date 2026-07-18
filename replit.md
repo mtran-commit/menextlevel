@@ -36,18 +36,28 @@ A black-and-white premium neon basketball habit game: complete Assets to shoot f
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- The game itself (locked prototype UI): daily Assets/Liabilities, shots for Team Me, Final Bell, streaks, ceremonies at 7/30/60/90 days, 90-day seasons.
+- Accounts (Clerk, email+password with email-code verification and password reset) — custom black/white headless auth overlay in `src/cloud.ts`; game is gated behind sign-in.
+- Cloud sync: localStorage stays the runtime store; every `saveState()` is debounced to `PUT /api/game/state`. First login idempotently imports local progress (`POST /api/game/migrate`); afterwards cloud is source of truth.
+- In-app notification center (bell) + optional browser web-push (VAPID keys auto-generated, stored in `app_config` table). Per-type in-app/push toggles in the account panel.
+- Retention reminders + timezone-aware daily resets run in a 5-min scheduler inside the API server (`lib/game.ts`): auto Final Bell at local midnight (mirrors app.js incl. the 30-day gate block), reminders (final bell approaching, liabilities ignored, Not Me winning, one-more-asset, streak at risk, 7-day milestone).
+- Account management: profile (display name, signature), change password, log out, permanent delete (cascades all data + Clerk user).
+- Super-admin panel at `/admin.html`: user search/suspend/reactivate/delete, DAU/WAU/streak/tag stats, reports, announcements (fan out as notifications), achievement rules, audit/error logs. First user can claim admin via `POST /api/admin/claim` while no admin exists.
 
 ## User preferences
 
 - Do NOT redesign, restyle, simplify, or reinterpret the MeNotMe interface. It must remain black and white exactly as the uploaded prototype.
 - Do not rename MeNotMe or change the slogan "Play for the person you want to become."
 - Do not make unsolicited improvements — ask for approval before any visual or functional modification.
-- No authentication, databases, or cloud syncing until the user approves (localStorage only for now).
+- Auth/database/cloud sync were approved and added later — but only as an *additive* layer (`src/cloud.ts`, styled black/white); `public/app.js` and the game markup remain untouched.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Clerk's npm ESM bundle has no prebuilt UI components (they're remote-hosted and blocked behind the preview proxy) — use the headless client API (`clerk.client.signIn/signUp`) with custom forms; import from `@clerk/clerk-js/no-rhc`.
+- `#gate` element is always in the DOM; it's shown/hidden via `.gate.show` CSS — check visibility, not presence.
+- After changing `lib/db` schema: `pnpm --filter @workspace/db run push`, and rebuild declarations (`npx tsc -b lib/db`) or api-server typecheck sees stale types.
+- Vite build for menotme needs `PORT` and `BASE_PATH` env vars set (deployment sets them).
+- Clerk dev-instance test emails: `*+clerk_test@...`, verification code 424242 (used by e2e testers; programmatic claim-override login also works).
 
 ## Pointers
 

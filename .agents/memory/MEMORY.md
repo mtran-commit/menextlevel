@@ -1,1 +1,2 @@
 - [MeNotMe locked prototype](menotme-locked-prototype.md) — never redesign the MeNotMe UI; the uploaded HTML prototype is the locked source of truth, black-and-white only, ask before any change.
+- [MeNotMe cloud layer](menotme-cloud-layer.md) — backend/auth is an additive layer; Clerk must be headless (no prebuilt UI); scheduler mirrors app.js gate logic with CAS writes.

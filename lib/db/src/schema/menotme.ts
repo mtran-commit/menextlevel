@@ -1,0 +1,215 @@
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  jsonb,
+  date,
+  uniqueIndex,
+  index,
+} from "drizzle-orm/pg-core";
+
+// ---------- Users ----------
+export const usersTable = pgTable("users", {
+  id: text("id").primaryKey(), // Clerk user id
+  email: text("email"),
+  username: text("username"),
+  signature: text("signature").default("Team Me").notNull(),
+  timezone: text("timezone").default("UTC").notNull(),
+  role: text("role").default("user").notNull(), // user | admin
+  status: text("status").default("active").notNull(), // active | suspended
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastSeenAt: timestamp("last_seen_at").defaultNow().notNull(),
+});
+export type User = typeof usersTable.$inferSelect;
+
+// ---------- Live game state blob (source of truth for the in-progress day) ----------
+export const gameStatesTable = pgTable("game_states", {
+  userId: text("user_id").primaryKey().references(() => usersTable.id, { onDelete: "cascade" }),
+  state: jsonb("state").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ---------- Seasons ----------
+export const seasonsTable = pgTable(
+  "seasons",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    number: integer("number").default(1).notNull(),
+    startDate: date("start_date").notNull(),
+    endedAt: timestamp("ended_at"),
+  },
+  (t) => [uniqueIndex("seasons_user_start_idx").on(t.userId, t.startDate)],
+);
+
+// ---------- Tags ----------
+export const assetsTable = pgTable(
+  "assets",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    active: boolean("active").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("assets_user_name_idx").on(t.userId, t.name)],
+);
+
+export const liabilitiesTable = pgTable(
+  "liabilities",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    active: boolean("active").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("liabilities_user_name_idx").on(t.userId, t.name)],
+);
+
+// ---------- Daily matches / scores ----------
+export const dailyMatchesTable = pgTable(
+  "daily_matches",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    me: integer("me").default(0).notNull(),
+    notme: integer("notme").default(0).notNull(),
+    result: text("result").notNull(), // me | notme | draw
+    details: jsonb("details"), // per-tag done/scored/addressed snapshot
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [
+    uniqueIndex("daily_matches_user_date_idx").on(t.userId, t.date),
+    index("daily_matches_date_idx").on(t.date),
+  ],
+);
+
+// ---------- Streaks ----------
+export const streaksTable = pgTable("streaks", {
+  userId: text("user_id").primaryKey().references(() => usersTable.id, { onDelete: "cascade" }),
+  current: integer("current").default(1).notNull(),
+  best: integer("best").default(0).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ---------- Achievements ----------
+export const achievementsTable = pgTable(
+  "achievements",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    milestone: integer("milestone").notNull(), // 7 | 30 | 60 | 90
+    seasonNumber: integer("season_number").default(1).notNull(),
+    achievedAt: timestamp("achieved_at").defaultNow().notNull(),
+  },
+  (t) => [uniqueIndex("achievements_user_ms_season_idx").on(t.userId, t.milestone, t.seasonNumber)],
+);
+
+export const achievementRulesTable = pgTable("achievement_rules", {
+  id: serial("id").primaryKey(),
+  milestone: integer("milestone").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  enabled: boolean("enabled").default(true).notNull(),
+});
+
+// ---------- Friend challenges ----------
+export const friendChallengesTable = pgTable(
+  "friend_challenges",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    friendName: text("friend_name").notNull(),
+    friendScore: integer("friend_score"),
+    date: date("date").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("friend_challenges_user_idx").on(t.userId)],
+);
+
+// ---------- Notifications ----------
+export const notificationsTable = pgTable(
+  "notifications",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    read: boolean("read").default(false).notNull(),
+    dedupeKey: text("dedupe_key"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [
+    index("notifications_user_idx").on(t.userId),
+    uniqueIndex("notifications_dedupe_idx").on(t.userId, t.dedupeKey),
+  ],
+);
+
+export const pushSubscriptionsTable = pgTable(
+  "push_subscriptions",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    keys: jsonb("keys").notNull(), // { p256dh, auth }
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("push_subs_user_idx").on(t.userId)],
+);
+
+// ---------- User settings (notification prefs etc.) ----------
+export const userSettingsTable = pgTable("user_settings", {
+  userId: text("user_id").primaryKey().references(() => usersTable.id, { onDelete: "cascade" }),
+  // { [notificationType]: { inapp: boolean, push: boolean } }
+  notificationPrefs: jsonb("notification_prefs").notNull(),
+  pushEnabled: boolean("push_enabled").default(false).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ---------- Moderation / announcements ----------
+export const reportsTable = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  reporterId: text("reporter_id").references(() => usersTable.id, { onDelete: "set null" }),
+  targetUserId: text("target_user_id"),
+  targetType: text("target_type").notNull(), // tag | signature | other
+  targetContent: text("target_content"),
+  reason: text("reason").notNull(),
+  status: text("status").default("open").notNull(), // open | resolved | dismissed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const announcementsTable = pgTable("announcements", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ---------- App config (server-generated keys, e.g. VAPID) ----------
+export const appConfigTable = pgTable("app_config", {
+  key: text("key").primaryKey(),
+  value: jsonb("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ---------- Audit logs ----------
+export const auditLogsTable = pgTable(
+  "audit_logs",
+  {
+    id: serial("id").primaryKey(),
+    actorId: text("actor_id"),
+    userId: text("user_id"),
+    action: text("action").notNull(),
+    level: text("level").default("info").notNull(), // info | warn | error
+    details: jsonb("details"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("audit_logs_created_idx").on(t.createdAt)],
+);

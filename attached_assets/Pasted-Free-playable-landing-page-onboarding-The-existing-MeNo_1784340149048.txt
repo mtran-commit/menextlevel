@@ -1,0 +1,434 @@
+Free playable landing page + onboarding
+
+The existing MeNotMe game interface must remain the locked visual source of truth.
+
+I want to change the onboarding and account flow so new visitors land directly inside the game.
+
+Core principle
+
+Do not show a traditional marketing landing page before the game.
+
+Do not require users to create an account before they understand or experience MeNotMe.
+
+The first screen a new visitor sees should be the existing premium basketball game interface.
+
+The experience should feel like:
+
+Play first. Sign up when you want to keep playing.
+
+Do not redesign the existing basketball court or game interface.
+
+1. First-time visitor experience
+
+When someone visits MeNotMe for the first time and is not logged in:
+
+Immediately load the existing game screen.
+
+Show a very short onboarding overlay on top of the game.
+
+Do not navigate them to a separate onboarding page.
+
+The game must remain visible behind the onboarding.
+
+Step 1
+
+Display:
+
+TEAM ME vs TEAM NOT ME
+
+Supporting text:
+
+Team Me is the person you want to become.
+Team Not Me is everything trying to pull you backwards.
+
+Button:
+
+LET'S PLAY
+
+Step 2 — Create Team Me
+
+Display:
+
+Build your Team Me
+
+Supporting text:
+
+Add 3 things you want more of in your life.
+
+Show three simple fields.
+
+Examples:
+
+Go to the gym
+Read a book
+Spend time with family
+
+Allow the user to enter three Asset tags.
+
+Button:
+
+NEXT
+
+These tags should immediately appear in the existing Assets panel on the game screen.
+
+Do not reload the page.
+
+Step 3 — Create Team Not Me
+
+Display:
+
+Choose your opponents
+
+Supporting text:
+
+Add 3 things you want less of in your life.
+
+Examples:
+
+Smoking
+Procrastination
+Mindless scrolling
+
+Allow the user to enter three Liability tags.
+
+Button:
+
+START THE GAME
+
+These tags should immediately appear in the existing Liabilities panel.
+
+2. Teach the first shot
+
+After the user creates their tags, return full focus to the basketball court.
+
+Highlight their first Asset tag.
+
+Display:
+
+Did you do this today?
+
+Let the user select the Asset.
+
+When selected:
+
+The Asset becomes the paper ball.
+Highlight the paper.
+Highlight the basket.
+Show a short animated instruction:
+
+Pull back and flick.
+
+The user should physically make their first paper shot.
+
+Do not automatically throw it for them.
+
+The onboarding should teach them the real game mechanic.
+
+3. First basket celebration
+
+When the first shot scores:
+
+Play the cheering sound.
+Trigger confetti.
+Update Team Me to 1 point.
+
+Display briefly:
+
+YOU JUST SCORED FOR TEAM ME
+
+Then:
+
+Every decision changes the score.
+
+Button:
+
+KEEP PLAYING
+
+The user is now inside the normal MeNotMe experience.
+
+4. Guest mode
+
+New users must be able to play without creating an account.
+
+Call this internally:
+
+Guest Mode
+
+Do not constantly show the words "Guest Mode" to the user.
+
+While playing without an account, save progress locally on the device.
+
+Guest progress should include:
+
+Asset tags
+Liability tags
+Today's score
+Current streak
+Best streak
+Daily history
+Current season progress
+Achievements earned
+5. When to ask the user to create an account
+
+Do not interrupt the first game with a signup screen.
+
+The user should experience the game first.
+
+Prompt them to create a free account after a meaningful positive moment.
+
+Good trigger points include:
+
+Trigger A — After first daily win
+
+Display:
+
+TEAM ME WON TODAY
+
+Then:
+
+Save your progress and protect your streak.
+
+Button:
+
+CREATE FREE ACCOUNT
+
+Secondary button:
+
+CONTINUE AS GUEST
+
+Trigger B — After 3 days of playing
+
+Display:
+
+Your streak is growing.
+
+Create a free account so you never lose your progress.
+
+Button:
+
+SAVE MY PROGRESS
+
+Trigger C — When accessing cloud features
+
+If the guest tries to access:
+
+Friend challenges
+Cross-device sync
+Full history
+Account profile
+
+Show:
+
+Create a free account to unlock this feature and save your progress.
+
+6. Free account creation
+
+Account creation should be fast.
+
+Allow:
+
+Continue with Google
+Email and password
+
+Prepare architecture so Sign in with Apple can be added later for iOS.
+
+After account creation:
+
+Automatically import the guest's local progress into their new account.
+
+Do not reset their game.
+
+Do not delete their tags.
+
+Do not reset their streak.
+
+Do not restart the onboarding.
+
+The transition should feel seamless.
+
+7. Guest-to-account migration
+
+On first successful account creation or login:
+
+Migrate:
+
+Assets
+Liabilities
+Daily scores
+Streak
+Best streak
+Achievements
+Daily history
+Current 90-day season
+Friend challenge state if applicable
+Notification preferences
+
+The migration must be idempotent.
+
+Running migration twice must not duplicate:
+
+Tags
+Matches
+Achievements
+History
+
+After successful migration, the user's cloud account becomes the primary source of truth.
+
+8. Returning guest
+
+If a guest returns on the same device:
+
+Do not show onboarding again.
+
+Load their saved local game immediately.
+
+9. Returning registered user
+
+If logged in:
+
+Skip onboarding.
+
+Load their cloud-saved game immediately.
+
+10. New registered user with no previous guest data
+
+If someone creates an account before playing and has no game data:
+
+Run the same three-step onboarding:
+
+Team Me vs Team Not Me
+Create 3 Assets
+Create 3 Liabilities
+Make first paper shot
+11. Important UI rule
+
+The onboarding must feel like part of the game.
+
+Use:
+
+Existing black background
+Existing white typography
+Existing neon/glass style
+Existing court behind the overlay
+
+Do not introduce:
+
+Colourful onboarding illustrations
+Generic SaaS cards
+Large marketing sections
+Stock photos
+Different fonts
+New visual themes
+
+Keep MeNotMe black and white.
+
+12. Landing page behaviour
+
+The homepage / should load the game.
+
+Do not create a separate traditional homepage.
+
+The structure should be:
+
+menotme.com
+
+→ game loads immediately
+
+→ first-time visitor receives short interactive onboarding
+
+→ plays first shot
+
+→ continues as guest
+
+→ signup is offered after value has been experienced
+
+13. Optional minimal pre-game message
+
+While the game assets are loading, show only:
+
+MeNotMe
+
+Play for the person you want to become.
+
+Then immediately transition into the game.
+
+Do not add a marketing carousel or long explanation.
+
+14. Account prompt philosophy
+
+Never block gameplay unnecessarily.
+
+The free account should feel like:
+
+Save my game
+
+rather than:
+
+Register for a platform
+
+Preferred language:
+
+Save your progress
+
+Protect your streak
+
+Play on any device
+
+Create free account
+
+Avoid:
+
+Register
+
+Complete registration
+
+Create user profile
+
+15. Analytics events
+
+Track these onboarding events:
+
+landing_game_loaded
+onboarding_started
+asset_1_created
+asset_2_created
+asset_3_created
+liability_1_created
+liability_2_created
+liability_3_created
+first_asset_selected
+first_shot_attempted
+first_shot_scored
+onboarding_completed
+continued_as_guest
+signup_prompt_shown
+signup_started
+signup_completed
+guest_data_migrated
+
+This will help measure exactly where users leave.
+
+Acceptance criteria
+
+Before considering this complete, verify:
+
+A brand-new visitor sees the game immediately.
+No account is required to start playing.
+The onboarding occurs over the existing game interface.
+The user creates 3 Assets and 3 Liabilities.
+Those tags appear immediately in the game panels.
+The user learns to throw a real paper shot.
+The first successful basket triggers the full celebration.
+The user can continue as a guest.
+Guest progress survives closing and reopening the browser.
+Signup does not erase guest progress.
+Guest progress migrates correctly into the account.
+Returning users do not see onboarding again.
+The original premium MeNotMe game design remains unchanged.
+Critical instruction
+
+Do not redesign the existing game interface while implementing this onboarding.
+
+The basketball game is the landing page.
+
+Build the onboarding and authentication flow around the existing game, not instead of it.
