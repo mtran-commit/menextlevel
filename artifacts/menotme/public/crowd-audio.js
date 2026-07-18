@@ -13,6 +13,8 @@ DOUBT_KEYS.forEach(k=>{FILES["doubt_"+k+"_m"]=A+"doubt_"+k+"_m.mp3";FILES["doubt
 ["ambience_loop","beat_loop","cheer_small","cheer_big","groan","jeer","chant_teamme","chant_onemore","intro_rhythm"].forEach(k=>FILES[k]=A+k+".mp3");
 // Match commentator library (fictional MeNotMe announcer voice; no private names ever spoken)
 ["comm_greet_1","comm_greet_2","comm_greet_3","comm_new_1","comm_win_1","comm_win_2","comm_loss_1","comm_loss_2","comm_streak_1","comm_streakbig_1","comm_neutral_1","comm_milestone_1","comm_out_1","comm_out_2","comm_out_3"].forEach(k=>FILES[k]=A+k+".mp3");
+// Contextual Inspiration Engine narrated quotes (pregenerated announcer clips — no runtime TTS)
+for(let i=1;i<=64;i++){const k="insp_q"+String(i).padStart(2,"0");FILES[k]=A+k+".mp3"}
 
 function ensureAudioPrefs(){
   if(!state.audio)state.audio={master:true,crowd:true,fanVoices:true,doubterVoices:true,music:false};
@@ -20,6 +22,8 @@ function ensureAudioPrefs(){
   if(state.audio.commentator===undefined)state.audio.commentator=true;
   if(state.audio.sfx===undefined)state.audio.sfx=true;       // swish/rim/miss/cheer/boo/bell tones
   if(state.audio.haptics===undefined)state.audio.haptics=true; // vibration — separate from audio, NOT muted by master
+  if(state.audio.inspireAudio===undefined)state.audio.inspireAudio=true; // narrated inspiration quotes
+  if(state.audio.inspireText===undefined)state.audio.inspireText=true;   // on-screen inspiration quotes
 }
 function buzz(pattern){
   ensureAudioPrefs();
@@ -30,10 +34,12 @@ ensureAudioPrefs();
 
 /* ---------- Asset preload & decode cache ---------- */
 const raw={},bufs={};
-Object.entries(FILES).forEach(([k,url])=>{raw[k]=fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.arrayBuffer()}).catch(()=>null)});
+// Inspiration quotes (insp_*) are fetched lazily on first use to keep page load light.
+Object.entries(FILES).forEach(([k,url])=>{if(k.indexOf("insp_")!==0)raw[k]=fetch(url).then(r=>{if(!r.ok)throw new Error(url);return r.arrayBuffer()}).catch(()=>null)});
 let ctx=null,master=null,crowdBus=null,musicBus=null,voiceBus=null;
 async function buf(k){
   if(bufs[k])return bufs[k];
+  if(!raw[k]&&FILES[k])raw[k]=fetch(FILES[k]).then(r=>{if(!r.ok)throw new Error(FILES[k]);return r.arrayBuffer()}).catch(()=>null);
   const ab=await raw[k];if(!ab||!ctx)return null;
   try{bufs[k]=await ctx.decodeAudioData(ab.slice(0))}catch(e){return null}
   return bufs[k];
@@ -94,13 +100,14 @@ function shot(k,dest,vol,panV){
 }
 
 /* ---------- Voice scheduler ---------- */
-let voiceBusyUntil=0,cd={fan:0,doubt:0},lastKey={fan:"",doubt:""};
+let voiceBusyUntil=0,cd={fan:0,doubt:0},lastKey={fan:"",doubt:""},hushUntil=0;
 function pick(arr,avoid){let k;do{k=arr[Math.floor(Math.random()*arr.length)]}while(arr.length>1&&k===avoid);return k}
 function say(side,chance,opts={}){
   ensureAudioPrefs();const a=state.audio;
   if(!ctx||!a.master||(side==="fan"?!a.fanVoices:!a.doubterVoices))return;
   const now=performance.now();
   const hot=intensity()>0.6;
+  if(side==="doubt"&&now<hushUntil)return; // doubters go quiet after a comeback
   if(now<voiceBusyUntil||now<cd[side])return;
   if(Math.random()>chance+(hot?.15:0))return;
   const keys=side==="fan"?FAN_KEYS:DOUBT_KEYS;
@@ -134,7 +141,7 @@ function applyPrefs(){
   if(a.master&&a.crowd)startLoop("amb");else stopLoop("amb");
   if(a.master&&a.music)startLoop("beat");else stopLoop("beat");
 }
-const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"],["prefCommentator","commentator"],["prefSoundFx","sfx"],["prefHaptics","haptics"]];
+const PREFS=[["prefSoundMaster","master"],["prefCrowdAudio","crowd"],["prefFanVoices","fanVoices"],["prefDoubterVoices","doubterVoices"],["prefMusic","music"],["prefGameIntro","gameIntro"],["prefCommentator","commentator"],["prefSoundFx","sfx"],["prefHaptics","haptics"],["prefInspireAudio","inspireAudio"],["prefInspireText","inspireText"]];
 
 /* ---------- Quick HUD master audio toggle (🔊 / 🔇) ---------- */
 function renderQuickAudio(){
@@ -161,7 +168,10 @@ function renderQuickAudio(){
 
 /* ---------- Intro audio (rhythm + commentator), stoppable via Skip ---------- */
 let introStopped=false;const introSrcs=[];
-window.stopIntroAudio=function(){introStopped=true;introSrcs.forEach(s=>{try{s.stop()}catch(e){}});introSrcs.length=0};
+window.stopIntroAudio=function(){introStopped=true;introSrcs.forEach(s=>{try{s.stop()}catch(e){}});introSrcs.length=0;narrGuard=0};
+// Time-based narration guard: can't get stuck if a suspended AudioContext never fires onended.
+let narrGuard=0;
+function guardNarr(sec){narrGuard=Math.max(narrGuard,performance.now()+sec*1000+800)}
 window.commentaryEnabled=function(){ensureAudioPrefs();return !!(state.audio.master&&state.audio.commentator)};
 // Plays clips back-to-back; resolves when finished (or immediately if disabled/stopped).
 window.playCommentary=function(keys){
@@ -175,7 +185,7 @@ window.playCommentary=function(keys){
       const s=ctx.createBufferSource();s.buffer=b;
       const g=ctx.createGain();g.gain.value=1;s.connect(g);g.connect(voiceBus);
       if(ambGain){ambGain.gain.cancelScheduledValues(ctx.currentTime);ambGain.gain.setValueAtTime(ambLevel()*.35,ctx.currentTime)}
-      introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1);setTimeout(res,120)};s.start();
+      introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1);setTimeout(res,120)};guardNarr(b.duration);s.start();
     });
   })),Promise.resolve()).then(()=>{if(ambGain&&ctx)ambGain.gain.linearRampToValueAtTime(ambLevel(),ctx.currentTime+.8)});
 };
@@ -190,9 +200,36 @@ window.playIntroSound=function(){
     if(!b||introStopped)return;
     const s=ctx.createBufferSource();s.buffer=b;
     const g=ctx.createGain();g.gain.value=.95;s.connect(g);g.connect(crowdBus);
-    introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1)};s.start();
+    introSrcs.push(s);s.onended=()=>{const i=introSrcs.indexOf(s);if(i>=0)introSrcs.splice(i,1)};guardNarr(b.duration);s.start();
   });
 };
+/* ---------- Inspiration narration API (used by inspire.js) ---------- */
+let inspActive=false;
+window.narrationActive=function(){return performance.now()<narrGuard};
+window.crowdShout=function(side,strong){say(side,1,{chant:!!strong})};
+window.hushDoubters=function(ms){hushUntil=performance.now()+(ms||20000)};
+// Plays one narrated quote clip through the voice bus with ambience ducking.
+// Resolves true if audio actually played, false otherwise (text-only mode).
+window.playInspiration=function(key,vol){
+  ensureAudioPrefs();
+  initCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+  if(!ctx||!state.audio.master||!state.audio.inspireAudio)return Promise.resolve(false);
+  return buf(key).then(b=>{
+    if(!b)return false;
+    // Queue behind any fan/doubter voice currently speaking, then narrate.
+    const wait=Math.max(0,voiceBusyUntil-performance.now());
+    return new Promise(res=>{setTimeout(res,wait)}).then(()=>new Promise(res=>{
+      const s=ctx.createBufferSource();s.buffer=b;
+      const g=ctx.createGain();g.gain.value=vol||1;s.connect(g);g.connect(voiceBus);
+      if(ambGain){ambGain.gain.cancelScheduledValues(ctx.currentTime);ambGain.gain.linearRampToValueAtTime(ambLevel()*.35,ctx.currentTime+.1)}
+      inspActive=true;guardNarr(b.duration);
+      voiceBusyUntil=performance.now()+b.duration*1000+500; // fan/doubter voices wait
+      s.onended=()=>{inspActive=false;if(ambGain&&ctx)ambGain.gain.linearRampToValueAtTime(ambLevel(),ctx.currentTime+.8);res(true)};
+      s.start();
+    }));
+  });
+};
+
 PREFS.forEach(([id,key])=>{
   const el=document.getElementById(id);if(!el)return;
   el.checked=!!state.audio[key];

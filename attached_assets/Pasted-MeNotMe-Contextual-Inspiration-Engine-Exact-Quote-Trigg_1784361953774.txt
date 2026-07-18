@@ -1,0 +1,458 @@
+MeNotMe — Contextual Inspiration Engine: Exact Quote & Trigger Rules
+
+Implement an automatic Contextual Inspiration Engine.
+
+There is no Inspire Me button. The system automatically selects an appropriate quote based on what is happening in the user's game.
+
+Use the following original MeNotMe quotes and trigger rules.
+
+1. NEW DAY / NEW MATCH
+
+Trigger once when the user enters a new daily match, after Yesterday's Result and before normal gameplay begins.
+
+Rotate between:
+
+"Every day starts at zero. What happens next is yours."
+
+"Yesterday's score is final. Today's game is not."
+
+"Your streak starts with today."
+
+"You don't become Team Me tomorrow. You choose Team Me today."
+
+"One decision. One point. One step closer to who you want to become."
+
+Sequence:
+
+Yesterday's Result → Commentator introduces new match → one New Day quote if selected → arena drum rhythm → scoreboard 0–0 → NEW DAY. NEW GAME.
+
+Do not always play a motivational quote during the intro. Randomise it so approximately 30–40% of new matches receive one.
+
+2. TEAM ME IS LOSING
+
+Trigger when Team Not Me leads by at least 2 points and sufficient time has passed since the previous inspirational message.
+
+Rotate:
+
+"The Final Bell hasn't rung yet."
+
+"The score can change with your very next move."
+
+"If Team Not Me scored, score back."
+
+"A bad first quarter doesn't decide the final score."
+
+"You don't need a perfect game. You need one more point than Team Not Me."
+
+Do not trigger immediately after Team Not Me scores. Wait approximately 5–10 seconds so the quote feels motivational rather than intrusive.
+
+Maximum once per losing period.
+
+3. TEAM ME FALLS BEHIND AFTER LEADING
+
+Trigger when Team Me was previously leading and Team Not Me takes the lead.
+
+Rotate:
+
+"The comeback starts with the next decision."
+
+"The game isn't over."
+
+"The score can change with your very next move."
+
+"Back on the court."
+
+Give this trigger slightly higher priority than the normal "Team Me is losing" trigger.
+
+4. MULTIPLE MISSED SHOTS
+
+Trigger after 2–3 consecutive missed Asset shots.
+
+Rotate:
+
+"Missed the shot? Pick up the paper and shoot again."
+
+"Take the shot."
+
+"Keep playing."
+
+"One more point."
+
+"The next point is yours to win."
+
+Do not trigger after every miss.
+
+Reset the miss counter after a successful basket.
+
+5. SUCCESSFUL COMEBACK
+
+Trigger when Team Me was losing and then ties or takes the lead.
+
+Rotate:
+
+"This is your comeback."
+
+"Every time you choose differently, you change the score."
+
+"One more point."
+
+"Keep playing."
+
+Fans should become more energetic when this quote plays.
+
+Doubters should become quieter temporarily.
+
+6. TEAM ME TAKES A STRONG LEAD
+
+Trigger when Team Me leads by 3 or more points.
+
+Rotate:
+
+"Small wins become winning streaks."
+
+"Build the streak."
+
+"Finish strong."
+
+"Make today count."
+
+Do not trigger repeatedly as the lead increases.
+
+Maximum once per daily game.
+
+7. FINAL BELL APPROACHING — TEAM ME LOSING
+
+This is a high-priority trigger.
+
+When Final Bell is approaching and Team Me is behind, play one of:
+
+"The Final Bell hasn't rung yet."
+
+"The comeback starts with the next decision."
+
+"The clock is still running."
+
+"If Team Not Me scored, score back."
+
+"Your move."
+
+The commentator voice should become slightly more intense.
+
+Crowd ambience can increase subtly after the quote.
+
+Do not interrupt an active shot.
+
+8. FINAL BELL APPROACHING — CLOSE GAME
+
+If the difference is only 1 point near the Final Bell:
+
+Rotate:
+
+"One decision can change the game."
+
+"One more point."
+
+"The next point is yours to win."
+
+"Finish strong."
+
+"Your move."
+
+Use a more dramatic but short delivery.
+
+9. TEAM ME WINS THE DAY
+
+After the Final Bell confirms a Team Me victory, rotate:
+
+"You didn't just win the game. You showed up for yourself."
+
+"Small wins become winning streaks."
+
+"The person you want to become is built one day at a time."
+
+"Every time you choose differently, you change the score."
+
+"Make today count. Then do it again tomorrow."
+
+Fans celebrate after the narration.
+
+Do not play the quote over the main victory sound. Sequence:
+
+Final Bell → Result → Crowd Celebration → Audio dips → Quote → Streak update.
+
+10. TEAM NOT ME WINS THE DAY
+
+After Team Not Me wins:
+
+Rotate:
+
+"Yesterday's score is final. Today's game is not."
+
+"One day won't define you. What you repeatedly choose might."
+
+"The comeback starts with the next decision."
+
+"You can't change yesterday's scoreboard. You can change today's."
+
+"Back on the court."
+
+The delivery should be encouraging, not sad or judgmental.
+
+Do not play a boo sound over the motivational quote.
+
+Sequence:
+
+Final Bell → Result → Team Not Me reaction → short pause → Quote.
+
+11. STREAK BREAKS
+
+When a Team Not Me daily victory resets the user's streak:
+
+Rotate:
+
+"Your streak ended. Your story didn't."
+
+"Day One isn't starting over. It's starting stronger."
+
+"Yesterday's score is final. Today's game is not."
+
+"The comeback starts with the next decision."
+
+"Your next streak starts with your next win."
+
+These streak-specific messages should have priority over general Team Not Me loss quotes.
+
+12. 7-DAY STREAK APPROACHING
+
+When the user is one daily win away from the 7-day milestone:
+
+Rotate:
+
+"One more win. Your fans are waiting."
+
+"Seven days isn't luck. It's consistency."
+
+"One more game. Finish strong."
+
+Use the commentator voice.
+
+Fans should react subtly after the quote.
+
+13. 7-DAY STREAK ACHIEVED
+
+During the paparazzi/autograph celebration:
+
+Rotate:
+
+"Seven days. Seven victories. Team Me is building something."
+
+"Give your fans something to cheer about. You just did."
+
+"Small wins become winning streaks."
+
+Play only one quote during the ceremony.
+
+14. 30-DAY CHAMPIONSHIP APPROACHING
+
+One daily victory before the Championship:
+
+Rotate:
+
+"The Championship is one victory away."
+
+"Thirty days started with one decision."
+
+"The arena is watching. Finish the game."
+
+The commentator should deliver this with increased excitement.
+
+15. 30-DAY CHAMPIONSHIP ACHIEVED
+
+During the Championship Cup ceremony:
+
+Rotate:
+
+"Thirty days. You didn't wait to become Team Me. You chose it every day."
+
+"Discipline is showing up when motivation stays home."
+
+"The person you want to become is built one day at a time."
+
+Play after the Championship Cup is revealed.
+
+Then trigger the existing requirement to add at least one new Asset and one new Liability for the next stage.
+
+16. 60-DAY WALL OF FAME APPROACHING
+
+One victory before Day 60:
+
+Rotate:
+
+"One more victory and your name goes on the Wall."
+
+"Sixty days of choosing who you want to become."
+
+"You've come too far to stop playing now."
+
+17. 60-DAY WALL OF FAME ACHIEVED
+
+During the Wall of Fame ceremony:
+
+Rotate:
+
+"This isn't motivation anymore. This is who you're becoming."
+
+"Your habits are keeping score. Look at the scoreboard."
+
+"Don't play against everyone else. Play against yesterday's you."
+
+Fans should stand and applaud.
+
+18. 90-DAY RETIREMENT APPROACHING
+
+One victory away from completing the 90-day journey:
+
+This should be one of the most dramatic inspirational moments.
+
+Rotate:
+
+"Ninety days started with one decision. One more game remains."
+
+"The Final Bell is coming. Finish what you started."
+
+"One more victory. Play for the person you've become."
+
+The commentator introduces the quote.
+
+Arena crowd intensity increases afterward.
+
+19. 90-DAY RETIREMENT ACHIEVED
+
+During the Retirement Ceremony:
+
+Use one of:
+
+"Ninety days ago, you started playing for the person you wanted to become. Look who showed up."
+
+"You came here to change the score. You changed the player."
+
+"Team Me wins more than a game today. Team Me wins a season."
+
+This should be a special narration, separate from normal quotes.
+
+Play only once per completed 90-day season.
+
+20. LIABILITY SCORES REPEATEDLY
+
+If Team Not Me receives multiple points from ignored or failed Liabilities:
+
+Rotate:
+
+"Don't give Team Not Me an easy point."
+
+"Your habits are keeping score, even when you aren't."
+
+"One decision can change the direction of the game."
+
+Do not identify or speak the actual Liability name.
+
+21. USER RETURNS AFTER MULTIPLE DAYS AWAY
+
+On returning after 3 or more inactive days:
+
+Rotate:
+
+"Welcome back. The scoreboard is waiting."
+
+"No explanations needed. Get back on the court."
+
+"The comeback starts today."
+
+"Team Me needs you on the court."
+
+Do not shame the user for being absent.
+
+22. FANS REACTION QUOTES
+
+Occasionally, instead of the narrator, allow the Fans to shout short phrases:
+
+"YOU GOT THIS!"
+
+"TEAM ME!"
+
+"ONE MORE!"
+
+"KEEP GOING!"
+
+"LET'S GO!"
+
+"FINISH STRONG!"
+
+These should sound like arena crowd shouts, not narrator quotes.
+
+23. DOUBTER REACTIONS
+
+Doubters can occasionally shout short challenges:
+
+"YOU'LL MISS!"
+
+"NOT TODAY!"
+
+"PROVE IT!"
+
+"LET'S SEE IT!"
+
+Do not use Doubter audio during sensitive moments such as a broken streak or after a significant loss.
+
+Doubter reactions should be playful competitive pressure, never abusive.
+
+GLOBAL AUDIO RULES
+
+Do not allow inspirational audio to become repetitive.
+
+Maximum:
+
+3 full narrated motivational quotes per daily game.
+
+Milestone ceremony quotes do not count toward this limit.
+
+Use a minimum cooldown of approximately 10 minutes between normal automatic narrated quotes.
+
+High-priority events such as Final Bell and milestone ceremonies can override the cooldown.
+
+Never interrupt:
+
+Active paper flight
+Swish animation
+Final Bell sound
+Commentator introduction
+Milestone narration
+
+Queue the quote and play it after the active audio event completes.
+
+Track recently played quotes and avoid repeating the same quote within the user's last 10 inspirational messages.
+
+If Master Audio = OFF, do not play narration.
+
+If Inspirational Audio = OFF, show the quote visually only if Inspirational Text = ON.
+
+Allow users to disable:
+
+Inspirational Audio
+Inspirational Text
+Fan Voices
+Doubter Voices
+Commentator
+IMPORTANT IMPLEMENTATION RULE
+
+Use the exact trigger categories above. Do not allow an AI model to independently decide when to interrupt gameplay.
+
+The game engine determines the trigger.
+
+The quote engine selects an eligible quote from that trigger category.
+
+The audio engine handles narration.
+
+The system should feel responsive to the user's game, but never overwhelming.
+
+All quotes listed above are intended as original MeNotMe copy for this implementation.

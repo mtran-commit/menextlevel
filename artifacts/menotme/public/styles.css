@@ -284,3 +284,12 @@ button{cursor:pointer}
 .audio-quick:hover{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.25)}
 .audio-quick.off{color:#888;border-color:#444}
 @media (max-width:680px){.audio-quick{padding:3px 8px;margin-left:6px}}
+
+/* ---------- Contextual Inspiration Engine quote overlay ---------- */
+#inspireQuote{position:absolute;left:50%;top:26%;transform:translateX(-50%) translateY(6px);z-index:12;max-width:64%;
+  padding:10px 22px;background:rgba(0,0,0,.88);border:1px solid rgba(255,255,255,.45);border-radius:6px;
+  color:#fff;font-weight:800;letter-spacing:.08em;text-align:center;font-size:clamp(11px,1.4vw,17px);
+  text-shadow:0 0 10px rgba(255,255,255,.5);box-shadow:0 0 18px rgba(255,255,255,.12);
+  opacity:0;pointer-events:none;transition:opacity .6s ease,transform .6s ease}
+#inspireQuote.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:680px){#inspireQuote{max-width:86%;top:24%;font-size:11px;padding:8px 14px}}
