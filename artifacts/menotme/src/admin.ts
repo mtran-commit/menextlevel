@@ -71,6 +71,7 @@ async function show(tab: string) {
     else if (tab === "users") await tabUsers();
     else if (tab === "reports") await tabReports();
     else if (tab === "announcements") await tabAnnouncements();
+    else if (tab === "sponsors") await tabSponsors();
     else if (tab === "rules") await tabRules();
     else if (tab === "logs") await tabLogs();
   } catch (e) {
@@ -184,6 +185,117 @@ async function tabAnnouncements() {
     b.onclick = async () => {
       await api(`/admin/announcements/${b.dataset.id}`, { method: "PATCH", body: JSON.stringify({ active: b.dataset.active === "true" }) });
       tabAnnouncements();
+    };
+  });
+}
+
+/* ---------- Sponsor Campaigns ---------- */
+function fileToDataUrl(input: HTMLInputElement, maxBytes = 400_000): Promise<string | null> {
+  const f = input.files?.[0];
+  if (!f) return Promise.resolve(null);
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const v = String(r.result || "");
+      if (v.length > maxBytes) rej(new Error(`${f.name}: image too large (max ~300KB)`));
+      else res(v);
+    };
+    r.onerror = () => rej(new Error("read failed"));
+    r.readAsDataURL(f);
+  });
+}
+
+async function tabSponsors(editId?: number) {
+  const { campaigns, stats } = await api("/admin/sponsors");
+  const stat = (id: number, ev: string) =>
+    (stats as any[]).filter((s) => s.campaignId === id && s.event === ev).reduce((a, s) => a + s.n, 0);
+  const editing = editId ? (campaigns as any[]).find((c) => c.id === editId) : null;
+  const e = (k: string) => esc(editing?.[k] ?? "");
+  const placeStats: Record<string, { imp: number; clk: number }> = {};
+  for (const s of stats as any[]) {
+    const p = s.placement || "—";
+    placeStats[p] ??= { imp: 0, clk: 0 };
+    if (s.event === "sponsor_impression") placeStats[p].imp += s.n;
+    if (s.event === "sponsor_click") placeStats[p].clk += s.n;
+  }
+  main.innerHTML = `<h2>${editing ? `EDIT CAMPAIGN #${editing.id}` : "NEW SPONSOR CAMPAIGN"}</h2>
+  <div class="row"><input id="spName" placeholder="Campaign name (internal)" value="${e("name")}" style="width:220px">
+    <input id="spSponsor" placeholder="Sponsor name (on board)" value="${e("sponsorName")}" style="width:200px">
+    <select id="spType">${["text", "logo", "banner"].map((t) => `<option ${editing?.adType === t ? "selected" : ""}>${t}</option>`).join("")}</select>
+    <select id="spPlace">${["any", "left", "right", "backboard", "ribbon"].map((p) => `<option ${editing?.placement === p ? "selected" : ""}>${p}</option>`).join("")}</select></div>
+  <div class="row"><input id="spText" placeholder="Text (e.g. POWERED BY BRAND)" value="${e("textContent")}" style="width:300px">
+    <input id="spCta" placeholder="Call-to-action" value="${e("ctaText")}" style="width:180px">
+    <input id="spUrl" placeholder="Destination URL (https://…)" value="${e("destinationUrl")}" style="width:260px"></div>
+  <div class="row"><label class="muted">Logo <input id="spLogo" type="file" accept="image/*"></label>
+    <label class="muted">Banner <input id="spBanner" type="file" accept="image/*"></label></div>
+  <div class="row"><label class="muted">Start <input id="spStart" type="date" value="${e("startDate")}"></label>
+    <label class="muted">End <input id="spEnd" type="date" value="${e("endDate")}"></label>
+    <label class="muted">Secs <input id="spDur" type="number" min="3" max="60" value="${editing?.durationSec ?? 8}" style="width:60px"></label>
+    <label class="muted">Priority <input id="spPri" type="number" min="0" max="100" value="${editing?.priority ?? 0}" style="width:60px"></label>
+    <label class="muted">Frequency <input id="spFreq" type="number" min="1" max="10" value="${editing?.frequency ?? 1}" style="width:60px"></label>
+    <label class="muted">Audience <select id="spAud">${["all", "guest", "registered"].map((a) => `<option ${((editing?.targeting?.audience ?? "all") === a && "selected") || ""}>${a}</option>`).join("")}</select></label>
+    <label class="muted">Device <select id="spDev"><option value="">all</option>${["desktop", "mobile"].map((d) => `<option ${editing?.targeting?.devices?.[0] === d ? "selected" : ""}>${d}</option>`).join("")}</select></label></div>
+  <div class="row"><button class="btn solid" id="spSave">${editing ? "SAVE CHANGES" : "CREATE CAMPAIGN"}</button>
+    ${editing ? '<button class="btn" id="spCancel">CANCEL</button>' : ""}<span class="muted" id="spMsg"></span></div>
+  <p class="muted">Targeting never uses Assets, Liabilities, Fans or Doubters — those stay private.</p>
+  <h2>CAMPAIGNS</h2>
+  <table><tr><th>Campaign</th><th>Type / Placement</th><th>Dates</th><th>Secs/Pri/Freq</th><th>Impr.</th><th>Clicks</th><th>CTR</th><th>Status</th><th></th></tr>
+  ${(campaigns as any[])
+    .map((c) => {
+      const imp = stat(c.id, "sponsor_impression"), clk = stat(c.id, "sponsor_click");
+      return `<tr><td><b>${esc(c.name)}</b><br><span class="muted">${esc(c.sponsorName)}${c.textContent ? " — " + esc(c.textContent) : ""}</span></td>
+      <td>${esc(c.adType)} / ${esc(c.placement)}</td>
+      <td class="muted">${esc(c.startDate ?? "—")} → ${esc(c.endDate ?? "—")}</td>
+      <td>${c.durationSec}s / ${c.priority} / ${c.frequency}</td>
+      <td>${imp}</td><td>${clk}</td><td>${imp ? ((100 * clk) / imp).toFixed(1) + "%" : "—"}</td>
+      <td>${c.active ? '<span class="pill">ACTIVE</span>' : '<span class="muted">paused</span>'}</td>
+      <td class="row" style="margin:0">
+        <button class="btn" data-sp-edit="${c.id}">EDIT</button>
+        <button class="btn" data-sp-toggle="${c.id}" data-to="${!c.active}">${c.active ? "PAUSE" : "ACTIVATE"}</button>
+        <button class="btn" data-sp-del="${c.id}">DELETE</button></td></tr>`;
+    })
+    .join("")}</table>
+  ${(campaigns as any[]).length === 0 ? '<p class="muted">No campaigns yet — the arena shows MeNotMe house boards.</p>' : ""}
+  <h2>PLACEMENT PERFORMANCE</h2>
+  <table><tr><th>Placement</th><th>Impressions</th><th>Clicks</th><th>CTR</th></tr>
+  ${Object.entries(placeStats).map(([p, v]) => `<tr><td>${esc(p)}</td><td>${v.imp}</td><td>${v.clk}</td><td>${v.imp ? ((100 * v.clk) / v.imp).toFixed(1) + "%" : "—"}</td></tr>`).join("") || '<tr><td colspan="4" class="muted">No sponsor events yet.</td></tr>'}</table>`;
+
+  const msg = document.getElementById("spMsg")!;
+  document.getElementById("spSave")!.onclick = async () => {
+    try {
+      const v = (id: string) => (document.getElementById(id) as HTMLInputElement).value.trim();
+      const body: Record<string, unknown> = {
+        name: v("spName"), sponsorName: v("spSponsor"),
+        adType: v("spType"), placement: v("spPlace"),
+        textContent: v("spText"), ctaText: v("spCta"), destinationUrl: v("spUrl"),
+        startDate: v("spStart"), endDate: v("spEnd"),
+        durationSec: Number(v("spDur")), priority: Number(v("spPri")), frequency: Number(v("spFreq")),
+        targeting: { audience: v("spAud"), ...(v("spDev") ? { devices: [v("spDev")] } : {}) },
+      };
+      const logo = await fileToDataUrl(document.getElementById("spLogo") as HTMLInputElement);
+      const banner = await fileToDataUrl(document.getElementById("spBanner") as HTMLInputElement);
+      if (logo) body.logoData = logo;
+      if (banner) body.bannerData = banner;
+      if (editing) await api(`/admin/sponsors/${editing.id}`, { method: "PATCH", body: JSON.stringify(body) });
+      else await api("/admin/sponsors", { method: "POST", body: JSON.stringify(body) });
+      tabSponsors();
+    } catch (err) {
+      msg.textContent = (err as Error).message;
+    }
+  };
+  (document.getElementById("spCancel") as HTMLButtonElement | null)?.addEventListener("click", () => tabSponsors());
+  main.querySelectorAll<HTMLButtonElement>("[data-sp-edit]").forEach((b) => (b.onclick = () => tabSponsors(Number(b.dataset.spEdit))));
+  main.querySelectorAll<HTMLButtonElement>("[data-sp-toggle]").forEach((b) => {
+    b.onclick = async () => {
+      await api(`/admin/sponsors/${b.dataset.spToggle}`, { method: "PATCH", body: JSON.stringify({ active: b.dataset.to === "true" }) });
+      tabSponsors();
+    };
+  });
+  main.querySelectorAll<HTMLButtonElement>("[data-sp-del]").forEach((b) => {
+    b.onclick = async () => {
+      if (!confirm("Delete this campaign and its stats?")) return;
+      await api(`/admin/sponsors/${b.dataset.spDel}`, { method: "DELETE" });
+      tabSponsors();
     };
   });
 }

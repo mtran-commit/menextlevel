@@ -237,3 +237,44 @@ button{cursor:pointer}
 @keyframes micBlink{0%,100%{opacity:1}50%{opacity:.45}}
 #ioSkip{position:absolute;right:18px;bottom:16px;background:transparent;border:1px solid rgba(255,255,255,.35);color:#bbb;border-radius:999px;padding:7px 14px;font-size:10px;letter-spacing:.16em;cursor:pointer}
 #ioSkip:hover{color:#fff;border-color:#fff}
+
+/* ---------- Arena Sponsors: stadium LED boards (behind gameplay, z3) ---------- */
+#sponsorLayer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.sp-strip{position:absolute;top:30.6%;height:9.2%;display:flex;gap:1.2%}
+.sp-left{left:1%;width:33%}
+.sp-right{right:1%;width:33%}
+.sp-board{position:relative;flex:1;overflow:hidden;pointer-events:auto;cursor:default;
+  background:#040404;border:1px solid rgba(255,255,255,.28);border-radius:3px;
+  box-shadow:0 0 10px rgba(255,255,255,.10),inset 0 0 14px rgba(0,0,0,.9);
+  transform:perspective(600px) rotateX(2deg)}
+.sp-board::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 3px),
+             linear-gradient(180deg,rgba(255,255,255,.07),transparent 30%,transparent 70%,rgba(0,0,0,.4));}
+.sp-bb{position:absolute;top:30.6%;height:9.2%;flex:none}
+.sp-bb-l{left:35.6%;width:10.6%}
+.sp-bb-r{left:53.8%;width:10.6%}
+.sp-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2%;padding:2% 5%;text-align:center}
+.sp-face.sp-in{animation:spSlideIn .9s ease both}
+.sp-face.sp-out{animation:spSlideOut .9s ease both}
+@keyframes spSlideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes spSlideOut{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.sp-brand{font-weight:900;letter-spacing:.14em;font-size:clamp(7px,1.15vw,15px);color:#fff;text-shadow:0 0 8px rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;max-width:100%}
+.sp-brand.sp-small{font-size:clamp(6px,0.85vw,11px)}
+.sp-sub,.sp-text{font-size:clamp(5px,0.62vw,9px);letter-spacing:.22em;color:#cfcfcf;white-space:nowrap;overflow:hidden;max-width:100%}
+.sp-cta{font-size:clamp(5px,0.6vw,9px);letter-spacing:.14em;font-weight:800;color:#000;background:#fff;border-radius:2px;padding:1% 5%;box-shadow:0 0 8px rgba(255,255,255,.6);white-space:nowrap}
+.sp-img{max-width:92%;max-height:88%;object-fit:contain;filter:grayscale(1) brightness(1.15) drop-shadow(0 0 6px rgba(255,255,255,.5))}
+.sp-adtag{position:absolute;top:3px;right:4px;font-size:6px;letter-spacing:.12em;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.3);border-radius:2px;padding:0 3px;line-height:1.5}
+.sp-ribbon{position:absolute;left:14%;right:14%;top:.4%;height:3.4%;overflow:hidden;border-radius:2px;background:rgba(3,3,3,.85);border:1px solid rgba(255,255,255,.16);pointer-events:none}
+.sp-ribbon-track{position:absolute;top:0;height:100%;display:flex;align-items:center;gap:26px;white-space:nowrap;padding:0 13px;animation:spRibbon 36s linear infinite;will-change:transform}
+.sp-rib-item{font-size:clamp(5px,0.62vw,9px);letter-spacing:.28em;color:#bdbdbd;font-weight:700}
+.sp-rib-dot{color:#555;font-size:8px}
+@keyframes spRibbon{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (max-width:680px){
+  .sp-left{left:1%;width:22%}
+  .sp-right{right:1%;width:22%}
+  .sp-bb-l{left:25.5%;width:14%}
+  .sp-bb-r{left:60.5%;width:14%}
+  .sp-strip,.sp-bb{top:31%;height:8.6%}
+  .sp-ribbon{display:none}
+}
+@media (prefers-reduced-motion:reduce){.sp-ribbon-track{animation:none}.sp-face.sp-in,.sp-face.sp-out{animation-duration:.01s}}

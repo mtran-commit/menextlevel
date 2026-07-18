@@ -5,6 +5,7 @@ import accountRouter from "./account";
 import notificationsRouter from "./notifications";
 import adminRouter, { reportRouter, announcementsPublicRouter } from "./admin";
 import analyticsRouter from "./analytics";
+import sponsorsRouter from "./sponsors";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(adminRouter);
 router.use(reportRouter);
 router.use(announcementsPublicRouter);
 router.use(analyticsRouter);
+router.use(sponsorsRouter);
 
 export default router;

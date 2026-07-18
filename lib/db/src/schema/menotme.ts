@@ -213,6 +213,51 @@ export const analyticsEventsTable = pgTable(
   (t) => [index("analytics_events_event_idx").on(t.event, t.createdAt)],
 );
 
+// ---------- Arena sponsor advertising ----------
+export const sponsorCampaignsTable = pgTable(
+  "sponsor_campaigns",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(), // internal campaign name
+    sponsorName: text("sponsor_name").notNull(), // shown on the board
+    adType: text("ad_type").default("text").notNull(), // logo | text | banner
+    textContent: text("text_content"), // e.g. "POWERED BY BRAND"
+    ctaText: text("cta_text"), // e.g. "START YOUR FREE TRIAL"
+    destinationUrl: text("destination_url"),
+    logoData: text("logo_data"), // small data-URL image
+    bannerData: text("banner_data"), // wide data-URL image
+    placement: text("placement").default("any").notNull(), // left | right | backboard | ribbon | any
+    startDate: date("start_date"),
+    endDate: date("end_date"),
+    durationSec: integer("duration_sec").default(8).notNull(),
+    priority: integer("priority").default(0).notNull(),
+    frequency: integer("frequency").default(1).notNull(), // rotation weight
+    active: boolean("active").default(true).notNull(),
+    // Optional targeting: { countries?: string[], regions?: string[], ageMin?, ageMax?,
+    // devices?: ("mobile"|"desktop")[], audience?: "guest"|"registered"|"all" }.
+    // NEVER derived from assets/liabilities/fans/doubters — those stay private.
+    targeting: jsonb("targeting"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [index("sponsor_campaigns_active_idx").on(t.active, t.priority)],
+);
+
+export const sponsorEventsTable = pgTable(
+  "sponsor_events",
+  {
+    id: serial("id").primaryKey(),
+    campaignId: integer("campaign_id").notNull().references(() => sponsorCampaignsTable.id, { onDelete: "cascade" }),
+    event: text("event").notNull(), // sponsor_impression | sponsor_click | sponsor_campaign_view | sponsor_placement | sponsor_milestone_view
+    placement: text("placement"),
+    device: text("device"), // mobile | desktop
+    audience: text("audience"), // guest | registered
+    anonId: text("anon_id"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("sponsor_events_campaign_idx").on(t.campaignId, t.event, t.createdAt)],
+);
+
 // ---------- Audit logs ----------
 export const auditLogsTable = pgTable(
   "audit_logs",
