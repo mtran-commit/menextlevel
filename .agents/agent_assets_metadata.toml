@@ -1,0 +1,98 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "sDQ7PywzhtiH1sxZ_5f72"
+uri = "file://artifacts/menotme/public/assets/audio/fan_yougotthis_m.mp3"
+type = "audio"
+title = "fan yougotthis m"
+
+[[outputs]]
+id = "O6mTBe_zsB4Xc28sLnjUa"
+uri = "file://artifacts/menotme/public/assets/audio/fan_letsgo_m.mp3"
+type = "audio"
+title = "fan letsgo m"
+
+[[outputs]]
+id = "pfhTN-tj-ULuHJ4ORdkd4"
+uri = "file://artifacts/menotme/public/assets/audio/fan_onemore_m.mp3"
+type = "audio"
+title = "fan onemore m"
+
+[[outputs]]
+id = "hegZ4U0pIe4_-AZfPS14V"
+uri = "file://artifacts/menotme/public/assets/audio/fan_onemore_f.mp3"
+type = "audio"
+title = "fan onemore f"
+
+[[outputs]]
+id = "rlqxybfJZiPqDs6NeGMZs"
+uri = "file://artifacts/menotme/public/assets/audio/fan_keepgoing_f.mp3"
+type = "audio"
+title = "fan keepgoing f"
+
+[[outputs]]
+id = "eDX0GvkIOIeyGUWubEI-W"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_youllmiss_m.mp3"
+type = "audio"
+title = "doubt youllmiss m"
+
+[[outputs]]
+id = "DkKZ4ybwPVDrS8DWiUsRj"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_nottoday_f.mp3"
+type = "audio"
+title = "doubt nottoday f"
+
+[[outputs]]
+id = "MOJwiF4SNs03uqmkbBgPz"
+uri = "file://artifacts/menotme/public/assets/audio/fan_whatashot_f.mp3"
+type = "audio"
+title = "fan whatashot f"
+
+[[outputs]]
+id = "xdCvOV3Ys15GKxTs6sSw-"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_cantkeepup_f.mp3"
+type = "audio"
+title = "doubt cantkeepup f"
+
+[[outputs]]
+id = "T27t5TS1VzZy_nUjbznYZ"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_letssee_m.mp3"
+type = "audio"
+title = "doubt letssee m"
+
+[[outputs]]
+id = "ItasTqQ0fMCWiosth1nQS"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_proveit_f.mp3"
+type = "audio"
+title = "doubt proveit f"
+
+[[outputs]]
+id = "jIpFE-SjL-fdfx_kWtLnJ"
+uri = "file://artifacts/menotme/public/assets/audio/cheer_small.mp3"
+type = "audio"
+title = "small cheer"
+
+[[outputs]]
+id = "9JYEx3lOcKM2i5Qw2wxXl"
+uri = "file://artifacts/menotme/public/assets/audio/doubt_letssee_f.mp3"
+type = "audio"
+title = "doubt letssee f"
+
+[[outputs]]
+id = "RAke1S1nEf8olWEq95ztW"
+uri = "file://artifacts/menotme/public/assets/audio/chant_onemore.mp3"
+type = "audio"
+title = "one more chant"
+
+[[outputs]]
+id = "mWe8kZT_2kLoyY-jqip6V"
+uri = "file://artifacts/menotme/public/assets/audio/ambience_loop.mp3"
+type = "audio"
+title = "arena ambience loop"
+
+[[outputs]]
+id = "KHFuijy9BAP3hKUOpbhph"
+uri = "file://artifacts/menotme/public/assets/audio/beat_loop.mp3"
+type = "audio"
+title = "arena beat loop"
