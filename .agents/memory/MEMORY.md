@@ -1,0 +1,1 @@
+- [MeNotMe locked prototype](menotme-locked-prototype.md) — never redesign the MeNotMe UI; the uploaded HTML prototype is the locked source of truth, black-and-white only, ask before any change.

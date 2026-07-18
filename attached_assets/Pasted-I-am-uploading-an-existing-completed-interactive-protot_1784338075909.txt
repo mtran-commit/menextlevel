@@ -1,0 +1,153 @@
+I am uploading an existing completed interactive prototype called:
+
+menotme_complete_premium_working.html
+
+This file is the locked source of truth for the design, layout, styling, animations, game mechanics, wording and user experience.
+
+Your task is to convert this prototype into a properly structured production-ready web application without redesigning or visually changing it.
+
+Critical rules
+Do not redesign the interface.
+Do not change the layout, proportions, spacing, typography, glow, court, hoop, hands, paper ball, panels, buttons or visual hierarchy.
+Do not replace the existing design with Replit-generated components.
+Do not simplify the interface.
+Do not reinterpret the design.
+Do not remove any existing feature.
+Do not add colours. The app must remain black and white.
+Do not replace the embedded premium mockup or alter its appearance.
+Do not rename MeNotMe or change the slogan:
+“Play for the person you want to become.”
+Do not begin coding until you have inspected the entire uploaded HTML file.
+Development approach
+
+Use the uploaded HTML file as the reference implementation.
+
+First, run the original file unchanged and confirm it works.
+
+Then separate it carefully into maintainable files while preserving the output exactly:
+
+index.html
+styles.css
+app.js
+appropriate image/assets folder
+
+The rendered app must look visually identical before and after the code is separated.
+
+Existing features that must remain working
+
+Preserve all of the following:
+
+Team Me and Team Not Me scoreboard
+Exact premium neon basketball interface
+Exact hoop, court, hands and paper design
+Asset tags
+Liability tags
+Add Asset
+Add Liability
+Drag-and-flick paper interaction
+Shoot button
+Shot power
+Swish, rim-in and miss results
+Missed-shot retries
+Crowd energy
+Combo counter
+Cheer, rim, miss and boo sounds
+Confetti
+Final Bell scoring
+Ignored liabilities automatically scoring for Team Not Me
+Daily winner
+Streak logic
+Saved progress
+Daily reset
+90-day season reset
+7-day paparazzi and autograph ceremony
+30-day Championship Cup
+Requirement to add one new Asset and Liability after 30 days
+60-day Wall of Fame
+90-day retirement ceremony
+Weekly history
+Friend challenge
+Share functionality
+Scoring rules
+
+Assets:
+
+The user selects an Asset tag after completing it.
+The selected Asset becomes the paper ball.
+The user throws it into the basket.
+A successful shot gives Team Me one point.
+A miss does not give a point and can be attempted again.
+
+Liabilities:
+
+Every Liability must be addressed each day.
+Addressed and avoided: Team Me gets one point at the Final Bell.
+Addressed but happened: Team Not Me gets one point.
+Ignored and never tapped: Team Not Me automatically gets one point.
+
+Streak:
+
+The streak continues when Team Me wins the full day.
+The streak resets to Day 1 only when Team Not Me wins the full day.
+Individual Team Not Me points do not reset the streak when Team Me still wins.
+Data persistence
+
+For the first stage, preserve the current local-storage behaviour.
+
+Do not introduce authentication, databases or cloud syncing until the visual and functional parity check has passed.
+
+Required workflow
+
+Complete the project in these stages:
+
+Stage 1 — Exact preservation
+Import the uploaded file.
+Run it unchanged.
+Confirm all interactions work.
+Do not modify its design.
+Stage 2 — Code organisation
+Separate HTML, CSS and JavaScript.
+Preserve identical visual output and behaviour.
+Do not introduce a new UI framework unless absolutely necessary.
+Stage 3 — Mobile testing
+
+Test at:
+
+320 px
+375 px
+390 px
+430 px
+768 px
+
+Pay particular attention to iPhone Safari.
+
+Stage 4 — Functional testing
+
+Test:
+
+creating Asset tags
+creating Liability tags
+selecting tags
+flicking and shooting
+swish, rim and miss
+retrying after a miss
+Final Bell
+ignored Liability scoring
+streak continuation and reset
+saved progress after reopening
+all milestone ceremonies
+Visual acceptance requirement
+
+Before considering the work complete, compare the running application directly against the uploaded original.
+
+The implementation is accepted only when:
+
+the layout is visually identical,
+the buttons remain in the same positions,
+the court and hoop remain identical,
+all features still work,
+and no Replit-generated redesign has been introduced.
+
+When uncertain, preserve the original code rather than changing it.
+
+Do not make unsolicited improvements. Ask for approval before any visual or functional modification.

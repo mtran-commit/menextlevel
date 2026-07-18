@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "MeNotMe"
+version = "1.0.0"
+id = "artifacts/menotme"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25222
+
+[services.development]
+run = "pnpm --filter @workspace/menotme run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/menotme", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/menotme/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25222"
+BASE_PATH = "/"
