@@ -36,7 +36,7 @@ function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete()
  const cx=(rf.left+rf.width/2-st.left)/st.width*100,cy=(rf.top+rf.height/2-st.top)/st.height*100,nb=(nw.bottom-st.top)/st.height*100;
  const px=(pr.left+pr.width/2-st.left)/st.width*100,py=(pr.top+pr.height/2-st.top)/st.height*100;
  const TR="translate(-50%,-50%)";p.dataset.flying="1";
- const done=()=>{p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");p.textContent=state.selected===null?"PAPER":state.assets[state.selected].name};
+ const done=()=>{p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");p.textContent=state.selected===null?"":state.assets[state.selected].name};
  const showToast=t=>{$("toast").textContent=t;$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show")};
  // scoring fires the moment the paper crosses the rim — not when the shot starts
  const scoreNow=()=>{if(o==="swish")tone(980,.13,"sine",.04);state.me++;state.combo++;state.crowd=Math.min(100,state.crowd+(o==="swish"?10:6));state.assets[state.selected].scored=true;state.selected=null;cheer();confetti();const n=$("netImg");n.classList.remove("net-anim");void n.offsetWidth;n.classList.add("net-anim");showToast(o==="swish"?"SWISH +1":"RIM IN +1");if(window.arenaReact)window.arenaReact(state.combo);render()};

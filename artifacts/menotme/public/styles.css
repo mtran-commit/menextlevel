@@ -68,7 +68,18 @@ button{cursor:pointer}
 .net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}
 
 /* Paper ball (sits exactly over the baked ball in the art) */
-.paper{left:65.17%;top:70.42%;width:9.24%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:45% 55% 48% 52%/58% 43% 57% 42%;background:linear-gradient(135deg,#fff,#c8c8c8);border:2px solid #fff;box-shadow:0 0 11px #fff,0 0 28px rgba(255,255,255,.45);color:#111;display:grid;place-items:center;padding:1.2%;font-size:clamp(6px,0.9vw,11px);font-weight:800;text-align:center;touch-action:none;cursor:grab;z-index:10}
+/* Crumpled paper ball: real texture image on top; thin transparent neon ring behind it.
+   Layering back→front: arena → hands (in artwork) → ::before glow ring → paper texture. */
+.paper{left:65.17%;top:70.42%;width:9.24%;aspect-ratio:1;transform:translate(-50%,-50%);
+  background:url("assets/paper-ball.png") center/contain no-repeat;border:none;border-radius:50%;box-shadow:none;
+  display:flex;align-items:flex-end;justify-content:center;
+  color:#fff;font-size:clamp(6px,0.8vw,10px);font-weight:800;letter-spacing:.05em;text-align:center;
+  text-shadow:0 1px 3px #000,0 0 6px #000;
+  touch-action:none;cursor:grab;z-index:10}
+.paper::before{content:"";position:absolute;inset:-8%;border-radius:50%;
+  border:1px solid rgba(255,255,255,.7);background:transparent;
+  box-shadow:0 0 10px rgba(255,255,255,.5),0 0 22px rgba(255,255,255,.18),inset 0 0 10px rgba(255,255,255,.18);
+  z-index:-1;pointer-events:none}
 .paper.dragging{cursor:grabbing}
 
 .power{left:1.8%;top:50%;width:2.6%;height:28%;display:flex;flex-direction:column-reverse;gap:4%;padding:.4%;z-index:7}
