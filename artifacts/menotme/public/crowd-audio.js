@@ -12,7 +12,7 @@ FAN_KEYS.forEach(k=>{FILES["fan_"+k+"_m"]=A+"fan_"+k+"_m.mp3";FILES["fan_"+k+"_f
 DOUBT_KEYS.forEach(k=>{FILES["doubt_"+k+"_m"]=A+"doubt_"+k+"_m.mp3";FILES["doubt_"+k+"_f"]=A+"doubt_"+k+"_f.mp3"});
 ["ambience_loop","beat_loop","cheer_small","cheer_big","groan","jeer","chant_teamme","chant_onemore","intro_rhythm"].forEach(k=>FILES[k]=A+k+".mp3");
 // Match commentator library (fictional MeNotMe announcer voice; no private names ever spoken)
-["comm_greet_1","comm_greet_2","comm_greet_3","comm_new_1","comm_win_1","comm_win_2","comm_loss_1","comm_loss_2","comm_streak_1","comm_streakbig_1","comm_neutral_1","comm_milestone_1","comm_out_1","comm_out_2","comm_out_3"].forEach(k=>FILES[k]=A+k+".mp3");
+["comm_greet_1","comm_greet_2","comm_greet_3","comm_new_1","comm_win_1","comm_win_2","comm_loss_1","comm_loss_2","comm_streak_1","comm_streakbig_1","comm_neutral_1","comm_milestone_1","comm_out_1","comm_out_2","comm_out_3","comm_tutorial_1"].forEach(k=>FILES[k]=A+k+".mp3");
 // Contextual Inspiration Engine narrated quotes (pregenerated announcer clips — no runtime TTS)
 for(let i=1;i<=64;i++){const k="insp_q"+String(i).padStart(2,"0");FILES[k]=A+k+".mp3"}
 

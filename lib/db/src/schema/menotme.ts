@@ -19,6 +19,7 @@ export const usersTable = pgTable("users", {
   signature: text("signature").default("Team Me").notNull(),
   timezone: text("timezone").default("UTC").notNull(),
   role: text("role").default("user").notNull(), // user | admin
+  tutorialDone: boolean("tutorial_done").default(false).notNull(),
   status: text("status").default("active").notNull(), // active | suspended
   createdAt: timestamp("created_at").defaultNow().notNull(),
   lastSeenAt: timestamp("last_seen_at").defaultNow().notNull(),

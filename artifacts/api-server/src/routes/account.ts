@@ -14,11 +14,12 @@ router.get("/account/profile", requireAuth, async (req: AuthedRequest, res) => {
 });
 
 router.patch("/account/profile", requireAuth, async (req: AuthedRequest, res) => {
-  const { username, signature, timezone } = req.body ?? {};
-  const set: Record<string, string> = {};
+  const { username, signature, timezone, tutorialDone } = req.body ?? {};
+  const set: Record<string, string | boolean> = {};
   if (typeof username === "string" && username.trim()) set.username = username.trim().slice(0, 40);
   if (typeof signature === "string" && signature.trim()) set.signature = signature.trim().slice(0, 60);
   if (typeof timezone === "string" && timezone.trim()) set.timezone = timezone.trim().slice(0, 64);
+  if (tutorialDone === true) set.tutorialDone = true; // monotonic — completion is never revoked
   if (Object.keys(set).length === 0) return res.status(400).json({ error: "Nothing to update" });
   const [user] = await db.update(usersTable).set(set).where(eq(usersTable.id, req.userId!)).returning();
   await logAudit({ userId: req.userId!, actorId: req.userId!, action: "profile_updated", details: set });

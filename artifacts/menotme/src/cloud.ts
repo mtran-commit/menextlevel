@@ -6,6 +6,7 @@
 import { Clerk } from "@clerk/clerk-js/no-rhc";
 import { publishableKeyFromHost } from "@clerk/shared/keys";
 import "./cloud.css";
+import { initTutorial, startTutorial, practiceActive } from "./tutorial";
 
 const KEY = "menotme_complete_v1";
 const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
@@ -378,6 +379,7 @@ function scheduleSync() {
   syncTimer = window.setTimeout(pushState, 1500);
 }
 async function pushState() {
+  if (practiceActive()) return; // tutorial practice mode must never sync its throwaway state
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return;
@@ -690,7 +692,7 @@ const FLAG_PROMPT_WIN = "mnm_prompt_first_win";
 const FLAG_PROMPT_3D = "mnm_prompt_three_days";
 
 function signupPrompt(title: string, body: string, cta: string) {
-  if (overlay || document.querySelector(".mnm-onb")) return;
+  if (overlay || document.querySelector(".mnm-onb") || document.querySelector(".tut")) return;
   track("signup_prompt_shown");
   const wrap = el("div", "mnm-onb") as HTMLDivElement;
   const card = el("div", "mnm-panel mnm-onb-card");
@@ -760,180 +762,6 @@ function needsOnboarding(): boolean {
   return true;
 }
 
-function applyTags(assets: string[], liabilities: string[]) {
-  const s = peekState();
-  if (!s) return;
-  s.assets = assets.map((name) => ({ name, done: false, scored: false }));
-  s.liabilities = liabilities.map((name) => ({ name, addressed: false, avoided: true }));
-  s.selected = null;
-  localStorage.setItem(KEY, JSON.stringify(s));
-  window.loadState?.();
-  window.render?.();
-}
-
-function onbCard(): { wrap: HTMLDivElement; card: HTMLDivElement } {
-  document.querySelector(".mnm-onb")?.remove();
-  const wrap = el("div", "mnm-onb") as HTMLDivElement;
-  const card = el("div", "mnm-panel mnm-onb-card") as HTMLDivElement;
-  wrap.appendChild(card);
-  document.body.appendChild(wrap);
-  return { wrap, card };
-}
-
-function tagInputs(card: HTMLDivElement, placeholders: string[]): HTMLInputElement[] {
-  return placeholders.map((ph) => {
-    const r = el("div", "mnm-row");
-    const i = el("input") as HTMLInputElement;
-    i.type = "text";
-    i.placeholder = ph;
-    i.maxLength = 40;
-    r.appendChild(i);
-    card.appendChild(r);
-    return i;
-  });
-}
-
-function runOnboarding() {
-  track("onboarding_started", { once: true });
-  step1();
-
-  function step1() {
-    const { card } = onbCard();
-    card.appendChild(el("h3", undefined, "TEAM ME vs TEAM NOT ME"));
-    card.appendChild(
-      el(
-        "p",
-        "mnm-muted",
-        "Team Me is the person you want to become.<br>Team Not Me is everything trying to pull you backwards.",
-      ),
-    );
-    const go = el("button", "mnm-btn solid", "LET'S PLAY");
-    go.onclick = step2;
-    const r = el("div", "mnm-row");
-    r.appendChild(go);
-    card.appendChild(r);
-  }
-
-  function step2() {
-    const { card } = onbCard();
-    card.appendChild(el("h3", undefined, "Build your Team Me"));
-    card.appendChild(el("p", "mnm-muted", "Add 3 things you want more of in your life."));
-    const inputs = tagInputs(card, ["e.g. Go to the gym", "e.g. Read a book", "e.g. Spend time with family"]);
-    const err = el("p", "mnm-muted", "");
-    const go = el("button", "mnm-btn solid", "NEXT");
-    go.onclick = () => {
-      const vals = inputs.map((i) => i.value.trim()).filter(Boolean);
-      if (vals.length < 3) {
-        err.textContent = "Add all 3 to build your team.";
-        return;
-      }
-      vals.forEach((_, i) => track(`asset_${i + 1}_created`, { once: true }));
-      step3(vals);
-    };
-    const r = el("div", "mnm-row");
-    r.appendChild(go);
-    card.append(r, err);
-    inputs[0]?.focus();
-  }
-
-  function step3(assets: string[]) {
-    const { card } = onbCard();
-    card.appendChild(el("h3", undefined, "Choose your opponents"));
-    card.appendChild(el("p", "mnm-muted", "Add 3 things you want less of in your life."));
-    const inputs = tagInputs(card, ["e.g. Smoking", "e.g. Procrastination", "e.g. Mindless scrolling"]);
-    const err = el("p", "mnm-muted", "");
-    const go = el("button", "mnm-btn solid", "START THE GAME");
-    go.onclick = () => {
-      const vals = inputs.map((i) => i.value.trim()).filter(Boolean);
-      if (vals.length < 3) {
-        err.textContent = "Add all 3 to know your opponents.";
-        return;
-      }
-      vals.forEach((_, i) => track(`liability_${i + 1}_created`, { once: true }));
-      applyTags(assets, vals);
-      document.querySelector(".mnm-onb")?.remove();
-      teachFirstShot();
-    };
-    const r = el("div", "mnm-row");
-    r.appendChild(go);
-    card.append(r, err);
-    inputs[0]?.focus();
-  }
-}
-
-function hint(msg: string) {
-  document.querySelector(".mnm-hint")?.remove();
-  const h = el("div", "mnm-hint", esc(msg));
-  document.body.appendChild(h);
-}
-function clearHint() {
-  document.querySelector(".mnm-hint")?.remove();
-}
-function highlightFirstAsset(on: boolean) {
-  document.querySelectorAll("#assets .tag").forEach((b, i) => b.classList.toggle("mnm-glow", on && i === 0));
-}
-
-function teachFirstShot() {
-  let phase: "select" | "shoot" | "done" = "select";
-  highlightFirstAsset(true);
-  hint("Did you do this today? Tap it.");
-
-  // #assets is re-rendered on every render(); keep the glow alive
-  const assetsEl = document.getElementById("assets");
-  const mo = new MutationObserver(() => {
-    if (phase === "select") highlightFirstAsset(true);
-  });
-  if (assetsEl) mo.observe(assetsEl, { childList: true });
-
-  let attempted = false;
-  const paper = document.getElementById("paper");
-  const onAttempt = () => {
-    if (!attempted && phase === "shoot") {
-      attempted = true;
-      track("first_shot_attempted", { once: true });
-    }
-  };
-  paper?.addEventListener("pointerup", onAttempt);
-  document.getElementById("shoot")?.addEventListener("click", onAttempt);
-
-  const unhook = onGameSave(() => {
-    const s = peekState();
-    if (!s) return;
-    if (phase === "select" && s.selected !== null) {
-      phase = "shoot";
-      track("first_asset_selected", { once: true });
-      highlightFirstAsset(false);
-      document.getElementById("paper")?.classList.add("mnm-glow");
-      document.getElementById("shoot")?.classList.add("mnm-glow-ring");
-      hint("Pull back and flick.");
-    }
-    if (phase !== "done" && s.me >= 1) {
-      phase = "done";
-      mo.disconnect();
-      unhook();
-      track("first_shot_scored", { once: true });
-      clearHint();
-      document.getElementById("paper")?.classList.remove("mnm-glow");
-      document.getElementById("shoot")?.classList.remove("mnm-glow-ring");
-      setTimeout(celebrateFirstBasket, 900);
-    }
-  });
-}
-
-function celebrateFirstBasket() {
-  const { card } = onbCard();
-  card.appendChild(el("h3", undefined, "YOU JUST SCORED FOR TEAM ME"));
-  card.appendChild(el("p", "mnm-muted", "Every decision changes the score."));
-  const go = el("button", "mnm-btn solid", "KEEP PLAYING");
-  go.onclick = () => {
-    document.querySelector(".mnm-onb")?.remove();
-    localStorage.setItem(FLAG_ONBOARDED, "1");
-    track("onboarding_completed", { once: true });
-  };
-  const r = el("div", "mnm-row");
-  r.appendChild(go);
-  card.appendChild(r);
-}
 
 // ---------- guest fab (single "save progress" button) ----------
 function guestFab() {
@@ -953,13 +781,19 @@ function guestFab() {
 
 // ---------- boot ----------
 (async () => {
+  initTutorial({
+    api,
+    track,
+    onGameSave,
+    isSignedIn: () => !!clerk.user,
+  });
   track("landing_game_loaded");
   try {
     await clerk.load();
   } catch (e) {
     console.error("Clerk failed to load", e);
     // Clerk down — game still fully playable as guest
-    if (needsOnboarding()) runOnboarding();
+    if (needsOnboarding()) startTutorial({ practice: false });
     return;
   }
 
@@ -983,7 +817,7 @@ function guestFab() {
   // Guest mode: play first, sign up later.
   unhookGuestTriggers = watchGuestTriggers();
   guestFab();
-  if (needsOnboarding()) runOnboarding();
+  if (needsOnboarding()) startTutorial({ practice: false });
 })();
 
 async function onSignedIn() {
@@ -1000,6 +834,16 @@ async function onSignedIn() {
   fab();
   refreshUnread();
   setInterval(refreshUnread, 60_000);
-  // brand-new registered user with no prior guest data → same onboarding
-  if (needsOnboarding()) runOnboarding();
+  // tutorial completion is account-level for registered users
+  try {
+    const { user } = (await api("/account/profile")) as { user: { tutorialDone?: boolean } };
+    if (user?.tutorialDone) {
+      localStorage.setItem("mnm_tutorial_done_v1", "1");
+      localStorage.setItem(FLAG_ONBOARDED, "1");
+    }
+  } catch {
+    /* offline — fall back to local flags */
+  }
+  // brand-new registered user with no prior guest data → same tutorial
+  if (needsOnboarding()) startTutorial({ practice: false });
 }

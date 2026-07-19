@@ -414,3 +414,9 @@ id = "41eI1QeLNqUnGyaVdceF6"
 uri = "file://artifacts/menotme/public/assets/audio/insp_q62.mp3"
 type = "audio"
 title = "insp q62"
+
+[[outputs]]
+id = "oAN20U1lzm17zcFyvvSUf"
+uri = "file://artifacts/menotme/public/assets/audio/comm_tutorial_1.mp3"
+type = "audio"
+title = "tutorial commentator clip"

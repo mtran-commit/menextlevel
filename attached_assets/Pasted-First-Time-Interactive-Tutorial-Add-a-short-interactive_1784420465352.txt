@@ -1,0 +1,479 @@
+First-Time Interactive Tutorial
+
+Add a short interactive first-time tutorial that explains how MeNotMe works inside the existing arena.
+
+Do not create a separate onboarding page.
+
+Do not redesign the main game interface.
+
+The tutorial should appear as an overlay on top of the existing game and highlight real parts of the interface step by step.
+
+Core principle
+
+The user should learn MeNotMe by actually playing their first point.
+
+The tutorial must feel like the opening of a game, not like filling in a form.
+
+1. When to show it
+
+Show the tutorial only when:
+
+the visitor is new
+they have never completed the tutorial before
+
+For guests, store tutorial completion locally.
+
+For registered users, save tutorial completion to their account.
+
+Returning users must not see it again automatically.
+
+Add a permanent option in:
+
+Profile → How to Play
+
+so the tutorial can be replayed later.
+
+Also provide:
+
+Skip Tutorial
+
+during the first-time experience.
+
+2. Tutorial Step 1 — Welcome
+
+Keep the arena visible in the background.
+
+Dim the rest of the interface slightly.
+
+Display:
+
+WELCOME TO MENOTME
+
+Text:
+
+Every day is a game between who you want to become and what holds you back.
+
+Button:
+
+SHOW ME HOW
+
+Do not navigate away from the game.
+
+3. Tutorial Step 2 — Team Me
+
+Highlight the Team Me side of the scoreboard.
+
+Dim other areas.
+
+Display:
+
+THIS IS TEAM ME
+
+Text:
+
+Your Assets play for Team Me.
+
+Positive actions like working out, reading and learning can score points for the person you want to become.
+
+Button:
+
+NEXT
+
+4. Tutorial Step 3 — Team Not Me
+
+Highlight Team Not Me.
+
+Display:
+
+THIS IS TEAM NOT ME
+
+Text:
+
+Your Liabilities play against you.
+
+Habits and choices you want less of can score points for Team Not Me.
+
+Button:
+
+NEXT
+
+5. Tutorial Step 4 — Choose Assets
+
+Highlight the Assets panel.
+
+Display:
+
+BUILD YOUR TEAM ME
+
+Text:
+
+Choose at least 3 Assets.
+
+Show these suggested Assets:
+
+Workout
+Read
+Drink Water
+Eat Healthy
+Sleep Well
+Quality Time
+Work on My Goals
+
+Also show:
+
++ Create My Own
+
+The user must choose at least 3.
+
+Selected Assets should immediately appear in the real Asset panel.
+
+Do not create duplicate tags.
+
+Button becomes active after 3 Assets are selected:
+
+NEXT
+
+6. Tutorial Step 5 — Choose Liabilities
+
+Highlight the Liabilities panel.
+
+Display:
+
+CHOOSE YOUR OPPONENTS
+
+Text:
+
+Choose at least 3 Liabilities you want less of in your life.
+
+Show these suggested Liabilities:
+
+Smoking
+Unnecessary Spending
+Mindless Scrolling
+Too Much Sugar
+Self-Doubt
+Negative Vibes
+Procrastination
+
+Also show:
+
++ Create My Own
+
+Selected Liabilities should immediately appear in the real Liability panel.
+
+Button becomes active after 3 are selected:
+
+START MY FIRST GAME
+
+7. Tutorial Step 6 — Complete an Asset
+
+Return focus to the full arena.
+
+Highlight one Asset tag.
+
+Display:
+
+DID YOU DO THIS TODAY?
+
+Text:
+
+Tap a completed Asset.
+
+When the user taps it:
+
+the Asset becomes the crumpled paper
+the paper appears in the user's hands
+the basket glows slightly
+
+Then proceed automatically.
+
+8. Tutorial Step 7 — Teach the shot
+
+Highlight:
+
+paper
+hands
+basket
+
+Display:
+
+PULL BACK. FLICK. SCORE.
+
+Text:
+
+Pull the paper back and release it toward the basket.
+
+The user must perform the actual drag-and-flick gesture.
+
+Do not automatically shoot for them.
+
+Do not allow the tutorial to progress until the user attempts the shot.
+
+9. First successful basket
+
+If the user misses:
+
+Display briefly:
+
+MISS — TRY AGAIN
+
+Allow unlimited retries.
+
+Do not penalise Team Me during the tutorial.
+
+When the user scores:
+
+paper travels through the rim
+net moves
+paper disappears below the net
+Team Me becomes 1
+cheer sound plays
+Fans react
+confetti appears
+
+Display:
+
+YOU JUST SCORED FOR TEAM ME
+
+Then:
+
+Every decision changes the score.
+
+Button:
+
+KEEP GOING
+
+10. Tutorial Step 8 — Explain Liabilities
+
+Highlight the Liability panel.
+
+Display:
+
+BEAT TEAM NOT ME
+
+Text:
+
+Avoid a Liability and Team Me can score at the Final Bell.
+
+If it happens, Team Not Me scores.
+
+Ignore it completely and Team Not Me gets the point automatically.
+
+Show the three states visually:
+
+AVOIDED
+HAPPENED
+IGNORED
+
+Button:
+
+NEXT
+
+11. Tutorial Step 9 — Explain Final Bell
+
+Highlight the Final Bell timer.
+
+Display:
+
+THE FINAL BELL DECIDES THE DAY
+
+Text:
+
+At the end of the day, the final score determines who wins.
+
+Win the day to build your Team Me streak.
+
+Button:
+
+NEXT
+
+12. Tutorial Step 10 — Explain streaks
+
+Highlight the Day Streak display.
+
+Display:
+
+WIN THE DAY. BUILD THE STREAK.
+
+Text:
+
+Team Me wins the day when it finishes with the higher score.
+
+If Team Not Me wins the day, your streak returns to Day 1.
+
+Do not suggest that one individual Liability point resets the streak.
+
+Only the full daily result determines the streak.
+
+Button:
+
+LET'S PLAY
+
+13. Final tutorial sequence
+
+After the user taps LET'S PLAY:
+
+The commentator says:
+
+“The teams are ready. The arena is waiting. Welcome to your first game.”
+
+Then play the original MeNotMe arena intro rhythm:
+
+TUM — TA — TUM TUM — TA
+
+Then:
+
+arena lights pulse
+court neon travels
+Fans cheer
+scoreboard is ready
+normal gameplay begins
+
+Keep the full final sequence short.
+
+Approximately 4–7 seconds maximum.
+
+Allow:
+
+Skip Intro
+
+if the user wants to begin immediately.
+
+14. Tutorial visual behaviour
+
+Use:
+
+existing black background
+white neon
+existing typography
+existing arena
+existing glass UI
+
+Do not introduce:
+
+colourful tutorial cards
+stock illustrations
+cartoon characters
+new visual themes
+
+Use a subtle spotlight/highlight effect around the current UI element.
+
+Dim non-relevant parts of the arena slightly.
+
+Do not fully hide the court.
+
+The user should always feel like they are still inside the arena.
+
+15. Tutorial interaction rules
+
+During each tutorial step:
+
+only the relevant control should be active when appropriate
+prevent accidental actions on unrelated controls
+allow Skip Tutorial at all times
+preserve any Assets or Liabilities already created
+do not reset game data if tutorial is replayed
+
+When replayed from Profile → How to Play:
+
+use existing tags
+do not require creating new Assets or Liabilities
+demonstrate the relevant controls without changing the user's real score unless they explicitly choose to practise in Tutorial Mode
+16. Practice mode for replayed tutorial
+
+If the user replays How to Play later:
+
+Use a temporary practice score.
+
+Do not modify:
+
+official daily score
+streak
+achievements
+season
+history
+
+Label it:
+
+PRACTICE MODE
+
+When complete, return them to the real game unchanged.
+
+17. Audio
+
+Tutorial respects:
+
+Master Audio On/Off
+Commentator On/Off
+Crowd Audio On/Off
+Sound Effects On/Off
+
+If Master Audio is Off:
+
+show all tutorial text
+do not play commentator or sound effects
+
+Do not force audio on.
+
+18. Mobile behaviour
+
+Make sure tutorial overlays do not cover:
+
+highlighted control
+paper
+basket
+key information
+
+Position tutorial messages dynamically depending on screen size.
+
+Test:
+
+320px
+375px
+390px
+393px
+430px
+768px
+
+The tutorial must work on real iPhone Safari with touch gestures.
+
+19. Analytics
+
+Track:
+
+tutorial_started
+tutorial_skipped
+tutorial_team_me_viewed
+tutorial_team_not_me_viewed
+tutorial_assets_selected
+tutorial_liabilities_selected
+tutorial_first_shot_attempted
+tutorial_first_shot_missed
+tutorial_first_shot_scored
+tutorial_final_bell_explained
+tutorial_completed
+tutorial_replayed
+Acceptance criteria
+
+The tutorial is complete only when:
+
+A new user sees the arena immediately.
+The tutorial happens inside the arena.
+Team Me and Team Not Me are explained.
+The user chooses at least 3 Assets.
+The user chooses at least 3 Liabilities.
+The user physically makes their first paper shot.
+A successful first shot gives the correct celebration.
+Liability scoring is explained.
+Final Bell is explained.
+Streak rules are explained correctly.
+Tutorial completion is saved.
+Returning users skip it automatically.
+The tutorial can be replayed from How to Play.
+Replayed tutorials do not change official game data.
+The existing premium arena design remains unchanged.
+Critical instruction
+
+Do not redesign the MeNotMe game to implement this tutorial.
+
+The tutorial must be built as a guided interactive layer over the existing arena and real controls.
