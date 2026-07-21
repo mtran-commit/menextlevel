@@ -200,6 +200,9 @@ button{cursor:pointer}
 @media (max-width:680px){
   .stage{aspect-ratio:856/666;background-size:179.44% 153.75%;background-position:50% 64.8%}
   .court-pulse{mask-size:179.44% 153.75%;-webkit-mask-size:179.44% 153.75%;mask-position:50% 64.8%;-webkit-mask-position:50% 64.8%}
+  /* .pa spans 100% width — on mobile Safari the mask misaligns at 179% scale and the raw
+     white gradient shows as a broad floor sweep. Hide it; .pb (key area, tight insets) remains. */
+  .court-pulse.pa{display:none}
   .court-pulse.pb{clip-path:inset(56.5% 36.3% 10.2% 24.3%)}
   #rimFront{left:46.50%;width:6.78%}
   #netWrap{left:47.20%;width:5.37%}
@@ -224,6 +227,14 @@ button{cursor:pointer}
   .iconbtn{width:32px;height:32px;border-radius:8px}
   .iconbtn svg{width:17px;height:17px}
   .streak-chip{font-size:8px;padding:5px 6px;letter-spacing:.02em}
+  /* Shoot button: hide the floating white sphere on mobile. On desktop it sits close to the
+     paper ball (left≈65% vs center≈50%), so they read as one element. On mobile the paper
+     moves to left:77% while the ball stays at center≈50%, creating a second phantom white
+     circle in the middle of the court. The #paper element is the real interactive ball. */
+  .shootbtn .ball{display:none}
+  /* Paper ball: reduce the ::before glow ring on mobile — the larger element size (16.59% vs
+     9.24% on desktop) makes the inset shadow too prominent, adding to the "white circle" look. */
+  .paper::before{box-shadow:0 0 6px rgba(255,255,255,.35),0 0 12px rgba(255,255,255,.1),inset 0 0 6px rgba(255,255,255,.1)}
   /* cinematic edge vignette; also hides banner slivers cut by the crop window */
   .stage::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 9%,rgba(0,0,0,0) 91%,#000 100%)}
   /* --- mobile court reflection fix ---

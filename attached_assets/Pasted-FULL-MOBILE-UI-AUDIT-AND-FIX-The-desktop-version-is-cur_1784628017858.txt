@@ -1,0 +1,195 @@
+FULL MOBILE UI AUDIT AND FIX
+
+The desktop version is currently correct.
+
+DO NOT MODIFY THE DESKTOP VERSION.
+
+We have discovered multiple visual fixes that were successfully applied to desktop but are still incorrect on mobile.
+
+Therefore, perform a complete audit of the mobile implementation rather than fixing only one individual issue.
+
+Known Issue 1 — White court reflection
+
+On mobile, there is still a large white glowing/reflection area moving or appearing across the basketball court.
+
+Desktop is correct and displays only illuminated neon court lines.
+
+Mobile must match this behaviour:
+
+black court + neon court lines + travelling light contained within the lines only.
+
+Remove the broad white floor reflection/glow on mobile.
+
+Inspect mobile media queries, pseudo-elements, gradients, overlays, filters and animation layers to find what is generating it.
+
+Known Issue 2 — White circle covering the paper
+
+The desktop version correctly removed the solid white circular layer around/in front of the crumpled paper.
+
+Mobile is still rendering the old white circle.
+
+Remove this mobile-only white circle.
+
+The user should see the actual crumpled paper ball clearly.
+
+The correct layering must be:
+
+Arena → hands → subtle transparent glow → actual crumpled paper
+
+There must NOT be:
+
+a solid white circle
+a white circular button behind the paper
+a white pseudo-element covering the paper
+the Asset name displayed on a solid white circle
+
+The selected Asset name may be shown subtly on/near the crumpled paper if required, but it must not replace the paper texture.
+
+Preserve all drag, pull-back and flick functionality.
+
+IMPORTANT — DO NOT STOP AFTER FIXING THESE TWO ISSUES
+
+Perform a complete mobile-vs-desktop visual comparison of the entire MeNotMe arena.
+
+Desktop is the approved reference.
+
+Check every component for mobile-specific CSS or rendering that is overriding the approved desktop styling.
+
+Specifically inspect:
+
+Arena
+court
+neon lines
+travelling neon animation
+reflections
+floor glow
+hoop
+rim
+net
+backboard
+Shot system
+hands
+crumpled paper
+paper glow
+pull-back animation
+shot trajectory
+rim layering
+net animation
+Header
+hamburger
+Day Streak
+MeNotMe logo
+trophy
+stats
+share
+Scoreboard
+Team Me
+Team Not Me
+red LED numbers
+Final Bell
+labels
+Arena audience
+Fans
+Doubters
+signs
+crowd
+sponsor boards
+Game controls
+Asset Shot
+Add Asset
+Shoot
+Add Liability
+Liability List
+Lower interface
+Assets panel
+Liabilities panel
+Crowd Energy
+Combo
+Audio controls
+bottom navigation
+FIND THE ROOT CAUSE
+
+Search the codebase for mobile-specific overrides including:
+
+@media
+max-width
+min-width
+mobile component variants
+duplicated mobile components
+::before
+::after
+gradients
+box-shadow
+filter
+blur
+opacity
+background
+mix-blend-mode
+absolute overlays
+different z-index values
+
+Determine whether mobile is rendering:
+
+an older duplicate component,
+mobile-specific CSS overriding the corrected desktop CSS,
+pseudo-elements that were removed only from desktop,
+or a separate mobile animation implementation.
+
+Fix the root cause, not just visually cover the problem.
+
+MOBILE SOURCE-OF-TRUTH RULE
+
+Wherever possible, desktop and mobile should use the same core component and visual logic.
+
+Mobile CSS should only change:
+
+dimensions
+spacing
+responsive positioning
+typography sizing where necessary
+touch interaction requirements
+
+Mobile should NOT silently use older visual effects or duplicate versions of game components.
+
+REAL MOBILE TESTING
+
+Test the completed application at:
+
+320px
+375px
+390px
+393px
+430px
+768px
+
+Specifically test Safari/iPhone behaviour.
+
+Do not rely only on desktop browser resizing.
+
+Check portrait orientation.
+
+ACCEPTANCE REQUIREMENT
+
+Compare desktop and mobile side-by-side.
+
+The mobile version must preserve the same approved visual language as desktop.
+
+The only differences should be necessary responsive layout adjustments.
+
+Specifically confirm:
+
+1. No large white reflection across the mobile court.
+
+2. No solid white circle covering/replacing the crumpled paper.
+
+3. Neon animation remains confined to the court lines.
+
+4. Actual crumpled paper remains clearly visible.
+
+5. No overlapping controls.
+
+6. No mobile-only outdated visual elements.
+
+7. Desktop remains visually unchanged.
+
+After completing the audit, provide me with a short list of every mobile-specific inconsistency found and what was changed to correct it.

@@ -2,3 +2,4 @@
 - [MeNotMe cloud layer](menotme-cloud-layer.md) — backend/auth is an additive layer; Clerk must be headless (no prebuilt UI); scheduler mirrors app.js gate logic with CAS writes.
 - [MeNotMe inspiration engine](menotme-inspiration-engine.md) — deterministic triggers only, pregenerated clips, `state` is a let (no window.state), time-based narration guards.
 - [MeNotMe tutorial](menotme-tutorial.md) — spotlight tutorial over the live arena; practice snapshot must be crash-safe; overlay cards must never cover the paper drag zone.
+- [MeNotMe mobile visual rules](menotme-mobile-visual.md) — two mobile-only rendering bugs fixed; court-pulse.pa hidden; shootbtn .ball hidden; paper::before glow reduced.
