@@ -422,18 +422,25 @@ async function pullCloudState() {
 let unread = 0;
 let bellBadge: HTMLSpanElement | null = null;
 function fab() {
+  // Notification bell stays as a floating FAB (top-right, below header).
   const wrap = el("div", "mnm-fab");
   const bell = el("button", undefined, "&#128276;");
   bell.setAttribute("aria-label", "Notifications");
   bellBadge = el("span", "mnm-badge") as HTMLSpanElement;
   bellBadge.style.display = "none";
   bell.appendChild(bellBadge);
-  const account = el("button", undefined, "&#9786;");
-  account.setAttribute("aria-label", "Account");
-  wrap.append(bell, account);
+  wrap.appendChild(bell);
   document.body.appendChild(wrap);
   bell.onclick = () => togglePanel("notifications");
-  account.onclick = () => togglePanel("account");
+
+  // Auth pill in the header switches to "PROFILE" for signed-in users.
+  const btn = document.getElementById("authBtn") as HTMLButtonElement | null;
+  if (btn) {
+    btn.innerHTML =
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>PROFILE`;
+    btn.setAttribute("aria-label", "Profile");
+    btn.onclick = () => togglePanel("account");
+  }
 }
 function setUnread(n: number) {
   unread = n;
@@ -763,20 +770,17 @@ function needsOnboarding(): boolean {
 }
 
 
-// ---------- guest fab (single "save progress" button) ----------
+// ---------- header auth button (guest: "CREATE FREE ACCOUNT", signed-in: "PROFILE") ----------
 function guestFab() {
-  const wrap = el("div", "mnm-fab");
-  const save = el("button", undefined, "&#9786;");
-  save.setAttribute("aria-label", "Save your progress");
-  wrap.appendChild(save);
-  document.body.appendChild(wrap);
-  save.onclick = () =>
+  // Wire the #authBtn pill already in the HTML header — no floating FAB for guest.
+  const btn = document.getElementById("authBtn") as HTMLButtonElement | null;
+  if (!btn) return;
+  btn.onclick = () =>
     signupPrompt(
       "Save your progress",
       "Create a free account to unlock friend challenges, full history and playing on any device.",
       "CREATE FREE ACCOUNT",
     );
-  return wrap;
 }
 
 // ---------- boot ----------
