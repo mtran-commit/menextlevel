@@ -234,8 +234,9 @@ button{cursor:pointer}
   .panel.assets,.panel.liabilities{position:static;left:auto;top:auto;width:auto;height:230px;padding:8px}
   .tag{font-size:11px}
   .panel h2{font-size:10px}
+  .brand{min-width:0}
   .brand p{display:none}
-  .brand h1{font-size:17px;letter-spacing:.1em}
+  .brand h1{font-size:17px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* Scoreboard: show short team labels on mobile to avoid overflow */
   .tl-full{display:none}
   .tl-short{display:inline}
@@ -260,6 +261,17 @@ button{cursor:pointer}
      On mobile portrait we remove that filter so only the masked line paths are lit.
      The travelling neon gradient animation is preserved; the bloom band is not. */
   .court-pulse{filter:none}
+}
+
+/* ---------- Very small phones (≤393px) : compact header ----------
+   Streak chip hides "DAY" and "STREAK" text → shows only 🔥 N.
+   Brand font scales down so the three header groups never collide.
+   Math at 393px: left(~68px) + brand(~140px) + right(~135px) = 343px < 377px ✓
+   Math at 320px: left(~68px) + brand(~110px) + right(~135px) = 313px > 304px → icon-only
+   auth at ≤375px (see cloud.css) shrinks right to ~69px → 68+110+69=247px < 304px ✓ */
+@media (max-width:393px){
+  .str-long{display:none}
+  .brand h1{font-size:13px;letter-spacing:.08em}
 }
 
 /* ---------- New-day arena intro ---------- */
