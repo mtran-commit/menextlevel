@@ -221,10 +221,21 @@ button{cursor:pointer}
   #rimFront{left:46.50%;width:6.78%}
   #netWrap{left:47.20%;width:5.37%}
   .paper{left:77.22%;width:16.59%;font-size:clamp(6px,1.9vw,11px)}
-  .actionbar{left:11.10%;width:77.92%}
-  .ab{font-size:clamp(5px,1.55vw,10px)}
+  /* Action bar: swap from flex to 5-column grid so each control gets its own lane.
+     Regular columns: 1fr each. Shoot centre: 1.35fr (visually dominant).
+     left/width expanded slightly so the outer cells don't crowd the stage vignette. */
+  .actionbar{left:6%;width:88%;display:grid;grid-template-columns:1fr 1fr 1.35fr 1fr 1fr}
+  /* .ab becomes a grid item — flex:none removes the old flex-item sizing.
+     min-width:0 lets the grid lane constrain it. Font floor raised to 7px (readable). */
+  .ab{font-size:clamp(7px,2vw,10px);min-width:0;flex:none}
+  .shootbtn{flex:none}
+  /* Label spans: width:100% fills the grid lane, letting text wrap to two lines (e.g.
+     "ADD / LIABILITY", "LIABILITY / LIST"). text-align:center keeps them under the icon. */
+  .ab > span:last-child{white-space:normal;text-align:center;width:100%;overflow-wrap:break-word}
   .power{display:none}
-  .sign{font-size:clamp(5px,1.35vw,10px)}
+  /* Signs: raise font floor from 5px → 6px and increase vw coefficient for better
+     readability on narrow viewports. overflow:hidden already prevents cross-sign overflow. */
+  .sign{font-size:clamp(6px,2vw,10px)}
   .sign.s1,.sign.s2,.sign.s3,.sign.d3,.sign.d4,.sign.d5{display:none}
   .sign.s4{left:4.09%;width:9.58%}
   .sign.s5{left:16.36%;width:10.16%}
@@ -233,7 +244,11 @@ button{cursor:pointer}
   .panels{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
   .panel.assets,.panel.liabilities{position:static;left:auto;top:auto;width:auto;height:230px;padding:8px}
   .tag{font-size:11px}
-  .panel h2{font-size:10px}
+  /* Panel headings: min-width:0 allows the flex item to shrink below its text min-content
+     so text-overflow:ellipsis actually triggers. flex-shrink:0 on .plus keeps it always
+     visible at the right edge regardless of heading length. */
+  .panel h2{font-size:10px;min-width:0}
+  .plus{flex-shrink:0}
   .brand{min-width:0}
   .brand p{display:none}
   .brand h1{font-size:17px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

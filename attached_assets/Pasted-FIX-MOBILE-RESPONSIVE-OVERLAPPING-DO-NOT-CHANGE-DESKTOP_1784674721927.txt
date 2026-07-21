@@ -1,0 +1,86 @@
+FIX MOBILE RESPONSIVE OVERLAPPING — DO NOT CHANGE DESKTOP
+
+The mobile version of the Home/Arena screen has multiple text and button overlap problems. Please fix the responsive CSS/layout specifically for mobile widths.
+
+IMPORTANT: The desktop version is already correct. Do not change the desktop layout or styling. Apply these changes only at mobile/tablet breakpoints.
+
+1. Fix the 5 game controls around the SHOOT button
+
+The following controls currently overlap on mobile:
+
+Asset Shot
+Add Asset
+Shoot
+Add Liability
+Liability List
+
+Do NOT simply reduce the font until everything becomes unreadable.
+
+Make the mobile control bar properly responsive:
+
+Each control must have its own defined space.
+No text may enter the neighbouring control.
+Keep SHOOT as the dominant centre button.
+Allow labels such as ADD LIABILITY and LIABILITY LIST to wrap to two lines if necessary.
+Centre each label underneath its icon.
+Use consistent gaps between controls.
+Use min-width: 0 where required on flex/grid children.
+Prevent uncontrolled overflow.
+Do not use fixed desktop pixel widths for these controls on mobile.
+
+A CSS Grid layout with five columns can be used if appropriate, with the centre SHOOT column slightly larger than the other four.
+
+2. Fix the arena signs at the top
+
+The four arena/team signs are being compressed and their words are cut off/overlapping.
+
+On mobile:
+
+Do not force four full-width signs into space that cannot accommodate them.
+Reduce their width/font proportionally OR create a responsive arrangement.
+Text must stay completely inside each sign.
+No sign should overlap another sign.
+Use responsive font sizing such as clamp().
+Maintain the existing black-and-white arena aesthetic.
+3. Assets and Liabilities headings
+
+Make the headings responsive.
+
+If the full team name cannot fit, either:
+
+intelligently reduce the font size, or
+allow the team name portion to truncate cleanly with one ellipsis.
+
+The + button on the right must always remain completely visible and must never overlap the heading.
+
+4. Test the entire mobile Home screen
+
+Please inspect the DOM/CSS for all elements, not only the ones visually obvious in the screenshot.
+
+Check for:
+
+fixed pixel widths
+absolute positioning causing collisions
+negative margins
+white-space: nowrap
+fixed gaps that are too large for mobile
+elements wider than their containers
+desktop positioning rules still being applied on mobile
+Mobile breakpoint
+
+Apply the fixes at approximately:
+@media (max-width: 768px)
+
+Also test specifically around:
+
+320px
+375px
+390px
+393px
+430px
+
+There must be ZERO horizontal overlap and ZERO text/button collisions at all of these widths.
+
+Do not redesign the page. Preserve the current visual design and game concept — only correct the responsive layout.
+
+Also make sure these fixes do not reintroduce the previous mobile circle/paper issue or affect the desktop version.
