@@ -51,9 +51,9 @@
 
   /* ---------- creatives ---------- */
   const HOUSE = [
-    { id: 0, adType: "logo", sponsorName: "MENOTME", textContent: "OFFICIAL ARENA", durationSec: 10, frequency: 1 },
-    { id: 0, adType: "text", sponsorName: "MENOTME", textContent: "PLAY FOR THE PERSON YOU WANT TO BECOME", durationSec: 10, frequency: 1 },
-    { id: 0, adType: "text", sponsorName: "TEAM ME", textContent: "EVERY DAY IS GAME DAY", durationSec: 10, frequency: 1 },
+    { id: 0, adType: "logo", sponsorName: "ME NEXT LEVEL", textContent: "OFFICIAL ARENA", durationSec: 10, frequency: 1 },
+    { id: 0, adType: "text", sponsorName: "ME NEXT LEVEL", textContent: "LIVE YOUR FUTURE IN YOUR PRESENT", durationSec: 10, frequency: 1 },
+    { id: 0, adType: "text", sponsorName: "TEAM ME NEXT LEVEL", textContent: "EVERY DAY IS GAME DAY", durationSec: 10, frequency: 1 },
   ];
 
   function creativeHTML(c) {

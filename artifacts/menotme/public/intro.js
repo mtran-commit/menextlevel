@@ -44,8 +44,8 @@ function build(){
   const ov=document.createElement("div");ov.id="introOverlay";
   let res;
   if(last){
-    const w=last.me>last.notme?"TEAM ME TOOK THE DAY":last.notme>last.me?"TEAM NOT ME TOOK THE DAY":"IT WAS A DRAW";
-    res="<p class='io-label'>YESTERDAY'S RESULT</p><p class='io-score'>"+last.me+" — "+last.notme+"</p><p class='io-winner'>"+w+"</p>";
+    const w=last.me>last.notme?"TEAM ME NEXT LEVEL TOOK THE DAY":last.notme>last.me?"TEAM HOLDING ME BACK TOOK THE DAY":"IT WAS A DRAW";
+    res="<p class='io-label'>YESTERDAY'S FINAL SCORE</p><p class='io-score'>"+last.me+" — "+last.notme+"</p><p class='io-winner'>"+w+"</p>";
   }else res="<p class='io-label'>WELCOME BACK</p>";
   ov.innerHTML="<div class='io-card'><div id='ioResult'>"+res+"</div><div id='ioNew' class='io-new'>NEW DAY.<br>NEW GAME.</div><p id='ioMic' class='io-mic'>🎙 LIVE FROM THE ARENA</p><button id='ioStart'>START TODAY'S GAME</button></div><button id='ioSkip'>SKIP INTRO ›</button>";
   document.body.appendChild(ov);

@@ -327,7 +327,7 @@ function chipStep(opts: {
 function stepWelcome() {
   spot([], 0);
   const c = card(
-    `<h3>WELCOME TO MENOTME</h3><p>Every day is a game between who you want to become and what holds you back.</p>`,
+    `<h3>WELCOME TO ME NEXT LEVEL</h3><p>Every day is a game between the person you're becoming and the things holding you back.</p>`,
   );
   const go = btn("SHOW ME HOW");
   go.onclick = stepTeamMe;
@@ -341,7 +341,7 @@ function stepTeamMe() {
   trk("tutorial_team_me_viewed");
   spot([() => document.querySelector(".scoreboard .team")], 8);
   const c = card(
-    `<h3>THIS IS TEAM ME</h3><p>Your Assets play for Team Me.</p><p>Positive actions like working out, reading and learning can score points for the person you want to become.</p>`,
+    `<h3>TEAM ME NEXT LEVEL</h3><p>This is the version of you you're building.</p><p>Your Assets play for Team Me Next Level. Every positive action can score for your future self.</p>`,
   );
   const go = btn("NEXT");
   go.onclick = stepTeamNotMe;
@@ -352,7 +352,7 @@ function stepTeamNotMe() {
   trk("tutorial_team_not_me_viewed");
   spot([() => document.querySelectorAll(".scoreboard .team")[1] ?? null], 8);
   const c = card(
-    `<h3>THIS IS TEAM NOT ME</h3><p>Your Liabilities play against you.</p><p>Habits and choices you want less of can score points for Team Not Me.</p>`,
+    `<h3>TEAM HOLDING ME BACK</h3><p>These are the habits, choices and behaviours standing between you and your next level.</p><p>Your Liabilities play for Team Holding Me Back.</p>`,
   );
   const go = btn("NEXT");
   go.onclick = stepAssets;
@@ -365,7 +365,7 @@ function stepAssets() {
   if (practice && s && s.assets.length >= 3) return stepLiabilities();
   chipStep({
     kind: "asset",
-    title: "BUILD YOUR TEAM ME",
+    title: "BUILD YOUR TEAM ME NEXT LEVEL",
     text: "Choose at least 3 Assets.",
     cta: "NEXT",
     suggestions: SUGGESTED_ASSETS,
@@ -379,8 +379,8 @@ function stepLiabilities() {
   if (practice && s && s.liabilities.length >= 3) return stepTapAsset();
   chipStep({
     kind: "liability",
-    title: "CHOOSE YOUR OPPONENTS",
-    text: "Choose at least 3 Liabilities you want less of in your life.",
+    title: "WHAT'S HOLDING YOU BACK?",
+    text: "Choose the habits and behaviours you want to beat.",
     cta: "START MY FIRST GAME",
     suggestions: SUGGESTED_LIABILITIES,
     spotEl: ".panel.liabilities",

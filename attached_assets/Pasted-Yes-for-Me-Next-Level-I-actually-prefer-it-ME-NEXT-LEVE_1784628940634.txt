@@ -1,0 +1,900 @@
+Yes — for Me Next Level, I actually prefer it.
+
+ME NEXT LEVEL
+
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+It feels more premium, philosophical and brandable than:
+
+Play for the person you want to become.
+
+The difference is:
+
+“Play for the person you want to become” explains the game mechanic very well.
+“Live your future in your present” communicates the whole philosophy behind Me Next Level.
+
+And that's really what your platform is about: making choices today that belong to the future version of yourself.
+
+I wouldn't completely throw away the old line
+
+I would use them at different levels:
+
+Main brand tagline
+
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+Game/arena messaging
+
+PLAY FOR THE PERSON YOU WANT TO BECOME.
+
+For example, your header becomes:
+
+ME NEXT LEVEL
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+Then when the commentator starts the game:
+
+“A new day. A new game. Play for the person you want to become.”
+
+That gives you both.
+
+And honestly, “Live Your Future in Your Present” sounds much more like something that could become synonymous with the Me Next Level brand, rather than simply being an instruction for how to play the game.
+
+what about the teams name 1 team me next level 2 team holding me back
+
+Yes — I actually think this is clearer and stronger, particularly for someone opening the app for the first time.
+
+🏆 TEAM ME NEXT LEVEL
+
+vs.
+
+⚔️ TEAM HOLDING ME BACK
+
+It immediately explains what the game represents.
+
+The current Team Me vs Team Not Me is clever, but a brand-new user has to understand what “Not Me” means.
+
+With your new version:
+
+Team Me Next Level = the future version of yourself you're building.
+Team Holding Me Back = habits, behaviours and choices preventing you from getting there.
+
+And it connects perfectly with:
+
+ME NEXT LEVEL
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+One consideration: length
+
+TEAM HOLDING ME BACK is quite long for your scoreboard, especially on mobile.
+
+I would consider:
+
+TEAM NEXT LEVEL
+vs.
+TEAM HOLDING ME BACK
+
+Or my favourite:
+
+TEAM NEXT LEVEL
+
+vs.
+
+TEAM HOLDING BACK
+
+But “Holding Back” is slightly less natural.
+
+So if clarity is the priority, I'd choose:
+
+TEAM ME NEXT LEVEL
+VS
+TEAM HOLDING ME BACK
+
+Then elsewhere you can shorten them visually:
+
+ME NEXT LEVEL | HOLDING ME BACK
+
+That would look excellent above your two red LED scores.
+
+It also makes your entire concept extremely easy to explain in one sentence:
+
+Every day, Me Next Level puts the person you want to become against the habits holding you back.
+
+That's probably clearer to a first-time user than Team Me vs Team Not Me.
+
+ok send me the all changes to input into replit
+
+Paste this into Replit as the full brand and terminology change instruction.
+
+ME NEXT LEVEL — GLOBAL BRAND & TEAM NAME UPDATE
+
+We are changing the official product name and the language used throughout the application.
+
+This is a brand and terminology update only.
+
+Do not redesign the arena.
+
+Do not change the game mechanics.
+
+Do not reset any user data.
+
+Do not remove any existing features.
+
+1. Official platform name
+
+Change the official platform/product name from:
+
+MeNotMe
+
+to:
+
+Me Next Level
+
+Use:
+
+Me Next Level
+
+for normal brand display.
+
+Use:
+
+ME NEXT LEVEL
+
+for arena signage, scoreboard-style labels and uppercase branding.
+
+2. Official main tagline
+
+Change the main brand tagline from:
+
+Play for the person you want to become.
+
+to:
+
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+This becomes the primary official Me Next Level tagline.
+
+The header should display:
+
+ME NEXT LEVEL
+
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+Keep it premium, minimal and centred.
+
+Do not change the current black-and-white neon visual style.
+
+3. Keep the previous phrase as game language
+
+Do not completely remove:
+
+Play for the person you want to become.
+
+It can still be used selectively in:
+
+commentator dialogue
+tutorial text
+inspirational messages
+game introductions
+
+But it is no longer the main brand tagline.
+
+The main tagline is now:
+
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+4. Change the team names
+
+Replace:
+
+TEAM ME
+
+with:
+
+TEAM ME NEXT LEVEL
+
+Replace:
+
+TEAM NOT ME
+
+with:
+
+TEAM HOLDING ME BACK
+
+These are now the official names of the two teams.
+
+5. Mobile scoreboard display
+
+Because the full team names may be too long on mobile, use responsive display labels.
+
+Desktop/tablet:
+
+TEAM ME NEXT LEVEL
+
+vs.
+
+TEAM HOLDING ME BACK
+
+Mobile can use:
+
+ME NEXT LEVEL
+
+vs.
+
+HOLDING ME BACK
+
+Do not reduce the font so much that it becomes difficult to read.
+
+Use responsive labels rather than shrinking the entire interface.
+
+6. Meaning of the two teams
+
+Use this logic throughout the product:
+
+TEAM ME NEXT LEVEL
+
+Represents:
+
+Assets
+positive habits
+positive decisions
+actions aligned with the user's future self
+the person the user wants to become
+TEAM HOLDING ME BACK
+
+Represents:
+
+Liabilities
+bad habits
+negative behaviours
+avoidance
+distractions
+actions preventing the user from reaching the next level
+7. Update onboarding/tutorial language
+
+Update the first-time tutorial.
+
+Step 1
+
+Title:
+
+WELCOME TO ME NEXT LEVEL
+
+Text:
+
+Every day is a game between the person you're becoming and the things holding you back.
+
+Button:
+
+SHOW ME HOW
+
+Step 2
+
+Highlight the left team.
+
+Title:
+
+TEAM ME NEXT LEVEL
+
+Text:
+
+This is the version of you you're building.
+
+Your Assets play for Team Me Next Level.
+
+Every positive action can score for your future self.
+
+Step 3
+
+Highlight the opposing team.
+
+Title:
+
+TEAM HOLDING ME BACK
+
+Text:
+
+These are the habits, choices and behaviours standing between you and your next level.
+
+Your Liabilities play for Team Holding Me Back.
+
+8. Asset onboarding
+
+Change:
+
+BUILD YOUR TEAM ME
+
+to:
+
+BUILD YOUR TEAM ME NEXT LEVEL
+
+Text:
+
+Choose the things that move you closer to the person you want to become.
+
+Suggested Assets remain:
+
+Workout
+Read
+Drink Water
+Eat Healthy
+Sleep Well
+Quality Time
+Work on My Goals
+
+Also:
+
++ CREATE MY OWN
+
+9. Liability onboarding
+
+Change:
+
+CHOOSE YOUR OPPONENTS
+
+to:
+
+WHAT'S HOLDING YOU BACK?
+
+Supporting text:
+
+Choose the habits and behaviours you want to beat.
+
+Suggested Liabilities:
+
+Smoking
+Unnecessary Spending
+Mindless Scrolling
+Too Much Sugar
+Self-Doubt
+Negative Vibes
+Procrastination
+
+Also:
+
++ CREATE MY OWN
+
+10. Scoreboard
+
+Update the scoreboard labels.
+
+Desktop:
+
+TEAM ME NEXT LEVEL
+
+Large red score
+
+YOU GOT THIS
+
+versus:
+
+TEAM HOLDING ME BACK
+
+Large red score
+
+NOT TODAY
+
+Keep the numeric scores red LED style.
+
+Suggested score colour:
+
+#ff0033
+
+Keep Final Bell white.
+
+11. Daily winner language
+
+Replace:
+
+TEAM ME WINS
+
+with:
+
+TEAM ME NEXT LEVEL WINS
+
+Replace:
+
+TEAM NOT ME WINS
+
+with:
+
+TEAM HOLDING ME BACK WINS
+
+For compact mobile result screens, use:
+
+ME NEXT LEVEL WINS
+
+or
+
+HOLDING ME BACK WINS
+
+12. Yesterday's Result
+
+Update to:
+
+YESTERDAY'S FINAL SCORE
+
+ME NEXT LEVEL 7 — 3 HOLDING ME BACK
+
+Then:
+
+TEAM ME NEXT LEVEL WINS
+
+or:
+
+TEAM HOLDING ME BACK WINS
+
+Then:
+
+DAY X STREAK
+
+Then:
+
+NEW DAY. NEW GAME.
+
+13. Streak language
+
+Use:
+
+Win the day and build your Me Next Level streak.
+
+If Team Holding Me Back wins the full day:
+
+Your streak returns to Day 1.
+
+Do not say that one Liability point resets the streak.
+
+Only the full daily result determines the streak.
+
+14. Liability scoring language
+
+Update tutorial and informational copy.
+
+If a Liability is avoided:
+
+Team Me Next Level can score at the Final Bell.
+
+If it happens:
+
+Team Holding Me Back scores.
+
+If ignored:
+
+Team Holding Me Back automatically gets the point at the Final Bell.
+
+15. Arena branding
+
+Replace all visible arena branding that says:
+
+MeNotMe
+MENOTME
+Me Not Me
+
+with:
+
+ME NEXT LEVEL
+
+Examples:
+
+ME NEXT LEVEL — OFFICIAL ARENA
+
+ME NEXT LEVEL — LIVE YOUR FUTURE IN YOUR PRESENT
+
+TEAM ME NEXT LEVEL — EVERY DAY IS GAME DAY
+
+Do not automatically change generic sponsor names or user-entered content.
+
+16. Fan signage
+
+Update Fan signs where appropriate.
+
+Examples:
+
+TEAM ME NEXT LEVEL
+YOU'VE GOT THIS
+KEEP GOING
+NEXT LEVEL
+ONE MORE
+LET'S GO
+LIVE YOUR FUTURE
+SO PROUD OF YOU
+
+Keep personalised signs like:
+
+GO [FIRST NAME]!
+
+17. Doubter side language
+
+Rename references from:
+
+Team Not Me
+
+to:
+
+Team Holding Me Back
+
+The audience section can still be called:
+
+THE DOUBTERS
+
+Keep that feature.
+
+Supporting arena line:
+
+THEY DOUBT YOU. PROVE THEM WRONG.
+
+Or:
+
+WHAT'S HOLDING YOU BACK DOESN'T GET THE FINAL SAY.
+
+Keep Doubter messages challenging but not abusive.
+
+18. Commentator — new match
+
+Update commentator introductions.
+
+Example:
+
+“Ladies and gentlemen, welcome to the Me Next Level Arena! It's Team Me Next Level versus Team Holding Me Back. A new day. A new game. Let's play!”
+
+Returning user:
+
+“Welcome back to the Me Next Level Arena! Team Me Next Level is ready. Team Holding Me Back is waiting. The scoreboard is reset. Let's play!”
+
+19. Commentator — winning streak
+
+Example:
+
+“Team Me Next Level enters today's game on a seven-day winning streak. Team Holding Me Back is looking to end it. The arena is ready.”
+
+20. Commentator — after a loss
+
+Example:
+
+“Yesterday belonged to Team Holding Me Back. But today's scoreboard is back to zero. Team Me Next Level gets another chance.”
+
+Keep the tone motivating.
+
+21. Commentator — milestone
+
+30-day example:
+
+“This is a big one. Team Me Next Level is one victory away from the Championship.”
+
+90-day example:
+
+“One more game. Ninety days of becoming your next level come down to this.”
+
+22. Inspirational quote terminology
+
+Update original MeNotMe branded quotes where necessary.
+
+For example, replace:
+
+“Team Not Me only wins when you stop playing.”
+
+with:
+
+“What holds you back only wins when you stop playing.”
+
+Replace:
+
+“Team Me needs you on the court.”
+
+with:
+
+“Team Me Next Level needs you on the court.”
+
+Replace:
+
+“If Team Not Me scored, score back.”
+
+with:
+
+“If Team Holding Me Back scored, score back.”
+
+Do not mechanically replace quotes if the sentence becomes awkward.
+
+Review each quote for natural language.
+
+23. Recommended new branded quotes
+
+Add these to the existing inspiration library:
+
+“Your next level is built in today's decisions.”
+
+“Live your future in your present.”
+
+“Every point for Team Me Next Level is a vote for your future.”
+
+“What holds you back doesn't get the final say.”
+
+“Your future self is watching today's scoreboard.”
+
+“The next level isn't somewhere you arrive. It's something you choose.”
+
+“Today's choices are tomorrow's identity.”
+
+“Play today's game like your future depends on it.”
+
+24. Milestone ceremonies
+
+Update milestone branding.
+
+7 days
+
+7 DAYS — TEAM ME NEXT LEVEL
+
+Paparazzi/autograph ceremony remains.
+
+30 days
+
+ME NEXT LEVEL CHAMPION
+
+Championship Cup remains.
+
+60 days
+
+ME NEXT LEVEL WALL OF FAME
+
+90 days
+
+ME NEXT LEVEL RETIREMENT CEREMONY
+
+or:
+
+90-DAY SEASON COMPLETE
+
+Keep the existing retirement concept.
+
+25. Wall of Fame
+
+Update:
+
+Wall of Fame
+
+to display Me Next Level branding.
+
+Example:
+
+ME NEXT LEVEL WALL OF FAME
+
+Keep historical achievements permanently.
+
+26. Friend Challenges
+
+Update friend challenge language.
+
+Example:
+
+Me Next Level Challenge
+
+Compare:
+
+daily wins
+weekly result
+streak
+score
+
+Do not share private Liability names unless explicitly approved.
+
+27. Notification copy
+
+Update notifications.
+
+Examples:
+
+Instead of:
+
+Team Not Me is winning
+
+use:
+
+Team Holding Me Back is currently ahead.
+
+Instead of:
+
+One more Asset to take the lead
+
+use:
+
+One more point puts Team Me Next Level back in the game.
+
+Streak reminder:
+
+Your Me Next Level streak is on the line.
+
+Final Bell:
+
+Final Bell approaching. Finish strong.
+
+28. Signup messaging
+
+Keep:
+
+CREATE FREE ACCOUNT
+
+Supporting language can use:
+
+Save your Me Next Level progress.
+
+Protect your streak.
+
+Play on any device.
+
+29. PWA/app metadata
+
+Update user-facing metadata:
+
+App name:
+
+Me Next Level
+
+Short name:
+
+Me Next Level
+
+Page title:
+
+Me Next Level
+
+App description:
+
+Live your future in your present. Turn your daily choices into a game between Team Me Next Level and Team Holding Me Back.
+
+Update:
+
+manifest
+browser title
+Open Graph
+share metadata
+app icons text where applicable
+install prompt
+splash screen
+30. Emails
+
+Update email branding:
+
+Me Next Level
+
+Examples:
+
+Welcome to Me Next Level
+Verify your Me Next Level account
+Reset your Me Next Level password
+Your Me Next Level streak
+Your weekly Me Next Level result
+31. Admin portal
+
+Update user-facing Super Admin branding to:
+
+Me Next Level Admin
+
+Do not break existing internal admin routes.
+
+32. Sponsor system
+
+Update sponsor terminology.
+
+Examples:
+
+Official Partner of Me Next Level
+
+Me Next Level Arena Sponsor
+
+Me Next Level Championship presented by [Sponsor]
+
+33. Analytics
+
+Do not unnecessarily rename existing internal analytics identifiers if that risks breaking historical reporting.
+
+New events may use me_next_level.
+
+Legacy internal menotme identifiers can remain temporarily if needed for continuity.
+
+User-facing dashboards must say Me Next Level.
+
+34. Database and internal identifiers
+
+Critical:
+
+Do not perform blind global replacements on technical identifiers.
+
+Do not break:
+
+existing users
+authentication
+database relationships
+saved games
+migrations
+analytics history
+API routes
+environment variables
+cloud storage
+
+Internal legacy identifiers such as:
+
+menotme
+
+may remain temporarily if changing them creates risk.
+
+The user must never see the old name.
+
+35. Existing data
+
+The rebrand must NOT reset:
+
+users
+guest accounts
+Assets
+Liabilities
+Fans
+Doubters
+scores
+streaks
+history
+achievements
+seasons
+friend challenges
+notification preferences
+audio settings
+
+This is a brand update, not a new application.
+
+36. Final visual check
+
+Search the entire application for visible occurrences of:
+
+MeNotMe
+MENOTME
+Me Not Me
+Team Not Me
+TEAM NOT ME
+Team Me where it should now be Team Me Next Level
+
+Update appropriately.
+
+Do not alter unrelated phrases.
+
+37. Final approved brand architecture
+
+Use this structure consistently:
+
+ME NEXT LEVEL
+LIVE YOUR FUTURE IN YOUR PRESENT.
+
+Game:
+
+TEAM ME NEXT LEVEL
+
+versus
+
+TEAM HOLDING ME BACK
+
+Assets:
+
+Actions moving me toward my next level.
+
+Liabilities:
+
+Things holding me back.
+
+CRITICAL ACCEPTANCE REQUIREMENTS
+
+Before completing the change, verify:
+
+The main brand reads Me Next Level.
+The main tagline reads Live Your Future in Your Present.
+Left team reads Team Me Next Level.
+Right team reads Team Holding Me Back.
+Mobile uses shorter labels where required without overlap.
+Arena signs use Me Next Level.
+Tutorial has been updated.
+Commentator scripts have been updated.
+Notifications have been updated.
+Milestones have been updated.
+Inspirational quotes have been reviewed.
+No existing user data has been reset.
+No game mechanics have changed.
+Desktop and mobile layouts remain functional.
+Report any remaining internal references to menotme separately and explain why they remain.

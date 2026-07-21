@@ -134,8 +134,8 @@ function hideAuthOverlay() {
 function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
   if (!overlay) return;
   overlay.innerHTML = "";
-  overlay.appendChild(el("h1", undefined, "MeNotMe"));
-  overlay.appendChild(el("p", "mnm-slogan", esc(heading ?? "Save your progress. Protect your streak. Play on any device.")));
+  overlay.appendChild(el("h1", undefined, "Me Next Level"));
+  overlay.appendChild(el("p", "mnm-slogan", esc(heading ?? "Save your Me Next Level progress. Protect your streak. Play on any device.")));
 
   if (mode !== "forgot") {
     const toggle = el("div", "mnm-auth-toggle");
@@ -536,7 +536,7 @@ function urlBase64ToUint8Array(base64String: string) {
 const TYPE_LABELS: Record<string, string> = {
   final_bell_reminder: "Final Bell approaching",
   liabilities_unaddressed: "Liabilities not addressed",
-  notme_winning: "Team Not Me is winning",
+  notme_winning: "Team Holding Me Back is currently ahead",
   one_more_asset: "One more Asset to lead",
   milestone_approaching: "Milestone approaching",
   streak_at_risk: "Streak at risk",
@@ -568,7 +568,7 @@ async function renderAccount() {
     sigRow.innerHTML = `<label>Signature</label>`;
     const sigInput = el("input") as HTMLInputElement;
     sigInput.type = "text";
-    sigInput.value = user.signature ?? "Team Me";
+    sigInput.value = user.signature ?? "Team Me Next Level";
     sigRow.appendChild(sigInput);
     p.appendChild(sigRow);
 
@@ -734,7 +734,7 @@ function watchGuestTriggers(): () => void {
     if (!prevEnded && s.ended && s.me > s.notme && !localStorage.getItem(FLAG_PROMPT_WIN)) {
       localStorage.setItem(FLAG_PROMPT_WIN, "1");
       setTimeout(
-        () => signupPrompt("TEAM ME WON TODAY", "Save your progress and protect your streak.", "CREATE FREE ACCOUNT"),
+        () => signupPrompt("TEAM ME NEXT LEVEL WON TODAY", "Save your progress and protect your streak.", "CREATE FREE ACCOUNT"),
         2200,
       );
     }
@@ -777,8 +777,8 @@ function guestFab() {
   if (!btn) return;
   btn.onclick = () =>
     signupPrompt(
-      "Save your progress",
-      "Create a free account to unlock friend challenges, full history and playing on any device.",
+      "Save your Me Next Level progress",
+      "Create a free account to save your streak, unlock friend challenges and play on any device.",
       "CREATE FREE ACCOUNT",
     );
 }

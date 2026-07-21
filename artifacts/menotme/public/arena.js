@@ -2,7 +2,7 @@
 // Relies on globals from app.js: state, saveState, render, selectAsset, $.
 (function(){
 "use strict";
-const FAN_DEFAULTS=n=>["GO "+(n||"CHAMP").toUpperCase()+"!","YOU'VE GOT THIS!","TEAM ME","KEEP GOING!","SO PROUD OF YOU!"];
+const FAN_DEFAULTS=n=>["GO "+(n||"CHAMP").toUpperCase()+"!","YOU'VE GOT THIS!","NEXT LEVEL","KEEP GOING!","SO PROUD OF YOU!"];
 const DOUBT_SIGNS=["PROVE THEM WRONG","KEEP PLAYING","NOT TODAY","SHOW THEM","STAY FOCUSED"];
 const LEFT=["s1","s2","s3","s4","s5"],RIGHT=["d1","d2","d3","d4","d5"];
 
@@ -14,7 +14,7 @@ function ensureArenaState(){
 
 function fanFirstName(){
   const f=state.fans[0];
-  const sig=(state.signature&&state.signature!=="Team Me")?state.signature.split(" ")[0]:"";
+  const sig=(state.signature&&state.signature!=="Team Me Next Level")?state.signature.split(" ")[0]:"";
   return (f&&(f.nickname||f.name))||sig;
 }
 
@@ -90,7 +90,7 @@ $("assetShot").onclick=()=>{
 
 /* ---------- Wall of Fame ---------- */
 function openFame(){
-  const MILE=[[7,"📸","7 Days Straight — Paparazzi autograph"],[30,"🏆","30 Days — MeNotMe Champion"],[60,"🖼️","60 Days — Wall of Fame"],[90,"🎽","90 Days — Jersey retired"]];
+  const MILE=[[7,"📸","7 Days Straight — Paparazzi autograph"],[30,"🏆","30 Days — Me Next Level Champion"],[60,"🖼️","60 Days — Me Next Level Wall of Fame"],[90,"🎽","90 Days — Jersey retired"]];
   $("fameList").innerHTML=
     "<p style='margin:4px 0 12px'>Best streak: <b>"+state.best+"</b> days</p>"+
     MILE.map(([d,ic,t])=>"<p style='margin:6px 0;opacity:"+(state.shown[d]?1:.35)+"'>"+ic+" "+t+(state.shown[d]?" — ACHIEVED":"")+"</p>").join("");
