@@ -3,7 +3,7 @@
  * Additive only: authentication gate, cloud sync, notification bell,
  * settings & profile. The game UI and logic (app.js) are untouched.
  */
-import { Clerk } from "@clerk/clerk-js/no-rhc";
+import { Clerk } from "@clerk/clerk-js"; // full bundle — includes Turnstile bot-protection (required for Clerk v6 signup)
 import { publishableKeyFromHost } from "@clerk/shared/keys";
 import "./cloud.css";
 import { initTutorial, startTutorial, practiceActive } from "./tutorial";
