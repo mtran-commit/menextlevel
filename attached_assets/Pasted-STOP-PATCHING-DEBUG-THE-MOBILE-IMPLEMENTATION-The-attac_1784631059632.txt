@@ -1,0 +1,206 @@
+STOP PATCHING — DEBUG THE MOBILE IMPLEMENTATION
+
+The attached current iPhone screenshot confirms that multiple fixes that are correct on desktop are still not being applied on mobile.
+
+Do NOT add another CSS patch.
+
+I want you to identify why mobile is rendering different/legacy components or styles.
+
+Current mobile bugs visible in the attached screenshot
+
+1. Paper
+
+Mobile still displays the large solid white circular layer over/around the crumpled paper.
+
+Desktop is correct and shows the actual crumpled paper without this circle.
+
+2. Court lighting
+
+Mobile still displays a huge rectangular white animated/reflection block across the court.
+
+Desktop is correct and illuminates only the actual court lines.
+
+3. Team labels
+
+Mobile still duplicates the team names:
+
+TEAM ME NEXT LEVELME NEXT LEVEL
+
+TEAM HOLDING ME BACKHOLDING ME BACK
+
+4. Legacy branding
+
+Mobile arena advertising/signage still contains:
+
+MENOTME
+
+This should now be:
+
+ME NEXT LEVEL
+
+5. Mobile header collision
+
+The Me Next Level logo/title is being squeezed/covered between the Day Streak and SIGN UP FREE controls.
+
+THIS INDICATES A MOBILE ARCHITECTURE PROBLEM
+
+Do a code-level investigation before changing anything.
+
+Determine whether the application has:
+
+duplicated desktop/mobile components
+separate mobile arena markup
+separate mobile paper component
+separate mobile court animation
+old responsive components
+mobile-only JavaScript
+window.innerWidth conditional rendering
+isMobile conditional rendering
+matchMedia
+duplicated DOM elements hidden differently at breakpoints
+mobile-specific pseudo-elements
+old CSS media-query overrides
+dynamically generated mobile styling
+
+Search the complete codebase.
+
+USE DESKTOP AS THE SOURCE OF TRUTH
+
+Desktop is currently the approved implementation.
+
+Wherever technically possible, mobile must use the SAME:
+
+court component
+court-line animation
+paper component
+scoreboard component
+team-name component
+branding component
+game logic
+
+Mobile should only have responsive differences for:
+
+size
+spacing
+positioning
+typography
+touch interactions
+
+Do NOT maintain two visually different implementations.
+
+PAPER
+
+Find exactly why mobile is rendering the circular paper wrapper while desktop does not.
+
+Make mobile use the same paper rendering as desktop.
+
+Final result:
+
+actual irregular crumpled paper only
+
+No solid circle.
+
+No circular wrapper.
+
+No circular clipping.
+
+No circular pseudo-element.
+
+No circular background.
+
+Preserve touch/flick functionality.
+
+COURT
+
+Find the actual component/function generating the moving rectangular white block.
+
+Temporarily disable suspected animation layers until the exact source is identified.
+
+Mobile must use the same approved line-only illumination as desktop.
+
+Final result:
+
+black floor + illuminated court lines only
+
+No moving rectangles.
+
+No broad white reflection.
+
+No white floor panel.
+
+TEAM NAMES
+
+Find why two responsive labels are being rendered simultaneously.
+
+Render exactly ONE label per side.
+
+Mobile:
+
+ME NEXT LEVEL
+
+HOLDING ME BACK
+
+Desktop:
+
+TEAM ME NEXT LEVEL
+
+TEAM HOLDING ME BACK
+
+Never render both versions simultaneously.
+
+BRANDING
+
+Replace remaining visible mobile:
+
+MENOTME
+
+with:
+
+ME NEXT LEVEL
+
+Do not blindly rename backend identifiers.
+
+This requirement applies to visible UI/arena signage.
+
+MOBILE HEADER
+
+Fix the header so these elements never overlap:
+
+Menu
+Day Streak
+Me Next Level branding
+Sign Up Free
+Share
+
+On small phones, use responsive sizing/positioning.
+
+If necessary, use the compact interactive ME NEXT LEVEL LED wordmark rather than allowing the brand name to be covered.
+
+Do not simply shrink everything until it is unreadable.
+
+REQUIRED TEST
+
+Test using actual responsive viewport sizes:
+
+320px
+375px
+390px
+393px
+430px
+
+Test portrait mobile Safari behaviour.
+
+Do not consider desktop browser testing alone sufficient.
+
+DO NOT COMPLETE THE TASK UNTIL ALL FIVE ARE FIXED
+No white circle around paper.
+No rectangular white court reflection.
+No duplicated team names.
+No visible MENOTME legacy branding.
+No header overlap.
+
+Desktop must remain unchanged.
+
+Before making more visual patches, tell me which files/components are causing the desktop/mobile differences and whether separate mobile components or mobile-specific animation logic were found.
+
+Then fix the root cause and test again.

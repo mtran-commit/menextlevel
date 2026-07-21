@@ -200,10 +200,23 @@ button{cursor:pointer}
 /* ---------- Mobile (portrait) : centre-cropped arena window ---------- */
 @media (max-width:680px){
   .stage{aspect-ratio:856/666;background-size:179.44% 153.75%;background-position:50% 64.8%}
-  .court-pulse{mask-size:179.44% 153.75%;-webkit-mask-size:179.44% 153.75%;mask-position:50% 64.8%;-webkit-mask-position:50% 64.8%}
-  /* .pa spans 100% width — on mobile Safari the mask misaligns at 179% scale and the raw
-     white gradient shows as a broad floor sweep. Hide it; .pb (key area, tight insets) remains. */
+  /* ── Mobile court-pulse: replace PNG-mask with mix-blend-mode ───────────────
+     On mobile WebKit (iOS Safari / Chrome) the CSS mask at 179.44% scale fails to
+     clip the white gradient — the mask check (@supports mask-image) passes, but the
+     mask does not render at scaled sizes, so the raw gradient leaks as a solid white
+     rectangle within the clip-path boundary.
+     Fix: remove the PNG mask entirely on mobile and use mix-blend-mode:overlay.
+     Overlay maths — floor (luminance≈0.05): 2×src×0.05 ≈ 0 (stays dark).
+                      court lines (luminance≈0.9): ~1 (stays bright).
+     The gradient effect is therefore confined to bright areas with no mask needed. */
+  .court-pulse{
+    mask-image:none;-webkit-mask-image:none;
+    mix-blend-mode:overlay;
+  }
+  /* .pa spans full width; even with overlay the broad gradient sweeps the floor
+     on faded/lighter floor areas. Keep it hidden. */
   .court-pulse.pa{display:none}
+  /* .pb covers the key/lane area only — tighter clip on the zoomed 179% court. */
   .court-pulse.pb{clip-path:inset(56.5% 36.3% 10.2% 24.3%)}
   #rimFront{left:46.50%;width:6.78%}
   #netWrap{left:47.20%;width:5.37%}

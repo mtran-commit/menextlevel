@@ -1,0 +1,136 @@
+Me Next Level — Trace and remove the mobile light-block animation at its source
+
+The mobile version still shows large white/shiny rectangular light blocks moving across the basketball court.
+
+The desktop version does not show this problem.
+
+Do not apply another cosmetic CSS patch.
+
+I want you to trace the actual source code that creates this mobile-only light effect and remove or replace it properly.
+
+What I am seeing
+
+On mobile, the bright white block appears in different areas of the court at different times.
+
+This indicates it may be an animated overlay rather than a static CSS reflection.
+
+Inspect whether the effect is being created by:
+
+JavaScript
+Canvas
+SVG animation
+requestAnimationFrame
+React component state
+animated gradient layer
+duplicated mobile court component
+pseudo-elements
+CSS keyframes
+motion libraries
+WebGL
+separate mobile lighting component
+Search the entire codebase
+
+Search for terms and logic related to:
+
+court
+glow
+light
+sweep
+reflection
+shine
+pulse
+energy
+beam
+floor
+arena
+gradient
+mobile
+requestAnimationFrame
+canvas
+svg
+filter
+blur
+mixBlendMode
+boxShadow
+linear-gradient
+radial-gradient
+animation
+keyframes
+
+Also inspect all mobile-only conditions such as:
+
+window.innerWidth
+isMobile
+matchMedia
+@media
+responsive React branches
+mobile component imports
+conditional rendering
+Critical test
+
+Temporarily disable the suspected animation element entirely.
+
+Then test mobile.
+
+If the white block disappears, that confirms the source.
+
+Do not stop until you identify the exact element/component/function causing it.
+
+Required final behaviour
+
+Mobile must show:
+
+black court floor
+white neon court lines
+subtle glow around the line itself
+travelling illumination confined to the line path only
+
+Mobile must NOT show:
+
+rectangular white blocks
+broad white floor illumination
+moving gradient rectangles
+blurred light panels
+screen-style overlays crossing the court
+If mobile uses a different implementation
+
+If the mobile version has its own separate lighting or court-animation implementation, remove it and make mobile use the same line-animation logic as desktop wherever technically possible.
+
+Desktop is the approved visual reference.
+
+Also investigate the paper circle
+
+The solid white circle still appearing over the crumpled paper on mobile may indicate the same problem:
+
+mobile may be rendering a different or duplicated shot component.
+
+Verify whether desktop and mobile use:
+
+the same paper component
+the same shot control
+the same CSS
+the same pseudo-elements
+the same z-index layers
+
+If mobile uses a separate version, consolidate it with the desktop component.
+
+Do not use a visual cover-up
+
+Do not solve this by:
+
+placing a black rectangle over the effect
+clipping the entire court
+hiding large sections of the arena
+
+Remove the actual code producing the unwanted layer.
+
+Report back
+
+After debugging, tell me:
+
+the exact file/component responsible,
+the exact element or animation responsible,
+why it only appeared on mobile,
+what you changed,
+confirmation that desktop was not altered,
+confirmation that the mobile white block no longer appears.
