@@ -226,6 +226,12 @@ button{cursor:pointer}
   .streak-chip{font-size:8px;padding:5px 6px;letter-spacing:.02em}
   /* cinematic edge vignette; also hides banner slivers cut by the crop window */
   .stage::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,0) 9%,rgba(0,0,0,0) 91%,#000 100%)}
+  /* --- mobile court reflection fix ---
+     On desktop the drop-shadow filter is what creates the broad floor glow/reflection
+     visible in the screenshot — it spreads light outside the mask boundary.
+     On mobile portrait we remove that filter so only the masked line paths are lit.
+     The travelling neon gradient animation is preserved; the bloom band is not. */
+  .court-pulse{filter:none}
 }
 
 /* ---------- New-day arena intro ---------- */

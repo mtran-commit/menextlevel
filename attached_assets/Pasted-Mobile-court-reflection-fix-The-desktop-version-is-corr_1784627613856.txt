@@ -1,0 +1,96 @@
+Mobile court reflection fix
+
+The desktop version is correct and must remain unchanged.
+
+On mobile portrait only, remove the large white glowing/reflection band that sweeps horizontally across the basketball court floor.
+
+The desired mobile effect is:
+
+only the actual court lines illuminate
+travelling neon light follows the existing court line paths
+no large white reflection
+no horizontal white glow band
+no rectangular or blurred light patch crossing the floor
+no bloom layer sitting over the centre of the court
+Important
+
+Do not remove:
+
+court line animation
+neon edge glow
+hoop glow
+sponsor boards
+audience
+Fans
+Doubters
+
+Only remove the broad white floor-reflection/light sweep layer on mobile.
+
+Likely cause
+
+Inspect mobile-specific CSS and remove/disable any:
+
+large linear-gradient
+moving radial-gradient
+pseudo-element such as .court::before or .court::after
+filter: blur(...)
+box-shadow
+animated overlay
+reflection layer
+mix-blend-mode: screen
+white translucent layer moving across the court
+
+that creates a wide illuminated area rather than a line-only effect.
+
+Mobile implementation
+
+For screens below approximately 768px:
+
+Disable the reflection layer entirely, for example by targeting the actual class used in the project:
+
+@media (max-width: 767px) {
+  .court-reflection,
+  .court-light-sweep,
+  .floor-glow,
+  .arena-reflection {
+    display: none !important;
+    opacity: 0 !important;
+    animation: none !important;
+    filter: none !important;
+  }
+}
+
+Do not blindly use these class names if they do not exist. Inspect the code and identify the actual element creating the reflection.
+
+Neon animation on mobile
+
+Keep the travelling neon animation only on the line paths themselves.
+
+Preferred implementation:
+
+SVG stroke
+stroke-dasharray
+stroke-dashoffset
+transparent fill
+
+The animated highlight must be clipped to the court line path.
+
+It should never create a filled white area.
+
+Acceptance test
+
+Test on:
+
+iPhone Safari
+375px
+390px
+393px
+430px
+
+The mobile court should look like the desktop version:
+
+black floor + illuminated white court lines only.
+
+There must be zero large white reflection or light sweep across the floor.
+
+Do not modify the desktop styling.
