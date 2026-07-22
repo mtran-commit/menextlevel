@@ -1,0 +1,138 @@
+Replace Stylised Hands With Realistic First-Person Hands
+
+Use the uploaded hand reference images as the visual target.
+
+The current hands look too illustrated and synthetic. Replace them with realistic photographic hands matching the uploaded examples.
+
+Visual direction
+
+The hands should look:
+
+realistic
+photographic
+human
+anatomically correct
+detailed skin texture
+natural knuckles and fingers
+subtle highlights from the white neon court
+dark clothing/cuffs around the wrists
+integrated into the black-and-white arena lighting
+
+Do not make them:
+
+cartoonish
+outlined like a drawing
+plastic
+glossy
+overly smooth
+AI-distorted
+anatomically incorrect
+First-person composition
+
+Keep the current first-person position:
+
+left hand open and reaching toward the paper
+right hand holding/supporting the crumpled paper
+wrists entering from the bottom corners
+hands angled naturally toward the centre of the screen
+
+The right hand should visibly grip the paper with believable finger placement.
+
+The left hand should feel ready to pull back or guide the shot.
+
+Colour and lighting
+
+Use realistic skin tones, but integrate them into the monochrome arena.
+
+Apply:
+
+dark overall exposure
+white neon rim light on the fingers
+subtle shadows
+slight desaturation
+no strong colour cast
+no bright background around the hands
+
+The hands should remain visible without overpowering the court.
+
+Layering
+
+Correct visual order:
+
+Arena → court → hands → crumpled paper
+
+The paper must appear naturally between the hands.
+
+Do not place circular UI wrappers around the paper.
+
+Do not place the Asset label on a white circle.
+
+Mobile and desktop
+
+Use the same realistic hand assets/component on desktop and mobile.
+
+Only adjust:
+
+size
+crop
+position
+responsive scale
+
+Do not use a different cartoon version on mobile.
+
+Test at:
+
+320px
+375px
+390px
+393px
+430px
+768px
+desktop widescreen
+Interaction
+
+Preserve all current mechanics:
+
+drag
+pull-back
+flick
+shot power
+paper launch
+shot trajectory
+rim collision
+net animation
+
+The hands may animate subtly during pull-back and release, but keep movement natural.
+
+Suggested motion:
+
+slight wrist movement during pull-back
+fingers tighten around the paper
+hands separate during release
+right hand follows through slightly
+
+Do not overanimate.
+
+Technical approach
+
+Use properly cut-out transparent PNG/WebP hand assets, or a masked image layer.
+
+Avoid heavy DOM structures.
+
+Use high-resolution assets that remain sharp on Retina screens.
+
+Optimise file size for mobile.
+
+Acceptance criteria
+Hands look photographic and realistic.
+Finger anatomy is correct.
+Right hand naturally holds the crumpled paper.
+Left hand looks ready to guide/release the shot.
+Neon lighting matches the arena.
+No cartoon outlines remain.
+Mobile and desktop use the same visual style.
+Shot mechanics continue working.
+Hands do not cover controls.
+Paper remains clearly visible.
+
+Do not redesign any other part of the arena while replacing the hands.
