@@ -14,7 +14,10 @@
     <button class="iconbtn" id="menuBtn" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <div class="streak-chip">🔥<span class="str-long"> DAY </span><span id="streak">1</span><span class="str-long"> STREAK</span></div>
   </div>
-  <div class="brand"><h1>Me Next Level</h1><p>Live your future in your present.</p></div>
+  <div class="brand">
+    <canvas id="ledLogo" class="led-logo" aria-label="Me Next Level" role="img" tabindex="0"></canvas>
+    <p>Live your future in your present.</p>
+  </div>
   <div class="top-right">
     <button id="authBtn" class="mnm-authbtn" aria-label="Create free account">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -152,6 +155,14 @@
 </div></div>
 
 </div>
+<script src="led-logo.js"></script>
+<script>
+  // Boot the LED logo once the DOM is ready (script runs after body, so DOM exists)
+  (function(){
+    var el = document.getElementById('ledLogo');
+    if (el && window.LEDLogo) window.LEDLogo.init(el);
+  })();
+</script>
 <script src="app.js"></script>
 <script src="arena.js"></script>
 <script src="crowd-audio.js"></script>

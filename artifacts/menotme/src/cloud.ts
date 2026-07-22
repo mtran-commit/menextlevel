@@ -134,7 +134,13 @@ function hideAuthOverlay() {
 function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
   if (!overlay) return;
   overlay.innerHTML = "";
-  overlay.appendChild(el("h1", undefined, "Me Next Level"));
+  // LED logo in auth overlay
+  const ledCanvas = document.createElement("canvas");
+  ledCanvas.setAttribute("aria-label", "Me Next Level");
+  ledCanvas.setAttribute("role", "img");
+  ledCanvas.style.cssText = "display:block;width:min(340px,80vw);margin:0 auto 4px";
+  overlay.appendChild(ledCanvas);
+  if (window.LEDLogo) (window as any).LEDLogo.init(ledCanvas);
   overlay.appendChild(el("p", "mnm-slogan", esc(heading ?? "Save your Me Next Level progress. Protect your streak. Play on any device.")));
 
   if (mode !== "forgot") {

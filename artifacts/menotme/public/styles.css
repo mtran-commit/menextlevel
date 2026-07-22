@@ -14,8 +14,10 @@ button{cursor:pointer}
 .iconbtn svg{width:20px;height:20px}
 .iconbtn:hover{box-shadow:0 0 10px rgba(255,255,255,.25)}
 .streak-chip{border:1px solid var(--line);border-radius:10px;background:#050505;padding:8px 10px;font-size:clamp(9px,1.4vw,12px);font-weight:800;letter-spacing:.06em;white-space:nowrap}
-.brand{text-align:center;flex:0 1 auto}
-.brand h1{margin:0;font-size:clamp(20px,3.4vw,30px);letter-spacing:.16em;font-weight:800;text-shadow:0 0 14px rgba(255,255,255,.35)}
+.brand{text-align:center;flex:0 1 auto;min-width:0}
+/* LED logo canvas: fills the brand div, capped at 380px on desktop.
+   Height is set programmatically by led-logo.js (aspect ratio 7/69). */
+.brand .led-logo{display:block;width:100%;max-width:380px;margin:0 auto;border-radius:3px}
 .brand p{margin:2px 0 0;font-size:clamp(7px,1.1vw,11px);letter-spacing:.14em;text-transform:uppercase;color:#bbb}
 
 /* ---------- Scoreboard ---------- */
@@ -251,7 +253,8 @@ button{cursor:pointer}
   .plus{flex-shrink:0}
   .brand{min-width:0}
   .brand p{display:none}
-  .brand h1{font-size:17px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* LED canvas on mobile: fills available brand-div width, no max-width cap */
+  .brand .led-logo{max-width:100%}
   /* Scoreboard: show short team labels on mobile to avoid overflow */
   .tl-full{display:none}
   .tl-short{display:inline}
@@ -286,7 +289,7 @@ button{cursor:pointer}
    auth at ≤375px (see cloud.css) shrinks right to ~69px → 68+110+69=247px < 304px ✓ */
 @media (max-width:393px){
   .str-long{display:none}
-  .brand h1{font-size:13px;letter-spacing:.08em}
+  /* brand h1 removed — LED canvas scales naturally via JS ResizeObserver */
 }
 
 /* ---------- New-day arena intro ---------- */

@@ -1,0 +1,101 @@
+Replace Current Me Next Level Logo With New Interactive LED Logo
+
+I am uploading the approved interactive ME NEXT LEVEL logo file.
+
+Use this file as the new official logo implementation:
+
+me_next_level_interactive_no_reflection.html
+
+This replaces the current Me Next Level logo in the application.
+
+Critical rules
+Do not redesign the logo.
+Do not add the reflection underneath.
+Do not change the wording.
+Keep:
+ME in white LED
+NEXT in red LED
+LEVEL in white LED
+Keep the interactive illumination behaviour.
+Keep the travelling LED light sweep.
+Keep the red NEXT pulse.
+Keep the subtle white glow.
+Keep tap/hover interaction.
+Keep the automatic light-up pulse.
+Where to use it
+
+Replace the current Me Next Level branding/logo in:
+
+Main arena header
+Landing/game screen
+Login/signup where appropriate
+Splash/loading screen
+PWA install branding where visually appropriate
+Admin header if currently using the old wordmark
+
+Do not replace team labels or scoreboard labels.
+
+Mobile
+
+On mobile, use a compact responsive version of the same interactive logo.
+
+The logo must:
+
+stay centred
+never overlap Day Streak
+never overlap Sign Up Free
+never overlap Share
+remain readable at 320px width
+
+Do not create a separate visually different mobile logo.
+
+Use the same logo component with responsive sizing only.
+
+Desktop
+
+Keep the current desktop spacing/layout if it already works.
+
+Only replace the existing logo artwork/component with this approved interactive LED logo.
+
+Important technical requirement
+
+Do not embed the full uploaded HTML page directly inside the app.
+
+Extract and convert the logo into a reusable component using the existing app structure.
+
+Preserve:
+
+LED styling
+animations
+interaction
+no-reflection design
+
+Avoid iframes.
+
+Accessibility
+
+Add:
+
+aria-label="Me Next Level"
+
+Respect:
+
+prefers-reduced-motion
+
+If reduced motion is enabled, show the static illuminated LED logo without the moving sweep.
+
+Acceptance criteria
+
+The replacement is complete only when:
+
+The old Me Next Level wordmark is removed.
+The new LED logo appears in its place.
+No reflection appears underneath.
+NEXT is red.
+ME and LEVEL are white.
+Illumination animation works.
+Mobile and desktop both use the same logo style.
+No header overlap occurs.
+No other UI or game mechanics are changed.
+
+Do not modify any other part of the arena while replacing the logo.
