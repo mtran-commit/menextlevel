@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Me Next Level — Arena</title>
-<link rel="stylesheet" href="styles.css?v=12">
+<link rel="stylesheet" href="styles.css?v=13">
 </head>
 <body>
 <div class="app">
@@ -50,7 +50,10 @@
     <div id="signs"></div>
     <div class="hoop-fx" id="rimFront"></div>
     <div class="hoop-fx" id="netWrap"><div id="netImg"></div></div>
-    <img class="hand hand-right" id="handRight" src="assets/hand-right-empty.png" alt="" aria-hidden="true">
+    <div id="handWrap" class="hand-wrap">
+      <img class="hand hand-right" id="handRight" src="assets/hand-right-empty.png" alt="" aria-hidden="true">
+      <div class="paper paper--hidden" id="heldPaper"></div>
+    </div>
     <div class="live paper paper--hidden" id="paper"></div>
     <div class="live power" id="power"></div>
 
@@ -155,7 +158,7 @@
 </div></div>
 
 </div>
-<script src="led-logo.js?v=12"></script>
+<script src="led-logo.js?v=13"></script>
 <script>
   // Boot the LED logo once the DOM is ready (script runs after body, so DOM exists)
   (function(){
@@ -163,12 +166,12 @@
     if (el && window.LEDLogo) window.LEDLogo.init(el);
   })();
 </script>
-<script src="app.js?v=12"></script>
-<script src="arena.js?v=12"></script>
-<script src="crowd-audio.js?v=12"></script>
-<script src="intro.js?v=12"></script>
-<script src="sponsors.js?v=12"></script>
-<script src="inspire.js?v=12"></script>
+<script src="app.js?v=13"></script>
+<script src="arena.js?v=13"></script>
+<script src="crowd-audio.js?v=13"></script>
+<script src="intro.js?v=13"></script>
+<script src="sponsors.js?v=13"></script>
+<script src="inspire.js?v=13"></script>
 <script type="module" src="./src/cloud.ts"></script>
 </body>
 </html>

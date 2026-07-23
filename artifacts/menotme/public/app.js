@@ -19,35 +19,56 @@ const HAND_RELEASE="assets/hand-right-release.png";
 const HAND_FOLLOWTHROUGH="assets/hand-right-followthrough.png";
 function setHandState(s,opts){
   const prev=handState;handState=s;
-  const hR=$("handRight"),p=$("paper");if(!p)return;
+  const hR=$("handRight"),hW=$("handWrap"),p=$("paper"),hp=$("heldPaper");if(!hW)return;
   if(s==="EMPTY"){
+    if(hp){hp.classList.add("paper--hidden");hp.textContent="";hp.style.transform="";}
     p.classList.add("paper--hidden");p.textContent="";
-    if(hR){hR.src=HAND_EMPTY;hR.classList.remove("hand--aiming");hR.style.transition=""}
+    if(hR)hR.src=HAND_EMPTY;
+    hW.classList.remove("hand--aiming");hW.style.transition="";hW.style.transform="";
   } else if(s==="HOLDING_PAPER"){
-    if(hR){hR.src=HAND_HOLDING;hR.classList.remove("hand--aiming")}
+    if(hR)hR.src=HAND_HOLDING;
+    hW.classList.remove("hand--aiming");hW.style.transform="";
+    if(hp&&state.selected!==null)hp.textContent=state.assets[state.selected]?.name||"";
+    p.classList.add("paper--hidden");
     if(prev==="EMPTY"&&!(opts&&opts.skipAppear)){
-      // Paper appears with a brief scale-up from the hand
-      p.classList.remove("paper--hidden");
-      p.getAnimations().forEach(a=>a.cancel());
-      p.animate(
-        [{transform:"translate(-50%,-50%) scale(0.45)",opacity:0},
-         {transform:"translate(-50%,-50%) scale(1.06)",opacity:1,offset:.7,easing:"ease-out"},
-         {transform:"translate(-50%,-50%) scale(1)",opacity:1}],
-        {duration:240,easing:"cubic-bezier(.2,.8,.3,1)",fill:"none"});
+      if(hp){
+        hp.classList.remove("paper--hidden");
+        hp.getAnimations().forEach(a=>a.cancel());
+        hp.animate(
+          [{transform:"translate(-50%,-50%) scale(0.45)",opacity:0},
+           {transform:"translate(-50%,-50%) scale(1.06)",opacity:1,offset:.7,easing:"ease-out"},
+           {transform:"translate(-50%,-50%) scale(1)",opacity:1}],
+          {duration:240,easing:"cubic-bezier(.2,.8,.3,1)",fill:"none"});
+      }
     } else {
-      p.classList.remove("paper--hidden");
+      if(hp)hp.classList.remove("paper--hidden");
     }
   } else if(s==="AIMING"){
-    // Aim pose: wrist rotated inward, paper gripped
-    p.classList.remove("paper--hidden");
-    if(hR){hR.src=HAND_AIM;hR.classList.add("hand--aiming")}
+    if(hp)hp.classList.remove("paper--hidden");
+    p.classList.add("paper--hidden");
+    if(hR)hR.src=HAND_AIM;
+    hW.classList.add("hand--aiming");
   } else if(s==="PULLBACK"){
-    // Pull-back pose: wrist cocked, still gripping
-    p.classList.remove("paper--hidden");
-    if(hR){hR.src=HAND_PULLBACK;hR.classList.remove("hand--aiming")}
+    if(hp)hp.classList.remove("paper--hidden");
+    p.classList.add("paper--hidden");
+    if(hR)hR.src=HAND_PULLBACK;
+    hW.classList.remove("hand--aiming");
   } else if(s==="THROWING"){
-    // Release pose: fingers opening as paper detaches
-    if(hR){hR.src=HAND_RELEASE;hR.classList.remove("hand--aiming")}
+    // Transfer paper from grip to stage at current screen position
+    if(hp&&!hp.classList.contains("paper--hidden")){
+      const st=$("stage")?.getBoundingClientRect();
+      if(st){
+        const hr=hp.getBoundingClientRect();
+        const gx=(hr.left+hr.width/2-st.left)/st.width*100;
+        const gy=(hr.top+hr.height/2-st.top)/st.height*100;
+        p.style.left=gx+"%";p.style.top=gy+"%";
+        p.textContent=hp.textContent||"";
+        p.classList.remove("paper--hidden");
+      }
+      hp.classList.add("paper--hidden");hp.textContent="";hp.style.transform="";
+    }
+    if(hR)hR.src=HAND_RELEASE;
+    hW.classList.remove("hand--aiming");
   }
 }
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){try{(state.fans||[]).forEach(f=>{delete f.photo});localStorage.setItem(KEY,JSON.stringify(state));console.warn("MeNotMe: storage was full — fan photos were dropped to save your game.")}catch(e2){console.error("MeNotMe: could not save game state",e2)}}}
@@ -69,7 +90,7 @@ function render(){
  if(state.friend.name){$("friendName").value=state.friend.name;$("friendScore").value=state.friend.score??"";$("friendResult").textContent=state.friend.score==null?"No friend score yet.":state.me>state.friend.score?"You lead "+state.me+"–"+state.friend.score:state.me<state.friend.score?state.friend.name+" leads "+state.friend.score+"–"+state.me:"Draw "+state.me+"–"+state.friend.score}
  saveState()
 }
-function selectAsset(i){if(state.ended||!gateComplete())return;state.selected=i;state.assets[i].done=true;$("paper").textContent=state.assets[i].name;tone(360,.06,"square",.02);setHandState("HOLDING_PAPER");render()}
+function selectAsset(i){if(state.ended||!gateComplete())return;state.selected=i;state.assets[i].done=true;const hp=$("heldPaper");if(hp)hp.textContent=state.assets[i].name;tone(360,.06,"square",.02);setHandState("HOLDING_PAPER");render()}
 function toggleLiability(i){if(state.ended||!gateComplete())return;const l=state.liabilities[i];if(!l.addressed){l.addressed=true;l.avoided=true}else if(l.avoided)l.avoided=false;else{l.addressed=false;l.avoided=true}render()}
 function outcome(power){const r=Math.random(),skill=Math.max(0,1-Math.abs(power-.72));if(skill>.72&&r<.62)return"swish";if(skill>.45&&r<.82)return"rim";return"miss"}
 function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete())return;const p=$("paper");if(p.dataset.flying)return;const o=outcome(power);
@@ -119,10 +140,10 @@ function updateClock(){const d=new Date(),e=new Date();e.setHours(23,59,59,999);
 // Frame sequence: RELEASE → FOLLOWTHROUGH (at peak) → EMPTY (after return)
 let _throwTimers=[];
 function animateThrow(power,startRx,startRy,startRr){
-  const hR=$("handRight");if(!hR)return;
+  const hR=$("handRight"),hW=$("handWrap");if(!hW)return;
   _throwTimers.forEach(clearTimeout);_throwTimers=[];
-  hR.getAnimations().forEach(a=>a.cancel());
-  hR.classList.remove("hand--aiming");hR.style.transition="none";
+  hW.getAnimations().forEach(a=>a.cancel());
+  hW.classList.remove("hand--aiming");hW.style.transition="none";
   const p=Math.max(0,Math.min(1,power));
   // Timing: faster flick → shorter phases
   const tMs=Math.round(250-p*100);   // forward throw peak:  150–250 ms
@@ -133,46 +154,46 @@ function animateThrow(power,startRx,startRy,startRr){
   // Frame 1 — RELEASE (already set by setHandState("THROWING") before this call)
   // Frame 2 — FOLLOWTHROUGH when hand reaches peak of forward motion
   _throwTimers.push(setTimeout(()=>{if(hR)hR.src=HAND_FOLLOWTHROUGH;},tMs));
-  // Frame 3 — EMPTY when hand has returned to rest
-  _throwTimers.push(setTimeout(()=>{if(hR)hR.src=HAND_EMPTY;},tMs+fMs));
-  // WAAPI spatial transform: start pos → lunge forward/up → follow-through arc → rest
-  hR.animate([
+  // Frame 3 — EMPTY when hand has returned to rest; reset wrap transform too
+  _throwTimers.push(setTimeout(()=>{if(hR)hR.src=HAND_EMPTY;if(hW)hW.style.transform="";},tMs+fMs));
+  // WAAPI spatial transform on wrap: start pos → lunge forward/up → follow-through arc → rest
+  hW.animate([
     {transform:`translate(${startRx}px,${startRy}px) rotate(${startRr}deg)`},
     {transform:`translate(-4%,-11%) rotate(-24deg) scaleX(1.09)`,offset:tOff,easing:"cubic-bezier(.1,.8,.2,1)"},
     {transform:`translate(-2%,-6.5%) rotate(-14deg) scaleX(1.04)`,offset:fOff,easing:"ease-out"},
     {transform:"translate(0,0) rotate(0deg) scale(1)"}
   ],{duration:tot,easing:"ease-in-out",fill:"none"});
 }
-$("paper").onpointerdown=e=>{
+$("heldPaper").onpointerdown=e=>{
   if(state.selected===null||$("paper").dataset.flying)return;
   dragging=true;start={x:e.clientX,y:e.clientY};
-  $("paper").setPointerCapture(e.pointerId);$("paper").classList.add("dragging");
-  const hR=$("handRight");
-  if(hR){hR.getAnimations().forEach(a=>a.cancel());hR.style.transition="none";hR.style.transform=""}
-  // AIMING pose: wrist rotates in, hand-right-aim.png
+  $("heldPaper").setPointerCapture(e.pointerId);$("heldPaper").classList.add("dragging");
+  const hW=$("handWrap");
+  if(hW){hW.getAnimations().forEach(a=>a.cancel());hW.style.transition="none";hW.style.transform=""}
   setHandState("AIMING");
 };
-$("paper").onpointermove=e=>{
+$("heldPaper").onpointermove=e=>{
   if(!dragging)return;
   const dx=e.clientX-start.x,dy=e.clientY-start.y,p=Math.min(1,Math.hypot(dx,dy)/150);
   renderPower(p);
-  $("paper").style.transform=`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35}px))`;
-  const hR=$("handRight");
-  if(hR){
-    // PULLBACK pose: wrist fully cocked; inline transform drives position
-    if(handState!=="PULLBACK"){hR.src=HAND_PULLBACK;hR.classList.remove("hand--aiming");}
-    hR.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
+  // Paper moves 26% locally; wrap moves 9% → 35% total screen motion (same feel as before)
+  $("heldPaper").style.transform=`translate(calc(-50% + ${dx*.26}px),calc(-50% + ${dy*.26}px))`;
+  const hR=$("handRight"),hW=$("handWrap");
+  if(hW){
+    // PULLBACK pose: wrist fully cocked; inline transform drives wrap position
+    if(handState!=="PULLBACK"&&hR){hR.src=HAND_PULLBACK;hW.classList.remove("hand--aiming");}
+    hW.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
   }
   handState="PULLBACK";
 };
-$("paper").onpointerup=e=>{
+$("heldPaper").onpointerup=e=>{
   if(!dragging)return;
   dragging=false;
   const dx=e.clientX-start.x,dy=e.clientY-start.y;
   const p=Math.min(1,Math.hypot(dx,dy)/150);
-  $("paper").classList.remove("dragging");renderPower(0);
-  const hR=$("handRight");if(hR){hR.style.transition="";hR.classList.remove("hand--aiming")}
-  // Switch to open-hand image at the exact moment paper leaves fingertips
+  $("heldPaper").classList.remove("dragging");renderPower(0);
+  const hW=$("handWrap");if(hW){hW.style.transition="";hW.classList.remove("hand--aiming")}
+  // Transfer paper from grip to stage, then animate throw
   setHandState("THROWING");
   animateThrow(p,dx*.09,dy*.09,dx*.028);
   shoot(p);
@@ -194,7 +215,7 @@ $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} �
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);
 // Sync hand/paper state from whatever was persisted in localStorage
 if(state.selected!==null){
-  $("paper").textContent=state.assets[state.selected]?.name||"";
+  const hp=$("heldPaper");if(hp)hp.textContent=state.assets[state.selected]?.name||"";
   setHandState("HOLDING_PAPER",{skipAppear:true});
 }else{
   setHandState("EMPTY");

@@ -72,10 +72,24 @@ button{cursor:pointer}
 
 /* Realistic photo hands — transparent PNGs layered over the arena */
 /* Throw animation driven entirely by WAAPI in app.js for velocity-based timing */
-.hand{position:absolute;pointer-events:none;z-index:3}
-.hand-right{right:7%;bottom:-24%;width:48%;transform-origin:84% 100%;transition:transform 0.28s cubic-bezier(.2,.8,.3,1)}
-/* AIMING state: wrist rotated into throw-ready position */
-.hand--aiming{transform:translate(-1%,-3%) rotate(-9deg)}
+/* hand-wrap: positioning container for hand + held paper; all transforms applied here */
+.hand-wrap{position:absolute;right:7%;bottom:-24%;width:48%;aspect-ratio:1;pointer-events:none;z-index:3;transform-origin:84% 100%;transition:transform 0.28s cubic-bezier(.2,.8,.3,1)}
+.hand{pointer-events:none}
+.hand-right{position:absolute;inset:0;width:100%;height:100%}
+/* AIMING state: wrist rotated into throw-ready position — on the wrap so paper moves too */
+.hand-wrap.hand--aiming{transform:translate(-1%,-3%) rotate(-9deg)}
+/* Held paper: anchored inside the grip, inherits all wrap transforms */
+#heldPaper{position:absolute;left:50%;top:45%;width:22%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:2;
+  background:url("assets/paper-ball.png") center/contain no-repeat;border-radius:50%;
+  pointer-events:auto;touch-action:none;cursor:grab;
+  display:flex;align-items:flex-end;justify-content:center;
+  color:#fff;font-size:clamp(4px,0.6vw,8px);font-weight:800;letter-spacing:.05em;text-align:center;
+  text-shadow:0 1px 3px #000,0 0 6px #000}
+#heldPaper::before{content:"";position:absolute;inset:-8%;border-radius:50%;
+  border:1px solid rgba(255,255,255,.7);background:transparent;
+  box-shadow:0 0 10px rgba(255,255,255,.5),0 0 22px rgba(255,255,255,.18),inset 0 0 10px rgba(255,255,255,.18);
+  z-index:-1;pointer-events:none}
+#heldPaper.dragging{cursor:grabbing}
 
 /* Paper ball (sits exactly over the baked ball in the art) */
 /* Crumpled paper ball: real texture image on top; thin transparent neon ring behind it.
@@ -257,6 +271,8 @@ button{cursor:pointer}
   #rimFront{left:46.50%;width:6.78%}
   #netWrap{left:47.20%;width:5.37%}
   .paper{left:77.22%;width:16.59%;font-size:clamp(6px,1.9vw,11px)}
+  #heldPaper{width:28%;font-size:clamp(5px,1.8vw,9px)}
+  #heldPaper::before{box-shadow:0 0 6px rgba(255,255,255,.35),0 0 12px rgba(255,255,255,.1),inset 0 0 6px rgba(255,255,255,.1)}
   /* Action bar: swap from flex to 5-column grid so each control gets its own lane.
      Regular columns: 1fr each. Shoot centre: 1.35fr (visually dominant).
      left/width expanded slightly so the outer cells don't crowd the stage vignette. */
