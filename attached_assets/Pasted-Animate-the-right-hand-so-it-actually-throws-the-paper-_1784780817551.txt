@@ -1,0 +1,82 @@
+Animate the right hand so it actually throws the paper.
+
+The current first-person hands are realistic, but the right hand stays mostly static while the paper launches. I want the throwing motion to feel physical and believable.
+
+Throw sequence
+Ready position
+Right hand grips the crumpled paper naturally.
+Left hand stays open as a guide.
+Pull back
+When the user drags/pulls back, move the right hand slightly backward and downward.
+Fingers tighten slightly around the paper.
+Wrist rotates naturally.
+Left hand can move subtly as if helping aim.
+Release
+When the user lets go, animate the right hand quickly forward.
+Fingers open as the paper leaves the hand.
+The paper must detach at the exact moment the fingers release it.
+Follow-through
+Right hand continues slightly forward/upward after release.
+Fingers remain open briefly.
+Wrist naturally follows the shot direction.
+Then the hand returns smoothly to the ready position.
+Paper flight
+After leaving the fingertips, the paper follows the existing curved shot trajectory toward the hoop.
+Do not make the paper teleport from the hand.
+Important
+
+The paper and hand animation must be synchronised:
+
+grip → pull back → forward throw → fingers open → paper releases → hand follows through
+
+The hand should not continue holding a duplicate paper after the shot begins.
+
+Realism
+
+Keep the motion subtle and fast, approximately:
+
+pull-back: 200–350ms
+release/throw: 150–250ms
+follow-through: 250–400ms
+return to ready: 350–500ms
+
+Avoid exaggerated cartoon movement.
+
+Mobile touch
+
+The throw animation must be tied to the user's actual flick gesture:
+
+stronger/faster flick = slightly faster hand release
+weaker flick = softer release
+
+Do not change the existing shot scoring logic.
+
+Visual layering
+
+Before release:
+
+right hand in front/around paper
+
+At release:
+
+paper separates from fingertips
+
+After release:
+
+paper moves independently toward hoop
+
+Do not leave another paper inside the hand.
+
+Acceptance criteria
+The right hand visibly throws the paper.
+Fingers open at release.
+Paper leaves from the fingertips.
+Hand performs a natural follow-through.
+No duplicate paper appears.
+No duplicated hands appear.
+Works on desktop mouse drag and mobile touch flick.
+Existing hoop/net/score mechanics remain unchanged.
+
+Do not redesign the arena or hands. Only animate the existing realistic hand assets/components to create the physical throwing motion.
+
+This is one of those details that can make the whole game suddenly feel much more premium and game-like.

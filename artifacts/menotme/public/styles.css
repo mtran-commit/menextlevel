@@ -71,13 +71,10 @@ button{cursor:pointer}
 .net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}
 
 /* Realistic photo hands — transparent PNGs layered over the arena */
-.hand{position:absolute;pointer-events:none;z-index:3;transition:transform .22s ease-out}
+/* Throw animation driven entirely by WAAPI in app.js for velocity-based timing */
+.hand{position:absolute;pointer-events:none;z-index:3}
 .hand-left{left:-4%;bottom:-24%;width:46%;transform-origin:14% 100%}
 .hand-right{right:7%;bottom:-24%;width:48%;transform-origin:84% 100%}
-@keyframes handFollowRight{0%{transform:translate(0,0) rotate(0)}35%{transform:translate(2%,-8%) rotate(-10deg)}100%{transform:translate(0,0) rotate(0)}}
-@keyframes handFollowLeft{0%{transform:translate(0,0) rotate(0)}35%{transform:translate(-3%,-4%) rotate(7deg)}100%{transform:translate(0,0) rotate(0)}}
-.hand-right.throw{animation:handFollowRight .55s ease-out;animation-fill-mode:forwards}
-.hand-left.throw{animation:handFollowLeft .55s ease-out;animation-fill-mode:forwards}
 
 /* Paper ball (sits exactly over the baked ball in the art) */
 /* Crumpled paper ball: real texture image on top; thin transparent neon ring behind it.

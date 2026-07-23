@@ -60,10 +60,66 @@ const LIAB_CHIPS=["Procrastination","Overspending","Self-Doubt","Too Much Screen
 function openModal(type){mode=type;$("modalTitle").textContent=type==="asset"?"WHAT MOVES YOU FORWARD?":"WHAT'S HOLDING YOU BACK?";$("tagInput").value="";$("tagInput").placeholder="Type your own...";const chips=type==="asset"?ASSET_CHIPS:LIAB_CHIPS;$("inspireChips").innerHTML=chips.map(c=>`<button type="button" class="inspire-chip" data-val="${c}">${c}</button>`).join("");$("modal").classList.add("show");$("tagInput").focus()}
 function saveTag(){const v=$("tagInput").value.trim();if(!v)return;if(mode==="asset"){state.assets.push({name:v,done:false,scored:false});if(state.gate.required)state.gate.asset=true}else{state.liabilities.push({name:v,addressed:false,avoided:true});if(state.gate.required)state.gate.liability=true}if(gateComplete())state.gate.required=false;$("modal").classList.remove("show");render()}
 function updateClock(){const d=new Date(),e=new Date();e.setHours(23,59,59,999);const m=Math.max(0,Math.floor((e-d)/60000));$("clock").textContent=String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}
-$("paper").onpointerdown=e=>{if(state.selected===null)return;dragging=true;start={x:e.clientX,y:e.clientY};$("paper").setPointerCapture(e.pointerId);$("paper").classList.add("dragging");const hL=$("handLeft"),hR=$("handRight");if(hL){hL.classList.remove("throw");hR.classList.remove("throw");hL.style.transition="none";hR.style.transition="none"}};
-$("paper").onpointermove=e=>{if(!dragging)return;const dx=e.clientX-start.x,dy=e.clientY-start.y,p=Math.min(1,Math.hypot(dx,dy)/150);renderPower(p);$("paper").style.transform=`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35}px))`;const hL=$("handLeft"),hR=$("handRight");if(hL){hL.style.transform=`translate(${dx*.09}px,${dy*.09}px)`;hR.style.transform=`translate(${dx*.07}px,${dy*.07}px)`}};
-$("paper").onpointerup=e=>{if(!dragging)return;dragging=false;const p=Math.min(1,Math.hypot(e.clientX-start.x,e.clientY-start.y)/150);$("paper").classList.remove("dragging");renderPower(0);const hL=$("handLeft"),hR=$("handRight");if(hL){hL.style.transform="";hR.style.transform="";hL.style.transition="";hR.style.transition="";void hL.offsetWidth;hL.classList.add("throw");hR.classList.add("throw");setTimeout(()=>{hL.classList.remove("throw");hR.classList.remove("throw")},580)}shoot(p)};
-$("shoot").onclick=()=>shoot(.72);$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>$("modal").classList.remove("show");$("save").onclick=saveTag;
+// ---- Hand throw animation (WAAPI, velocity-scaled) ----
+// startRx/Ry = right-hand px offset at release moment (from drag)
+// startLx/Ly = left-hand px offset at release moment
+// startRr    = right-hand wrist rotation in deg at release moment
+function animateThrow(power,startRx,startRy,startRr,startLx,startLy){
+  const hR=$("handRight"),hL=$("handLeft");if(!hR)return;
+  hR.getAnimations().forEach(a=>a.cancel());hL.getAnimations().forEach(a=>a.cancel());
+  const p=Math.max(0,Math.min(1,power));
+  // Timing: faster flick → shorter phases
+  const tMs=Math.round(250-p*100);   // throw/release:  150–250 ms
+  const fMs=Math.round(380-p*130);   // follow-through: 250–380 ms
+  const rMs=Math.round(480-p*130);   // return to ready:350–480 ms
+  const tot=tMs+fMs+rMs;
+  const tOff=tMs/tot, fOff=(tMs+fMs)/tot;
+  // Right hand: pull-back pos → lunge forward-up (release) → follow-through → return
+  hR.animate([
+    {transform:`translate(${startRx}px,${startRy}px) rotate(${startRr}deg)`},
+    {transform:`translate(-4%,-11%) rotate(-24deg) scaleX(1.09)`,offset:tOff,easing:"cubic-bezier(.1,.8,.2,1)"},
+    {transform:`translate(-2%,-6.5%) rotate(-14deg) scaleX(1.04)`,offset:fOff,easing:"ease-out"},
+    {transform:"translate(0,0) rotate(0deg) scale(1)"}
+  ],{duration:tot,easing:"ease-in-out",fill:"none"});
+  // Left hand: subtle aiming lift → settle → return
+  hL.animate([
+    {transform:`translate(${startLx}px,${startLy}px) rotate(${-startRr*.35}deg)`},
+    {transform:`translate(-2%,-5%) rotate(5deg)`,offset:tOff,easing:"cubic-bezier(.1,.8,.2,1)"},
+    {transform:`translate(-1%,-2.5%) rotate(2.5deg)`,offset:fOff,easing:"ease-out"},
+    {transform:"translate(0,0) rotate(0deg)"}
+  ],{duration:tot+80,easing:"ease-in-out",fill:"none"});
+}
+$("paper").onpointerdown=e=>{
+  if(state.selected===null)return;
+  dragging=true;start={x:e.clientX,y:e.clientY};
+  $("paper").setPointerCapture(e.pointerId);$("paper").classList.add("dragging");
+  const hR=$("handRight"),hL=$("handLeft");
+  if(hR){hR.getAnimations().forEach(a=>a.cancel());hL.getAnimations().forEach(a=>a.cancel());
+    hR.style.transform="";hL.style.transform=""}
+};
+$("paper").onpointermove=e=>{
+  if(!dragging)return;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y,p=Math.min(1,Math.hypot(dx,dy)/150);
+  renderPower(p);
+  $("paper").style.transform=`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35}px))`;
+  const hR=$("handRight"),hL=$("handLeft");
+  if(hR){
+    // Right hand cocks back with the drag; left hand provides subtle counter-balance
+    hR.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
+    hL.style.transform=`translate(${dx*.04}px,${dy*.04}px) rotate(${-dx*.012}deg)`;
+  }
+};
+$("paper").onpointerup=e=>{
+  if(!dragging)return;
+  dragging=false;
+  const dx=e.clientX-start.x,dy=e.clientY-start.y;
+  const p=Math.min(1,Math.hypot(dx,dy)/150);
+  $("paper").classList.remove("dragging");renderPower(0);
+  // Capture where the hand sat at release, then launch full throw sequence + paper simultaneously
+  animateThrow(p,dx*.09,dy*.09,dx*.028,dx*.04,dy*.04);
+  shoot(p);
+};
+$("shoot").onclick=()=>{animateThrow(.72,0,0,0,0,0);shoot(.72)};$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>$("modal").classList.remove("show");$("save").onclick=saveTag;
 $("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;$("tagInput").focus()}});
 $("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
