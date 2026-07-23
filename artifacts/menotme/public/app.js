@@ -105,6 +105,7 @@ function updateClock(){const d=new Date(),e=new Date();e.setHours(23,59,59,999);
 function animateThrow(power,startRx,startRy,startRr){
   const hR=$("handRight");if(!hR)return;
   hR.getAnimations().forEach(a=>a.cancel());
+  hR.classList.remove("hand--aiming");hR.style.transition="none";
   const p=Math.max(0,Math.min(1,power));
   // Timing: faster flick → shorter phases
   const tMs=Math.round(250-p*100);   // throw/release:  150–250 ms
@@ -167,6 +168,11 @@ $("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeH
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} — ${state.notme} Holding Me Back`;try{if(navigator.share)await navigator.share({title:"Me Next Level",text:t})}catch(e){}};
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);
-// Sync hand state with whatever state was persisted in localStorage
-if(state.selected!==null)setHandState("HOLDING_PAPER",{skipAppear:true});else setHandState("EMPTY");
+// Sync hand/paper state from whatever was persisted in localStorage
+if(state.selected!==null){
+  $("paper").textContent=state.assets[state.selected]?.name||"";
+  setHandState("HOLDING_PAPER",{skipAppear:true});
+}else{
+  setHandState("EMPTY");
+}
 $("netImg").addEventListener("animationend",()=>$("netImg").classList.remove("net-anim"));
