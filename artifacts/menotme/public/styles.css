@@ -107,6 +107,17 @@ button{cursor:pointer}
 .shootbtn .ball{width:74%;max-width:64px;aspect-ratio:1;border-radius:50%;border:2px solid #fff;box-shadow:0 0 16px rgba(255,255,255,.65);background:radial-gradient(circle at 40% 32%,#fff 0%,#cfcfcf 38%,#6a6a6a 72%,#2c2c2c 100%);margin-top:-34%}
 .shootbtn span:last-child{font-size:1.15em;font-weight:800}
 
+/* Auth button — relocated from header into stage, sits right of the action bar */
+#authBtn{position:absolute;left:73.2%;top:80.78%;width:7.3%;height:17.72%;z-index:8;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7%;
+  background:rgba(4,4,4,.82);border:1px solid rgba(255,255,255,.3);border-radius:16px;
+  box-shadow:0 0 18px rgba(255,255,255,.07);color:#fff;cursor:pointer;
+  font-size:clamp(4px,0.6vw,8px);font-weight:800;letter-spacing:.07em;text-align:center;
+  line-height:1.25;padding:4% 2%}
+#authBtn:hover{border-color:rgba(255,255,255,.7);background:rgba(20,20,20,.92)}
+#authBtn svg{width:40%;max-width:26px;height:auto;opacity:.9;flex-shrink:0}
+.mnm-authbtn-label{text-align:center;line-height:1.3}
+
 /* ---------- Panels ---------- */
 .panels{display:contents}
 .panel{position:absolute;z-index:6;background:rgba(2,2,2,.9);border:1px solid var(--line);border-radius:14px;padding:1%;overflow:hidden;box-shadow:0 0 18px rgba(255,255,255,.06)}
@@ -249,7 +260,10 @@ button{cursor:pointer}
   /* Action bar: swap from flex to 5-column grid so each control gets its own lane.
      Regular columns: 1fr each. Shoot centre: 1.35fr (visually dominant).
      left/width expanded slightly so the outer cells don't crowd the stage vignette. */
-  .actionbar{left:6%;width:88%;display:grid;grid-template-columns:1fr 1fr 1.35fr 1fr 1fr}
+  .actionbar{left:6%;width:82%;display:grid;grid-template-columns:1fr 1fr 1.35fr 1fr 1fr}
+  /* Auth button on mobile: compact pill in the gap right of the action bar */
+  #authBtn{left:89%;top:80.78%;width:9%;height:17.72%;border-radius:12px;font-size:clamp(5px,1.8vw,8px);gap:5%;padding:3% 2%}
+  #authBtn svg{width:44%;max-width:18px}
   /* .ab becomes a grid item — flex:none removes the old flex-item sizing.
      min-width:0 lets the grid lane constrain it. Font floor raised to 7px (readable). */
   .ab{font-size:clamp(7px,2vw,10px);min-width:0;flex:none}
