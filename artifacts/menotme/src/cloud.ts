@@ -758,16 +758,13 @@ function watchGuestTriggers(): () => void {
 }
 
 // ---------- onboarding (over the live game) ----------
-const DEFAULT_ASSET_NAMES = ["Morning Workout", "Read 20 Pages", "Meditation", "Cold Shower"];
 function needsOnboarding(): boolean {
   if (localStorage.getItem(FLAG_ONBOARDED)) return false;
   const s = peekState();
   if (!s) return true;
   const hasProgress = s.me > 0 || s.notme > 0 || s.ended || s.weekly.history.length > 0;
-  // custom tags = the player already built their teams (e.g. partially onboarded)
-  const hasCustomTags =
-    s.assets.length !== DEFAULT_ASSET_NAMES.length ||
-    s.assets.some((a, i) => a.name !== DEFAULT_ASSET_NAMES[i]);
+  // custom tags = the player has already built their teams
+  const hasCustomTags = s.assets.length > 0 || s.liabilities.length > 0;
   if (hasProgress || hasCustomTags) {
     localStorage.setItem(FLAG_ONBOARDED, "1");
     return false;

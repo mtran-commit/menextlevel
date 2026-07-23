@@ -1,0 +1,102 @@
+CHANGE NEW-VISITOR HOME SCREEN — DO NOT PRELOAD PERSONAL HABITS
+
+For users who have never used Me Next Level and are not signed in, remove the current pre-populated Assets and Liabilities from the live home screen.
+
+Do NOT show example habits such as:
+
+Morning Workout
+Read 20 Pages
+Meditation
+Cold Shower
+Tomorrow's Me
+Skip Workout
+Mindless Scroll
+Late Nights
+
+These examples are causing users to think Me Next Level is prescribing these behaviours to them.
+
+Me Next Level must immediately feel personal.
+
+New empty state
+
+Under ASSETS — TEAM ME NEXT LEVEL, instead of example habits show:
+
+BUILD YOUR TEAM
+
+What will move you closer to your next level?
+
++ ADD MY FIRST ASSET
+
+Under LIABILITIES — TEAM HOLDING ME BACK, show:
+
+WHAT'S HOLDING YOU BACK?
+
+Choose something you want to beat, reduce or stop.
+
++ ADD MY FIRST LIABILITY
+
+When they click Add Asset
+
+First ask:
+
+WHAT MOVES YOU FORWARD?
+
+Input:
+
+Type your own...
+
+Then underneath, optionally show:
+
+Need inspiration?
+
+Suggestions can appear as selectable examples such as:
+
+Workout · Reading · Family Time · Saving Money · Building My Business · Healthy Eating · Learning
+
+These are suggestions only. They must NOT automatically become part of the user's game.
+
+When they click Add Liability
+
+Ask:
+
+WHAT'S HOLDING YOU BACK?
+
+Input:
+
+Type your own...
+
+Then optionally:
+
+Need inspiration?
+
+Procrastination · Overspending · Self-Doubt · Too Much Screen Time · Poor Sleep · Negative Thinking
+
+Again, these are suggestions only and must never automatically appear as the user's Liabilities.
+
+First-time experience
+
+Guide the user through creating:
+
+1 Asset + 1 Liability
+
+Then immediately return them to the arena and teach them how to take their first shot.
+
+Do not make this feel like account setup or a questionnaire.
+
+It should feel like they are building their teams before their first game.
+
+After their first shot, they can continue playing and be encouraged to:
+
+SIGN UP FREE — SAVE YOUR GAME
+
+Existing users
+
+IMPORTANT: Do not delete or alter Assets or Liabilities belonging to existing users.
+
+This change applies only to the default experience for brand-new visitors/users who have not created their own.
+
+Core principle
+
+Never assume what somebody's goals or bad habits are.
+
+The user's Assets and Liabilities define their personal game.

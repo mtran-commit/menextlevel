@@ -41,8 +41,8 @@ function write(s: GState) {
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-const SUGGESTED_ASSETS = ["Workout", "Read", "Drink Water", "Eat Healthy", "Sleep Well", "Quality Time", "Work on My Goals"];
-const SUGGESTED_LIABILITIES = ["Smoking", "Unnecessary Spending", "Mindless Scrolling", "Too Much Sugar", "Self-Doubt", "Negative Vibes", "Procrastination"];
+const SUGGESTED_ASSETS = ["Workout", "Reading", "Family Time", "Saving Money", "Building My Business", "Healthy Eating", "Learning"];
+const SUGGESTED_LIABILITIES = ["Procrastination", "Overspending", "Self-Doubt", "Too Much Screen Time", "Poor Sleep", "Negative Thinking"];
 
 // ---------- module state ----------
 let active = false;
@@ -253,9 +253,8 @@ function chipStep(opts: {
   const existingNames = ((opts.kind === "asset" ? s?.assets : s?.liabilities) ?? []).map((t) => t.name);
   // in a replay with real tags, pre-select them so nothing is lost
   const selected: string[] = [];
-  const isDefaultSet = opts.kind === "asset"
-    ? existingNames.join("|") === "Morning Workout|Read 20 Pages|Meditation|Cold Shower"
-    : existingNames.join("|") === "Tomorrow's Me|Skip Workout|Mindless Scroll|Late Nights";
+  // treat as a fresh slate if there are no existing tags
+  const isDefaultSet = existingNames.length === 0;
   const custom: string[] = isDefaultSet ? [] : existingNames.filter((n) => !opts.suggestions.includes(n));
   if (!isDefaultSet) selected.push(...existingNames);
 
@@ -263,9 +262,9 @@ function chipStep(opts: {
   next.disabled = true;
 
   const sync = () => {
-    next.disabled = selected.length < 3;
-    next.textContent = selected.length < 3 ? `${opts.cta} (${selected.length}/3)` : opts.cta;
-    if (selected.length >= 3 || !isDefaultSet) applySelection(opts.kind, selected);
+    next.disabled = selected.length < 1;
+    next.textContent = opts.cta;
+    if (selected.length >= 1 || !isDefaultSet) applySelection(opts.kind, selected);
     renderChips();
   };
   const toggle = (name: string) => {
@@ -313,7 +312,7 @@ function chipStep(opts: {
   renderChips();
   sync();
   next.onclick = () => {
-    if (selected.length < 3) return;
+    if (selected.length < 1) return;
     applySelection(opts.kind, selected);
     opts.onNext();
   };
@@ -362,11 +361,11 @@ function stepTeamNotMe() {
 function stepAssets() {
   const s = peek();
   // replay with real teams already built → don't force re-creating tags
-  if (practice && s && s.assets.length >= 3) return stepLiabilities();
+  if (practice && s && s.assets.length >= 1) return stepLiabilities();
   chipStep({
     kind: "asset",
     title: "BUILD YOUR TEAM ME NEXT LEVEL",
-    text: "Choose at least 3 Assets.",
+    text: "What will move you closer to your next level? Choose at least one Asset.",
     cta: "NEXT",
     suggestions: SUGGESTED_ASSETS,
     spotEl: ".panel.assets",
@@ -376,7 +375,7 @@ function stepAssets() {
 
 function stepLiabilities() {
   const s = peek();
-  if (practice && s && s.liabilities.length >= 3) return stepTapAsset();
+  if (practice && s && s.liabilities.length >= 1) return stepTapAsset();
   chipStep({
     kind: "liability",
     title: "WHAT'S HOLDING YOU BACK?",
