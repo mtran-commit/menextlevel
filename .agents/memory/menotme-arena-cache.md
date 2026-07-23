@@ -20,4 +20,6 @@ sed -i 's/arena\.png?v=[0-9]*/arena.png?v=NEW/' artifacts/menotme/public/styles.
 Match the version with the rest of the static assets in index.html.
 
 ## History
-Version mismatch caused the "left hand and rectangle returned together" bug — the browser was serving a pre-FX arena.png despite the file on disk being correct.
+- Version mismatch caused the "left hand and rectangle returned together" bug — the browser was serving a pre-FX arena.png despite the file on disk being correct.
+- The FX region originally started at x=80, leaving pixels up to 228 RGB at x=0–79 (the hand extends to the image's left edge). Fixed by using `-region "750x494+0+530"` (x starts at 0).
+- `?v=13` collided with an earlier session's cache of the same URL containing the old hand. Bumped to `?v=14`. Whenever arena.png changes, the version number must increase — never reuse a string that has previously pointed to an old copy.

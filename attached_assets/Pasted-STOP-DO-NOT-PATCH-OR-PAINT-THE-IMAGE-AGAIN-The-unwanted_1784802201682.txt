@@ -1,0 +1,133 @@
+STOP. DO NOT PATCH OR PAINT THE IMAGE AGAIN.
+
+The unwanted LEFT HAND and RECTANGLE are STILL visible in the current production render.
+
+Previous fixes have repeatedly removed one problem and then brought it back when another change was made.
+
+I want a root-cause asset audit before any further modification.
+
+STEP 1 — FIND THE SOURCE
+
+Search the ENTIRE project for every image that contains any part of this left hand.
+
+Inspect:
+
+arena.png
+all arena/background versions
+PNG
+JPG/JPEG
+WebP
+SVG
+CSS background images
+overlays
+cached/generated assets
+desktop assets
+mobile assets
+previous hand assets
+
+Do not assume arena.png is the only source.
+
+STEP 2 — PROVE WHICH ASSET IS RENDERING
+
+Temporarily replace the suspected source image with a solid obvious test image/colour in DEVELOPMENT ONLY.
+
+Refresh the arena.
+
+If the left hand disappears, we have identified the correct source.
+
+Revert the temporary test immediately afterward.
+
+Do not guess which asset is responsible.
+
+STEP 3 — CHECK WHETHER HAND + RECTANGLE ARE BAKED INTO THE SAME IMAGE
+
+Open the actual source image being rendered.
+
+Determine whether:
+
+A) the left hand is baked into the image
+B) the rectangle is baked into the image
+C) BOTH are baked into the same image
+D) either is being rendered by another layer
+
+Tell me the result before proceeding.
+
+STEP 4 — USE A CLEAN ARENA
+
+I want the arena background to contain:
+
+court
+hoop
+audience
+arena
+court lines
+
+It must contain:
+
+NO HANDS.
+
+NO PAPER.
+
+NO RECTANGULAR MASKS.
+
+Hands and paper must be independent transparent foreground assets/components.
+
+STEP 5 — DO NOT PAINT OVER THE LEFT HAND
+
+Do NOT:
+
+paint it black
+blur it
+clone a rectangular floor patch over it
+mask it with a rectangle
+hide it underneath another layer
+
+That is likely what created the rectangle problem.
+
+Reconstruct/restore the actual arena underneath it or locate the original clean arena asset.
+
+STEP 6 — CHECK PROJECT HISTORY
+
+Search Replit checkpoints/version history for the last version where the court was clean and neither the left hand nor rectangles were present.
+
+Compare the arena-related assets from that checkpoint with the current version.
+
+Do NOT revert the whole application.
+
+Recover only the clean arena/background asset if appropriate.
+
+FINAL ARCHITECTURE
+
+The scene must be:
+
+CLEAN ARENA BACKGROUND
+
+↓
+
+NEON/COURT EFFECTS
+
+↓
+
+RIGHT HAND — TRANSPARENT
+
+↓
+
+PAPER — SEPARATE TRANSPARENT OBJECT
+
+There should be NO LEFT HAND component whatsoever.
+
+BEFORE SAYING "FIXED"
+
+Take a screenshot of the actual rendered arena and visually confirm:
+
+✓ no left hand
+
+✓ no left rectangle
+
+✓ no right rectangle
+
+✓ continuous court texture
+
+✓ only the new right throwing hand
+
+Do not tell me the issue is resolved based only on the code. Verify the rendered pixels.
