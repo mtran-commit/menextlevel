@@ -1,0 +1,177 @@
+Right Hand + Paper State Logic
+
+Update the right-hand interaction so the hand and paper change based on the user's current game state.
+
+Do not redesign the arena.
+
+State 1 — No Asset selected
+
+When no Asset is selected:
+
+show the right hand empty
+no paper should be visible
+hand should rest naturally in the ready position
+do not show a placeholder paper
+do not show a circular paper control
+
+The empty hand tells the user they need to choose an Asset first.
+
+State 2 — Asset selected
+
+When the user selects an Asset:
+
+immediately make the crumpled paper appear naturally inside the right hand
+the hand should visibly grip the paper
+use the selected Asset as the active shot
+do not throw yet
+
+The paper should appear as if the hand has just picked it up.
+
+Optional subtle animation:
+
+empty hand → fingers close → paper appears/gripped
+
+Keep this short, around 200–300ms.
+
+State 3 — Shot mode selected
+
+When the user taps Asset Shot / Shoot or enters the pull-back interaction:
+
+rotate the right hand into the throwing position
+wrist turns naturally
+paper remains firmly inside the hand
+hand moves slightly backward into the ready-to-throw pose
+
+The user should clearly see:
+
+holding position → throwing position
+
+Do not release the paper yet.
+
+State 4 — Pull back
+
+As the user pulls/drags:
+
+move the right hand backward with the gesture
+rotate the wrist slightly
+keep the paper locked inside the fingers
+stronger pull = slightly greater hand movement
+
+The paper must stay attached to the hand.
+
+State 5 — Release
+
+When the user releases the flick:
+
+Synchronise this exact sequence:
+
+hand accelerates forward → wrist turns → fingers open → paper separates from fingertips
+
+The paper must leave the hand only at the actual release point.
+
+Do not make the paper disappear from the hand before the throw.
+
+Do not leave a duplicate paper behind.
+
+State 6 — Follow-through
+
+After release:
+
+right hand continues forward/upward naturally
+fingers remain open briefly
+wrist follows through
+then hand returns smoothly to the empty resting position
+
+The hand should now be empty because the Asset has already been thrown.
+
+Successful basket
+
+If the shot scores:
+
+paper passes through hoop
+net reacts
+paper disappears below net
+point is added
+right hand returns empty
+
+The scored Asset remains completed/scored.
+
+Miss
+
+If the shot misses:
+
+paper should return to the right hand for another attempt
+hand returns to the holding position
+user can pull back and shoot again
+
+Do not require the user to select the Asset again after a miss.
+
+Important state machine
+
+Implement the interaction explicitly as states such as:
+
+EMPTY
+
+→ Asset selected →
+
+HOLDING_PAPER
+
+→ Shot activated →
+
+AIMING
+
+→ user pulls →
+
+PULLBACK
+
+→ release →
+
+THROWING
+
+→ success →
+
+EMPTY
+
+or miss →
+
+HOLDING_PAPER
+
+Do not control this only through visual CSS animation. The game state and visual state must stay synchronised.
+
+Critical visual rules
+
+At no point should there be:
+
+paper visible before Asset selection
+duplicate paper
+paper floating beside the hand
+paper inside a white circle
+hand throwing while still visibly gripping another paper
+Mobile + desktop
+
+Use the same interaction logic on both.
+
+Desktop:
+
+mouse drag/release
+
+Mobile:
+
+touch drag/flick
+
+The mobile gesture should not use a separate visual implementation.
+
+Acceptance test
+
+Test this exact flow:
+
+Open game with no Asset selected → empty right hand.
+Tap Asset → paper appears in hand.
+Activate shot → hand rotates into throwing position.
+Pull back → hand and paper move together.
+Release → fingers open and paper leaves hand.
+Score → hand returns empty.
+Select another Asset → paper appears again.
+Miss → paper returns to hand for retry.
+
+Do not change scoring, streaks, court, hoop or other UI while implementing this.

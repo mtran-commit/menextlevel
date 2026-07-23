@@ -73,7 +73,9 @@ button{cursor:pointer}
 /* Realistic photo hands — transparent PNGs layered over the arena */
 /* Throw animation driven entirely by WAAPI in app.js for velocity-based timing */
 .hand{position:absolute;pointer-events:none;z-index:3}
-.hand-right{right:7%;bottom:-24%;width:48%;transform-origin:84% 100%}
+.hand-right{right:7%;bottom:-24%;width:48%;transform-origin:84% 100%;transition:transform 0.28s cubic-bezier(.2,.8,.3,1)}
+/* AIMING state: wrist rotated into throw-ready position */
+.hand--aiming{transform:translate(-1%,-3%) rotate(-9deg)}
 
 /* Paper ball (sits exactly over the baked ball in the art) */
 /* Crumpled paper ball: real texture image on top; thin transparent neon ring behind it.
@@ -89,6 +91,8 @@ button{cursor:pointer}
   box-shadow:0 0 10px rgba(255,255,255,.5),0 0 22px rgba(255,255,255,.18),inset 0 0 10px rgba(255,255,255,.18);
   z-index:-1;pointer-events:none}
 .paper.dragging{cursor:grabbing}
+/* Paper state: hidden when no asset is selected (opacity hides ::before ring too) */
+.paper--hidden{opacity:0;pointer-events:none}
 
 .power{left:1.8%;top:50%;width:2.6%;height:28%;display:flex;flex-direction:column-reverse;gap:4%;padding:.4%;z-index:7}
 .power i{display:block;height:7%;border-radius:999px;background:#111}

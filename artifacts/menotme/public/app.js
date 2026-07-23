@@ -6,8 +6,39 @@ const defaultState=()=>({
  weekly:{meWins:0,notMeWins:0,history:[]},friend:{name:"",score:null},gate:{required:false,asset:false,liability:false},signature:"Team Me Next Level",shown:{7:false,30:false,60:false,90:false},
  fans:[],doubters:[],arena:{showFans:true,showDoubters:true,showSigns:true,reactions:true}
 });
-let state=defaultState(),mode="asset",dragging=false,start=null,audio=null;
+let state=defaultState(),mode="asset",dragging=false,start=null,audio=null,handState="EMPTY";
 const $=id=>document.getElementById(id);
+// ---- Hand + paper state machine ----
+// States: EMPTY | HOLDING_PAPER | AIMING | PULLBACK | THROWING
+function setHandState(s,opts){
+  const prev=handState;handState=s;
+  const hR=$("handRight"),p=$("paper");if(!p)return;
+  if(s==="EMPTY"){
+    p.classList.add("paper--hidden");p.textContent="";
+    if(hR){hR.classList.remove("hand--aiming");hR.style.transition=""}
+  } else if(s==="HOLDING_PAPER"){
+    if(hR)hR.classList.remove("hand--aiming");
+    if(prev==="EMPTY"&&!(opts&&opts.skipAppear)){
+      // Paper appears with a brief scale-up from the hand
+      p.classList.remove("paper--hidden");
+      p.getAnimations().forEach(a=>a.cancel());
+      p.animate(
+        [{transform:"translate(-50%,-50%) scale(0.45)",opacity:0},
+         {transform:"translate(-50%,-50%) scale(1.06)",opacity:1,offset:.7,easing:"ease-out"},
+         {transform:"translate(-50%,-50%) scale(1)",opacity:1}],
+        {duration:240,easing:"cubic-bezier(.2,.8,.3,1)",fill:"none"});
+    } else {
+      p.classList.remove("paper--hidden");
+    }
+  } else if(s==="AIMING"){
+    p.classList.remove("paper--hidden");
+    if(hR)hR.classList.add("hand--aiming");
+  } else {
+    // PULLBACK / THROWING — paper visible, no aiming class (drag/WAAPI controls transform)
+    p.classList.remove("paper--hidden");
+    if(hR)hR.classList.remove("hand--aiming");
+  }
+}
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){try{(state.fans||[]).forEach(f=>{delete f.photo});localStorage.setItem(KEY,JSON.stringify(state));console.warn("MeNotMe: storage was full — fan photos were dropped to save your game.")}catch(e2){console.error("MeNotMe: could not save game state",e2)}}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state={...defaultState(),...s}}catch(e){};rollDay();resetSeasonIfNeeded()}
 function daysBetween(a,b){return Math.floor((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000)}
@@ -27,7 +58,7 @@ function render(){
  if(state.friend.name){$("friendName").value=state.friend.name;$("friendScore").value=state.friend.score??"";$("friendResult").textContent=state.friend.score==null?"No friend score yet.":state.me>state.friend.score?"You lead "+state.me+"–"+state.friend.score:state.me<state.friend.score?state.friend.name+" leads "+state.friend.score+"–"+state.me:"Draw "+state.me+"–"+state.friend.score}
  saveState()
 }
-function selectAsset(i){if(state.ended||!gateComplete())return;state.selected=i;state.assets[i].done=true;$("paper").textContent=state.assets[i].name;tone(360,.06,"square",.02);render()}
+function selectAsset(i){if(state.ended||!gateComplete())return;state.selected=i;state.assets[i].done=true;$("paper").textContent=state.assets[i].name;tone(360,.06,"square",.02);setHandState("HOLDING_PAPER");render()}
 function toggleLiability(i){if(state.ended||!gateComplete())return;const l=state.liabilities[i];if(!l.addressed){l.addressed=true;l.avoided=true}else if(l.avoided)l.avoided=false;else{l.addressed=false;l.avoided=true}render()}
 function outcome(power){const r=Math.random(),skill=Math.max(0,1-Math.abs(power-.72));if(skill>.72&&r<.62)return"swish";if(skill>.45&&r<.82)return"rim";return"miss"}
 function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete())return;const p=$("paper");if(p.dataset.flying)return;const o=outcome(power);
@@ -36,7 +67,15 @@ function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete()
  const cx=(rf.left+rf.width/2-st.left)/st.width*100,cy=(rf.top+rf.height/2-st.top)/st.height*100,nb=(nw.bottom-st.top)/st.height*100;
  const px=(pr.left+pr.width/2-st.left)/st.width*100,py=(pr.top+pr.height/2-st.top)/st.height*100;
  const TR="translate(-50%,-50%)";p.dataset.flying="1";
- const done=()=>{p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");p.textContent=state.selected===null?"":state.assets[state.selected].name};
+ const done=()=>{
+    p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");
+    if(state.selected===null){
+      p.classList.add("paper--hidden");p.textContent="";setHandState("EMPTY");
+    }else{
+      p.textContent=state.assets[state.selected].name;
+      handState="HOLDING_PAPER";const hR=$("handRight");if(hR)hR.classList.remove("hand--aiming");
+    }
+  };
  const showToast=t=>{$("toast").textContent=t;$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show")};
  // scoring fires the moment the paper crosses the rim — not when the shot starts
  const scoreNow=()=>{if(o==="swish")tone(980,.13,"sine",.04);state.me++;state.combo++;state.crowd=Math.min(100,state.crowd+(o==="swish"?10:6));state.assets[state.selected].scored=true;state.selected=null;cheer();confetti();const n=$("netImg");n.classList.remove("net-anim");void n.offsetWidth;n.classList.add("net-anim");showToast(o==="swish"?"SWISH +1":"RIM IN +1");if(window.arenaReact)window.arenaReact(state.combo);render()};
@@ -82,11 +121,13 @@ function animateThrow(power,startRx,startRy,startRr){
   ],{duration:tot,easing:"ease-in-out",fill:"none"});
 }
 $("paper").onpointerdown=e=>{
-  if(state.selected===null)return;
+  if(state.selected===null||$("paper").dataset.flying)return;
   dragging=true;start={x:e.clientX,y:e.clientY};
   $("paper").setPointerCapture(e.pointerId);$("paper").classList.add("dragging");
   const hR=$("handRight");
-  if(hR){hR.getAnimations().forEach(a=>a.cancel());hR.style.transform=""}
+  if(hR){hR.getAnimations().forEach(a=>a.cancel());hR.style.transition="none";hR.style.transform=""}
+  // Briefly enter AIMING (wrist rotates to throw-ready) before first drag move
+  handState="AIMING";if(hR)hR.classList.add("hand--aiming");
 };
 $("paper").onpointermove=e=>{
   if(!dragging)return;
@@ -94,7 +135,12 @@ $("paper").onpointermove=e=>{
   renderPower(p);
   $("paper").style.transform=`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35}px))`;
   const hR=$("handRight");
-  if(hR)hR.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
+  if(hR){
+    // Inline transform takes over from AIMING class; remove class to avoid double-transform
+    hR.classList.remove("hand--aiming");
+    hR.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
+  }
+  handState="PULLBACK";
 };
 $("paper").onpointerup=e=>{
   if(!dragging)return;
@@ -102,13 +148,25 @@ $("paper").onpointerup=e=>{
   const dx=e.clientX-start.x,dy=e.clientY-start.y;
   const p=Math.min(1,Math.hypot(dx,dy)/150);
   $("paper").classList.remove("dragging");renderPower(0);
+  const hR=$("handRight");if(hR){hR.style.transition="";hR.classList.remove("hand--aiming")}
+  handState="THROWING";
   animateThrow(p,dx*.09,dy*.09,dx*.028);
   shoot(p);
 };
-$("shoot").onclick=()=>{animateThrow(.72,0,0,0);shoot(.72)};$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>$("modal").classList.remove("show");$("save").onclick=saveTag;
+// Shoot button: brief AIMING flash then throw
+function triggerButtonShoot(){
+  if($("paper").dataset.flying||state.selected===null||state.ended||!gateComplete())return;
+  setHandState("AIMING");
+  setTimeout(()=>{handState="THROWING";animateThrow(.72,0,0,0);shoot(.72)},110);
+}
+$("shoot").onclick=triggerButtonShoot;
+$("assetShot").onclick=triggerButtonShoot;
+$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>$("modal").classList.remove("show");$("save").onclick=saveTag;
 $("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;$("tagInput").focus()}});
 $("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} — ${state.notme} Holding Me Back`;try{if(navigator.share)await navigator.share({title:"Me Next Level",text:t})}catch(e){}};
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);
+// Sync hand state with whatever state was persisted in localStorage
+if(state.selected!==null)setHandState("HOLDING_PAPER",{skipAppear:true});else setHandState("EMPTY");
 $("netImg").addEventListener("animationend",()=>$("netImg").classList.remove("net-anim"));
