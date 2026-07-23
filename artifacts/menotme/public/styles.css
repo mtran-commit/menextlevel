@@ -207,6 +207,12 @@ button{cursor:pointer}
 .arena-scroll{max-height:min(58vh,460px);overflow:auto;padding-right:4px}
 .arena-card h4{margin:14px 0 2px;letter-spacing:.08em}
 .hint{margin:2px 0 8px;font-size:11px;color:#999}
+.modal-hint{font-size:11px;min-height:16px;margin:5px 0 3px;text-align:left;line-height:1.4;transition:opacity .2s}
+.modal-hint:empty{opacity:0}
+.modal-hint--error{color:#ff4c4c}
+.modal-hint--warn{color:#ff9f1c}
+@keyframes tagFlash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 2px #fff,0 0 10px #fff}}
+.tag--flash{animation:tagFlash .9s ease-out}
 .fan-form{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
 .filelabel{font-size:11px;color:#bbb;display:flex;flex-direction:column;gap:4px}
 .fan-row{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:6px 8px;margin-bottom:6px;font-size:13px}

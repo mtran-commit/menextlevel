@@ -131,8 +131,33 @@ function checkCeremonies(){const s=state.streak;if(s>=90&&!state.shown[90]){stat
 function showCeremony(title,icon,text){$("ceremonyTitle").textContent=title;$("ceremonyIcon").textContent=icon;$("ceremonyText").textContent=text;$("ceremonySignature").textContent=state.signature;$("ceremony").classList.add("show");if(window.arenaCelebrate)window.arenaCelebrate()}
 const ASSET_CHIPS=["Workout","Reading","Family Time","Saving Money","Building My Business","Healthy Eating","Learning"];
 const LIAB_CHIPS=["Procrastination","Overspending","Self-Doubt","Too Much Screen Time","Poor Sleep","Negative Thinking"];
-function openModal(type){mode=type;$("modalTitle").textContent=type==="asset"?"WHAT MOVES YOU FORWARD?":"WHAT'S HOLDING YOU BACK?";$("tagInput").value="";$("tagInput").placeholder="Type your own...";const chips=type==="asset"?ASSET_CHIPS:LIAB_CHIPS;$("inspireChips").innerHTML=chips.map(c=>`<button type="button" class="inspire-chip" data-val="${c}">${c}</button>`).join("");$("modal").classList.add("show");$("tagInput").focus()}
-function saveTag(){const v=$("tagInput").value.trim();if(!v)return;if(mode==="asset"){state.assets.push({name:v,done:false,scored:false});if(state.gate.required)state.gate.asset=true}else{state.liabilities.push({name:v,addressed:false,avoided:true});if(state.gate.required)state.gate.liability=true}if(gateComplete())state.gate.required=false;$("modal").classList.remove("show");render()}
+function normalize(s){return s.toLowerCase().trim().replace(/\s+/g," ").replace(/[^\w\s]/g,"").trim()}
+function clearModalHint(){const h=$("modalHint");if(h){h.textContent="";h.className="modal-hint"}}
+function openModal(type){mode=type;$("modalTitle").textContent=type==="asset"?"WHAT MOVES YOU FORWARD?":"WHAT'S HOLDING YOU BACK?";$("tagInput").value="";$("tagInput").placeholder="Type your own...";clearModalHint();const chips=type==="asset"?ASSET_CHIPS:LIAB_CHIPS;$("inspireChips").innerHTML=chips.map(c=>`<button type="button" class="inspire-chip" data-val="${c}">${c}</button>`).join("");$("modal").classList.add("show");$("tagInput").focus()}
+function saveTag(){
+  const v=$("tagInput").value.trim();if(!v)return;
+  const norm=normalize(v);
+  const h=$("modalHint");
+  // Same-category duplicate check
+  const sameList=mode==="asset"?state.assets:state.liabilities;
+  const dupIdx=sameList.findIndex(x=>normalize(x.name)===norm);
+  if(dupIdx!==-1){
+    if(h){h.textContent=mode==="asset"?"Already on your team — This Asset already exists. Use the existing tag instead.":"Already on your team — This Liability already exists. Use the existing tag instead.";h.className="modal-hint modal-hint--error";}
+    const listId=mode==="asset"?"assets":"liabilities";
+    const tags=document.querySelectorAll("#"+listId+" .tag");
+    const el=tags[dupIdx];if(el){el.scrollIntoView({block:"nearest",behavior:"smooth"});el.classList.remove("tag--flash");void el.offsetWidth;el.classList.add("tag--flash");}
+    return;
+  }
+  // Cross-category duplicate check
+  const otherList=mode==="asset"?state.liabilities:state.assets;
+  if(otherList.some(x=>normalize(x.name)===norm)){
+    if(h){h.textContent="This already exists on the other team. Use the existing entry or rename this one so its meaning is clear.";h.className="modal-hint modal-hint--warn";}
+    return;
+  }
+  clearModalHint();
+  if(mode==="asset"){state.assets.push({name:v,done:false,scored:false});if(state.gate.required)state.gate.asset=true}else{state.liabilities.push({name:v,addressed:false,avoided:true});if(state.gate.required)state.gate.liability=true}
+  if(gateComplete())state.gate.required=false;$("modal").classList.remove("show");render()
+}
 function updateClock(){const d=new Date(),e=new Date();e.setHours(23,59,59,999);const m=Math.max(0,Math.floor((e-d)/60000));$("clock").textContent=String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}
 // ---- Hand throw animation (WAAPI position + frame-sequenced pose swap) ----
 // startRx/Ry = right-hand px offset at release moment (from drag)
@@ -207,8 +232,9 @@ function triggerButtonShoot(){
 }
 $("shoot").onclick=triggerButtonShoot;
 $("assetShot").onclick=triggerButtonShoot;
-$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>$("modal").classList.remove("show");$("save").onclick=saveTag;
-$("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;$("tagInput").focus()}});
+$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>{$("modal").classList.remove("show");clearModalHint()};$("save").onclick=saveTag;
+$("tagInput").addEventListener("input",clearModalHint);
+$("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;clearModalHint();$("tagInput").focus()}});
 $("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} — ${state.notme} Holding Me Back`;try{if(navigator.share)await navigator.share({title:"Me Next Level",text:t})}catch(e){}};

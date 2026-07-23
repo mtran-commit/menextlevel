@@ -53,10 +53,14 @@ export const assetsTable = pgTable(
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
+    normalizedName: text("normalized_name").notNull().default(""),
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [uniqueIndex("assets_user_name_idx").on(t.userId, t.name)],
+  (t) => [
+    uniqueIndex("assets_user_name_idx").on(t.userId, t.name),
+    uniqueIndex("assets_user_norm_idx").on(t.userId, t.normalizedName),
+  ],
 );
 
 export const liabilitiesTable = pgTable(
@@ -65,10 +69,14 @@ export const liabilitiesTable = pgTable(
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
+    normalizedName: text("normalized_name").notNull().default(""),
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [uniqueIndex("liabilities_user_name_idx").on(t.userId, t.name)],
+  (t) => [
+    uniqueIndex("liabilities_user_name_idx").on(t.userId, t.name),
+    uniqueIndex("liabilities_user_norm_idx").on(t.userId, t.normalizedName),
+  ],
 );
 
 // ---------- Daily matches / scores ----------

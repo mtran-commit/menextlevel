@@ -11,6 +11,11 @@ import {
   usersTable,
 } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
+
+/** Normalize a tag name for duplicate detection (case/space/punctuation-insensitive). */
+function normalizeName(s: string): string {
+  return s.toLowerCase().trim().replace(/\s+/g, " ").replace(/[^\w\s]/g, "").trim();
+}
 import { notifyUser } from "./notify";
 import { logAudit } from "./audit";
 
@@ -210,10 +215,10 @@ export async function syncNormalized(userId: string, state: GameState) {
 
   // tags
   for (const a of state.assets) {
-    await db.insert(assetsTable).values({ userId, name: a.name }).onConflictDoNothing();
+    await db.insert(assetsTable).values({ userId, name: a.name, normalizedName: normalizeName(a.name) }).onConflictDoNothing();
   }
   for (const l of state.liabilities) {
-    await db.insert(liabilitiesTable).values({ userId, name: l.name }).onConflictDoNothing();
+    await db.insert(liabilitiesTable).values({ userId, name: l.name, normalizedName: normalizeName(l.name) }).onConflictDoNothing();
   }
 
   // season (unique on userId+startDate; number = count of prior seasons + 1)

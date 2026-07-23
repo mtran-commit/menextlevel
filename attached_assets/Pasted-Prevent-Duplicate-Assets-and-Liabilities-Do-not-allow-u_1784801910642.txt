@@ -1,0 +1,133 @@
+Prevent Duplicate Assets and Liabilities
+
+Do not allow users to create the same Asset or Liability more than once.
+
+Apply duplicate detection to:
+
+Assets
+Liabilities
+Guest users
+Registered users
+Mobile
+Desktop
+Duplicate logic
+
+Compare entries after normalising:
+
+uppercase/lowercase differences
+leading/trailing spaces
+repeated spaces
+basic punctuation differences
+
+Examples that should count as duplicates:
+
+Workout
+
+workout
+
+Workout
+
+WORKOUT
+
+These must all be treated as the same Asset.
+
+The same applies to Liabilities.
+
+When a duplicate is entered
+
+Do not create another tag.
+
+Show:
+
+Already on your team
+
+For an Asset:
+
+This Asset already exists. Use the existing tag instead.
+
+For a Liability:
+
+This Liability already exists. Use the existing tag instead.
+
+Highlight or scroll to the existing tag where possible.
+
+Cross-category duplicate
+
+Also check whether the exact same wording already exists in the opposite team.
+
+Example:
+
+Asset: Smoking
+
+Liability: Smoking
+
+If this happens, warn the user:
+
+This already exists on the other team.
+
+Ask them to either:
+
+use the existing entry, or
+rename the new one so its meaning is clear.
+
+Do not silently create it.
+
+Database protection
+
+Do not rely only on frontend validation.
+
+Add backend/database protection so duplicate records cannot be created through:
+
+API calls
+multiple devices
+double taps
+network retries
+
+Use a normalised value such as:
+
+normalized_name
+
+and enforce uniqueness per user and type where appropriate.
+
+Example:
+
+user_id + type + normalized_name
+
+must be unique.
+
+Important
+
+Existing daily completion does NOT create a new Asset or Liability.
+
+A user should reuse the same tag every day.
+
+Example:
+
+Workout
+
+remains one permanent Asset.
+
+Each day the user completes Workout, it creates a new daily completion/result linked to the same Asset record.
+
+It must NOT create:
+
+Workout
+Workout
+Workout
+Workout
+
+as separate Assets.
+
+Acceptance test
+Add Workout.
+Try to add workout.
+System blocks it.
+Try Workout.
+System blocks it.
+Complete Workout tomorrow.
+Same original Asset is reused.
+Daily history records the new completion without creating another Asset.
+
+Do the same test for Liabilities.
+
+This also makes your long-term stats much cleaner because one Asset becomes one continuous history, rather than many slightly different copies of the same habit.
