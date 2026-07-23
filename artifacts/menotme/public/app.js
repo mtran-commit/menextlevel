@@ -13,6 +13,10 @@ const $=id=>document.getElementById(id);
 // Two hand assets: hand-right-empty.png (open fingers) | hand-right-holding.png (gripping paper)
 const HAND_EMPTY="assets/hand-right-empty.png";
 const HAND_HOLDING="assets/hand-right-holding.png";
+const HAND_AIM="assets/hand-right-aim.png";
+const HAND_PULLBACK="assets/hand-right-pullback.png";
+const HAND_RELEASE="assets/hand-right-release.png";
+const HAND_FOLLOWTHROUGH="assets/hand-right-followthrough.png";
 function setHandState(s,opts){
   const prev=handState;handState=s;
   const hR=$("handRight"),p=$("paper");if(!p)return;
@@ -34,16 +38,16 @@ function setHandState(s,opts){
       p.classList.remove("paper--hidden");
     }
   } else if(s==="AIMING"){
-    // Still gripping paper — switch to holding image, rotate wrist
+    // Aim pose: wrist rotated inward, paper gripped
     p.classList.remove("paper--hidden");
-    if(hR){hR.src=HAND_HOLDING;hR.classList.add("hand--aiming")}
+    if(hR){hR.src=HAND_AIM;hR.classList.add("hand--aiming")}
+  } else if(s==="PULLBACK"){
+    // Pull-back pose: wrist cocked, still gripping
+    p.classList.remove("paper--hidden");
+    if(hR){hR.src=HAND_PULLBACK;hR.classList.remove("hand--aiming")}
   } else if(s==="THROWING"){
-    // Fingers open — switch to empty hand as paper detaches
-    if(hR){hR.src=HAND_EMPTY;hR.classList.remove("hand--aiming")}
-  } else {
-    // PULLBACK — still gripping
-    p.classList.remove("paper--hidden");
-    if(hR){hR.src=HAND_HOLDING;hR.classList.remove("hand--aiming")}
+    // Release pose: fingers opening as paper detaches
+    if(hR){hR.src=HAND_RELEASE;hR.classList.remove("hand--aiming")}
   }
 }
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){try{(state.fans||[]).forEach(f=>{delete f.photo});localStorage.setItem(KEY,JSON.stringify(state));console.warn("MeNotMe: storage was full — fan photos were dropped to save your game.")}catch(e2){console.error("MeNotMe: could not save game state",e2)}}}
@@ -109,21 +113,29 @@ const LIAB_CHIPS=["Procrastination","Overspending","Self-Doubt","Too Much Screen
 function openModal(type){mode=type;$("modalTitle").textContent=type==="asset"?"WHAT MOVES YOU FORWARD?":"WHAT'S HOLDING YOU BACK?";$("tagInput").value="";$("tagInput").placeholder="Type your own...";const chips=type==="asset"?ASSET_CHIPS:LIAB_CHIPS;$("inspireChips").innerHTML=chips.map(c=>`<button type="button" class="inspire-chip" data-val="${c}">${c}</button>`).join("");$("modal").classList.add("show");$("tagInput").focus()}
 function saveTag(){const v=$("tagInput").value.trim();if(!v)return;if(mode==="asset"){state.assets.push({name:v,done:false,scored:false});if(state.gate.required)state.gate.asset=true}else{state.liabilities.push({name:v,addressed:false,avoided:true});if(state.gate.required)state.gate.liability=true}if(gateComplete())state.gate.required=false;$("modal").classList.remove("show");render()}
 function updateClock(){const d=new Date(),e=new Date();e.setHours(23,59,59,999);const m=Math.max(0,Math.floor((e-d)/60000));$("clock").textContent=String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}
-// ---- Hand throw animation (WAAPI, velocity-scaled) ----
+// ---- Hand throw animation (WAAPI position + frame-sequenced pose swap) ----
 // startRx/Ry = right-hand px offset at release moment (from drag)
 // startRr    = right-hand wrist rotation in deg at release moment
+// Frame sequence: RELEASE → FOLLOWTHROUGH (at peak) → EMPTY (after return)
+let _throwTimers=[];
 function animateThrow(power,startRx,startRy,startRr){
   const hR=$("handRight");if(!hR)return;
+  _throwTimers.forEach(clearTimeout);_throwTimers=[];
   hR.getAnimations().forEach(a=>a.cancel());
   hR.classList.remove("hand--aiming");hR.style.transition="none";
   const p=Math.max(0,Math.min(1,power));
   // Timing: faster flick → shorter phases
-  const tMs=Math.round(250-p*100);   // throw/release:  150–250 ms
-  const fMs=Math.round(380-p*130);   // follow-through: 250–380 ms
-  const rMs=Math.round(480-p*130);   // return to ready:350–480 ms
+  const tMs=Math.round(250-p*100);   // forward throw peak:  150–250 ms
+  const fMs=Math.round(330-p*100);   // follow-through:      230–330 ms
+  const rMs=Math.round(440-p*100);   // return to rest:      340–440 ms
   const tot=tMs+fMs+rMs;
   const tOff=tMs/tot, fOff=(tMs+fMs)/tot;
-  // Right hand: pull-back pos → lunge forward-up (release) → follow-through → return
+  // Frame 1 — RELEASE (already set by setHandState("THROWING") before this call)
+  // Frame 2 — FOLLOWTHROUGH when hand reaches peak of forward motion
+  _throwTimers.push(setTimeout(()=>{if(hR)hR.src=HAND_FOLLOWTHROUGH;},tMs));
+  // Frame 3 — EMPTY when hand has returned to rest
+  _throwTimers.push(setTimeout(()=>{if(hR)hR.src=HAND_EMPTY;},tMs+fMs));
+  // WAAPI spatial transform: start pos → lunge forward/up → follow-through arc → rest
   hR.animate([
     {transform:`translate(${startRx}px,${startRy}px) rotate(${startRr}deg)`},
     {transform:`translate(-4%,-11%) rotate(-24deg) scaleX(1.09)`,offset:tOff,easing:"cubic-bezier(.1,.8,.2,1)"},
@@ -137,8 +149,8 @@ $("paper").onpointerdown=e=>{
   $("paper").setPointerCapture(e.pointerId);$("paper").classList.add("dragging");
   const hR=$("handRight");
   if(hR){hR.getAnimations().forEach(a=>a.cancel());hR.style.transition="none";hR.style.transform=""}
-  // Briefly enter AIMING (wrist rotates to throw-ready) before first drag move
-  handState="AIMING";if(hR)hR.classList.add("hand--aiming");
+  // AIMING pose: wrist rotates in, hand-right-aim.png
+  setHandState("AIMING");
 };
 $("paper").onpointermove=e=>{
   if(!dragging)return;
@@ -147,8 +159,8 @@ $("paper").onpointermove=e=>{
   $("paper").style.transform=`translate(calc(-50% + ${dx*.35}px),calc(-50% + ${dy*.35}px))`;
   const hR=$("handRight");
   if(hR){
-    // Inline transform takes over from AIMING class; remove class to avoid double-transform
-    hR.classList.remove("hand--aiming");
+    // PULLBACK pose: wrist fully cocked; inline transform drives position
+    if(handState!=="PULLBACK"){hR.src=HAND_PULLBACK;hR.classList.remove("hand--aiming");}
     hR.style.transform=`translate(${dx*.09}px,${dy*.09}px) rotate(${dx*.028}deg)`;
   }
   handState="PULLBACK";
