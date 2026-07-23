@@ -3,5 +3,6 @@
 - [MeNotMe inspiration engine](menotme-inspiration-engine.md) — deterministic triggers only, pregenerated clips, `state` is a let (no window.state), time-based narration guards.
 - [MeNotMe tutorial](menotme-tutorial.md) — spotlight tutorial over the live arena; practice snapshot must be crash-safe; overlay cards must never cover the paper drag zone.
 - [MeNotMe mobile visual rules](menotme-mobile-visual.md) — two mobile-only rendering bugs fixed; court-pulse.pa hidden; shootbtn .ball hidden; paper::before glow reduced.
+- [MeNotMe arena cache busting](menotme-arena-cache.md) — arena.png must have ?v=N in ALL three CSS rules (.stage, #rimFront, #netImg); missing version = stale cache shows old illustrated hand.
 - [MeNotMe LED logo](menotme-led-logo.md) — canvas dot-matrix logo in public/led-logo.js; ME=white, NEXT=red, LEVEL=white; sweep+pulse+tap; used in header + auth overlay.
 - [MeNotMe realistic hands](menotme-realistic-hands.md) — photo hand PNGs overlay baked arena.png art; dark masks at z:2, hands at z:3, paper stays z:10; drag/throw hooks in app.js pointer events.
