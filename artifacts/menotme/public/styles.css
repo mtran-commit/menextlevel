@@ -73,7 +73,6 @@ button{cursor:pointer}
 /* Realistic photo hands — transparent PNGs layered over the arena */
 /* Throw animation driven entirely by WAAPI in app.js for velocity-based timing */
 .hand{position:absolute;pointer-events:none;z-index:3}
-.hand-left{left:-4%;bottom:-24%;width:46%;transform-origin:14% 100%}
 .hand-right{right:7%;bottom:-24%;width:48%;transform-origin:84% 100%}
 
 /* Paper ball (sits exactly over the baked ball in the art) */
