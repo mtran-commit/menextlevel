@@ -10,14 +10,17 @@ let state=defaultState(),mode="asset",dragging=false,start=null,audio=null,handS
 const $=id=>document.getElementById(id);
 // ---- Hand + paper state machine ----
 // States: EMPTY | HOLDING_PAPER | AIMING | PULLBACK | THROWING
+// Two hand assets: hand-right-empty.png (open fingers) | hand-right-holding.png (gripping paper)
+const HAND_EMPTY="assets/hand-right-empty.png";
+const HAND_HOLDING="assets/hand-right-holding.png";
 function setHandState(s,opts){
   const prev=handState;handState=s;
   const hR=$("handRight"),p=$("paper");if(!p)return;
   if(s==="EMPTY"){
     p.classList.add("paper--hidden");p.textContent="";
-    if(hR){hR.classList.remove("hand--aiming");hR.style.transition=""}
+    if(hR){hR.src=HAND_EMPTY;hR.classList.remove("hand--aiming");hR.style.transition=""}
   } else if(s==="HOLDING_PAPER"){
-    if(hR)hR.classList.remove("hand--aiming");
+    if(hR){hR.src=HAND_HOLDING;hR.classList.remove("hand--aiming")}
     if(prev==="EMPTY"&&!(opts&&opts.skipAppear)){
       // Paper appears with a brief scale-up from the hand
       p.classList.remove("paper--hidden");
@@ -31,12 +34,16 @@ function setHandState(s,opts){
       p.classList.remove("paper--hidden");
     }
   } else if(s==="AIMING"){
+    // Still gripping paper — switch to holding image, rotate wrist
     p.classList.remove("paper--hidden");
-    if(hR)hR.classList.add("hand--aiming");
+    if(hR){hR.src=HAND_HOLDING;hR.classList.add("hand--aiming")}
+  } else if(s==="THROWING"){
+    // Fingers open — switch to empty hand as paper detaches
+    if(hR){hR.src=HAND_EMPTY;hR.classList.remove("hand--aiming")}
   } else {
-    // PULLBACK / THROWING — paper visible, no aiming class (drag/WAAPI controls transform)
+    // PULLBACK — still gripping
     p.classList.remove("paper--hidden");
-    if(hR)hR.classList.remove("hand--aiming");
+    if(hR){hR.src=HAND_HOLDING;hR.classList.remove("hand--aiming")}
   }
 }
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){try{(state.fans||[]).forEach(f=>{delete f.photo});localStorage.setItem(KEY,JSON.stringify(state));console.warn("MeNotMe: storage was full — fan photos were dropped to save your game.")}catch(e2){console.error("MeNotMe: could not save game state",e2)}}}
@@ -70,10 +77,13 @@ function shoot(power=.72){if(state.selected===null||state.ended||!gateComplete()
  const done=()=>{
     p.getAnimations().forEach(a=>a.cancel());delete p.dataset.flying;p.className="live paper";p.removeAttribute("style");
     if(state.selected===null){
+      // Scored — hand returns empty, paper disappears
       p.classList.add("paper--hidden");p.textContent="";setHandState("EMPTY");
     }else{
+      // Missed — paper returns to grip; hand switches back to holding image
       p.textContent=state.assets[state.selected].name;
-      handState="HOLDING_PAPER";const hR=$("handRight");if(hR)hR.classList.remove("hand--aiming");
+      p.classList.remove("paper--hidden");
+      setHandState("HOLDING_PAPER",{skipAppear:true});
     }
   };
  const showToast=t=>{$("toast").textContent=t;$("toast").classList.remove("show");void $("toast").offsetWidth;$("toast").classList.add("show")};
@@ -150,7 +160,8 @@ $("paper").onpointerup=e=>{
   const p=Math.min(1,Math.hypot(dx,dy)/150);
   $("paper").classList.remove("dragging");renderPower(0);
   const hR=$("handRight");if(hR){hR.style.transition="";hR.classList.remove("hand--aiming")}
-  handState="THROWING";
+  // Switch to open-hand image at the exact moment paper leaves fingertips
+  setHandState("THROWING");
   animateThrow(p,dx*.09,dy*.09,dx*.028);
   shoot(p);
 };
@@ -158,7 +169,8 @@ $("paper").onpointerup=e=>{
 function triggerButtonShoot(){
   if($("paper").dataset.flying||state.selected===null||state.ended||!gateComplete())return;
   setHandState("AIMING");
-  setTimeout(()=>{handState="THROWING";animateThrow(.72,0,0,0);shoot(.72)},110);
+  // After the wrist-cock pause, switch to open hand and release paper
+  setTimeout(()=>{setHandState("THROWING");animateThrow(.72,0,0,0);shoot(.72)},110);
 }
 $("shoot").onclick=triggerButtonShoot;
 $("assetShot").onclick=triggerButtonShoot;

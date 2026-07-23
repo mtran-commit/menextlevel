@@ -420,3 +420,15 @@ id = "oAN20U1lzm17zcFyvvSUf"
 uri = "file://artifacts/menotme/public/assets/audio/comm_tutorial_1.mp3"
 type = "audio"
 title = "tutorial commentator clip"
+
+[[outputs]]
+id = "J3AlpwptPNraQHflkgfdh"
+uri = "file://artifacts/menotme/public/assets/hand-right-empty.png"
+type = "image"
+title = "Hand: EMPTY state"
+
+[[outputs]]
+id = "6zezwliADLslWuIllOccJ"
+uri = "file://artifacts/menotme/public/assets/hand-right-holding.png"
+type = "image"
+title = "Hand: HOLDING PAPER state"

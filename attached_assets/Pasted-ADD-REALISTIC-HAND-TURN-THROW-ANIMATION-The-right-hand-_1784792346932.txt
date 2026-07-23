@@ -1,0 +1,111 @@
+ADD REALISTIC HAND TURN + THROW ANIMATION
+
+The right hand must visibly perform the entire throwing motion.
+
+Do not make the paper launch from a static hand.
+
+Required sequence
+1. Empty hand
+
+No Asset selected:
+
+right hand empty
+relaxed ready pose
+2. Asset selected
+paper appears in the hand
+fingers close naturally around it
+3. Shot activated
+hand rotates inward into a throwing position
+wrist turns
+hand moves slightly backward
+paper stays gripped
+4. Pull-back
+
+As the user drags:
+
+hand moves backward with the gesture
+wrist rotates more
+fingers remain closed around paper
+5. Throw
+
+On release:
+
+hand accelerates forward
+wrist snaps forward
+palm rotates toward the hoop
+fingers open
+paper separates from the fingertips at the exact release moment
+6. Follow-through
+
+After the paper leaves:
+
+hand continues forward/up slightly
+fingers remain open briefly
+wrist finishes the throw naturally
+then returns to the empty resting pose
+Visual requirement
+
+I want to actually SEE:
+
+hand holding paper → hand turns → hand pulls back → hand throws forward → fingers open → paper leaves hand → follow-through
+
+The hand movement should look like a real first-person throw.
+
+Animation timing
+
+Approximate:
+
+rotate to throw position: 200–300ms
+pull-back: controlled by user drag
+forward throw: 150–220ms
+finger release: around 80–120ms
+follow-through: 250–350ms
+return to resting pose: 350–500ms
+Important
+
+Do not use a single static hand PNG for the whole animation.
+
+Use either:
+
+multiple hand pose assets/frames,
+a short transparent video/WebM sequence,
+sprite animation,
+or a properly rigged/layered hand animation.
+
+Preferred solution:
+
+transparent WebM or sprite sequence with realistic hand poses, because the hand anatomy will remain believable while turning and throwing.
+
+Required hand poses
+
+At minimum create:
+
+empty resting hand
+holding paper
+rotated throwing pose
+pull-back pose
+release/open-finger pose
+follow-through pose
+
+The separate paper projectile must detach from the hand only at the release frame.
+
+Miss logic
+
+If the shot misses:
+
+complete the follow-through
+return to the holding-paper pose
+allow retry
+
+If it scores:
+
+return to empty hand
+Mobile + desktop
+
+Use the same animation system on both.
+
+Mobile gesture velocity should affect the speed/intensity of the forward throw.
+
+Acceptance criteria
+
+The animation is only complete when the player can clearly see the hand physically turn and throw the paper, rather than the paper simply flying away from a static hand.
