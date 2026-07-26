@@ -48,6 +48,18 @@
     <div class="aud-label fansl">★ YOUR FANS</div>
     <div class="aud-label doubl">✕ THE DOUBTERS</div>
     <div id="signs"></div>
+
+    <!-- Arena auth bar: guest → Sign In + Create Account; signed-in → Profile -->
+    <div id="arenaAuthBar" class="arena-auth-bar">
+      <div id="arenaGuestBtns" class="arena-auth-guest">
+        <button id="arenaSignIn" class="arena-auth-btn">SIGN IN</button>
+        <button id="arenaCreateAcct" class="arena-auth-btn"><span class="acct-full">CREATE FREE ACCOUNT</span><span class="acct-short">SIGN UP FREE</span></button>
+      </div>
+      <div id="arenaUserBtns" class="arena-auth-user" style="display:none">
+        <button id="arenaProfile" class="arena-auth-btn profile-btn">PROFILE</button>
+      </div>
+    </div>
+
     <div class="hoop-fx" id="rimFront"></div>
     <div class="hoop-fx" id="netWrap"><div id="netImg"></div></div>
     <div id="handWrap" class="hand-wrap">
@@ -64,11 +76,6 @@
       <button class="ab" id="addLiability"><span class="ic">＋</span><span>ADD LIABILITY</span></button>
       <button class="ab" id="liabilityList"><span class="ic">◈</span><span>LIABILITY LIST</span></button>
     </div>
-    <button id="authBtn" class="mnm-authbtn" aria-label="Create free account">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      <span class="mnm-authbtn-label">CREATE FREE<br>ACCOUNT</span>
-    </button>
-
     <div class="gate" id="gate">Add one new Asset and one new Liability to unlock the next game.</div>
     <div class="toast" id="toast">SWISH +1</div>
   </div>
@@ -153,6 +160,15 @@
     <button class="secondary" id="menuFame">Wall of Fame</button>
     <button class="secondary" id="menuHistory">History & Friend Challenge</button>
     <button class="secondary" id="menuHowTo">How to Play</button>
+    <div class="menu-auth-divider"></div>
+    <div id="menuGuestItems">
+      <button class="secondary" id="menuSignIn">Sign In</button>
+      <button class="secondary" id="menuCreateAcct">Create Free Account</button>
+    </div>
+    <div id="menuUserItems" style="display:none">
+      <button class="secondary" id="menuProfile">Profile</button>
+      <button class="secondary" id="menuSignOut">Sign Out</button>
+    </div>
   </div>
   <div class="actions"><button class="primary" id="closeMenu">Close</button></div>
 </div></div>

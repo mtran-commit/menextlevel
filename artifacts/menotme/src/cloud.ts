@@ -439,14 +439,30 @@ function fab() {
   document.body.appendChild(wrap);
   bell.onclick = () => togglePanel("notifications");
 
-  // Auth pill in the header switches to "PROFILE" for signed-in users.
-  const btn = document.getElementById("authBtn") as HTMLButtonElement | null;
-  if (btn) {
-    btn.innerHTML =
-      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>PROFILE`;
-    btn.setAttribute("aria-label", "Profile");
-    btn.onclick = () => togglePanel("account");
-  }
+  // Arena auth bar — hide guest buttons, show profile button
+  const guestBtns = document.getElementById("arenaGuestBtns");
+  const userBtns = document.getElementById("arenaUserBtns");
+  if (guestBtns) guestBtns.style.display = "none";
+  if (userBtns) userBtns.style.display = "";
+  const arenaProfile = document.getElementById("arenaProfile") as HTMLButtonElement | null;
+  if (arenaProfile) arenaProfile.onclick = () => togglePanel("account");
+
+  // Menu — hide guest items, show signed-in items
+  const menuGuestItems = document.getElementById("menuGuestItems");
+  const menuUserItems = document.getElementById("menuUserItems");
+  if (menuGuestItems) menuGuestItems.style.display = "none";
+  if (menuUserItems) menuUserItems.style.display = "";
+  const menuProfile = document.getElementById("menuProfile") as HTMLButtonElement | null;
+  if (menuProfile) menuProfile.onclick = () => {
+    document.getElementById("menuModal")?.classList.remove("show");
+    togglePanel("account");
+  };
+  const menuSignOut = document.getElementById("menuSignOut") as HTMLButtonElement | null;
+  if (menuSignOut) menuSignOut.onclick = async () => {
+    document.getElementById("menuModal")?.classList.remove("show");
+    await clerk.signOut().catch(() => {});
+    window.location.reload();
+  };
 }
 function setUnread(n: number) {
   unread = n;
@@ -773,17 +789,24 @@ function needsOnboarding(): boolean {
 }
 
 
-// ---------- header auth button (guest: "CREATE FREE ACCOUNT", signed-in: "PROFILE") ----------
+// ---------- arena auth bar (guest: Sign In + Create Account | signed-in: Profile) ----------
 function guestFab() {
-  // Wire the #authBtn pill already in the HTML header — no floating FAB for guest.
-  const btn = document.getElementById("authBtn") as HTMLButtonElement | null;
-  if (!btn) return;
-  btn.onclick = () =>
-    signupPrompt(
-      "Save your Me Next Level progress",
-      "Create a free account to save your streak, unlock friend challenges and play on any device.",
-      "CREATE FREE ACCOUNT",
-    );
+  // Arena auth bar — guest state
+  const signIn = document.getElementById("arenaSignIn") as HTMLButtonElement | null;
+  const createAcct = document.getElementById("arenaCreateAcct") as HTMLButtonElement | null;
+  const menuSignIn = document.getElementById("menuSignIn") as HTMLButtonElement | null;
+  const menuCreateAcct = document.getElementById("menuCreateAcct") as HTMLButtonElement | null;
+
+  if (signIn) signIn.onclick = () => showAuthOverlay("in");
+  if (createAcct) createAcct.onclick = () => showAuthOverlay("up");
+  if (menuSignIn) menuSignIn.onclick = () => {
+    document.getElementById("menuModal")?.classList.remove("show");
+    showAuthOverlay("in");
+  };
+  if (menuCreateAcct) menuCreateAcct.onclick = () => {
+    document.getElementById("menuModal")?.classList.remove("show");
+    showAuthOverlay("up");
+  };
 }
 
 // ---------- boot ----------
