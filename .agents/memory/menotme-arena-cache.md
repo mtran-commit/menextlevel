@@ -30,6 +30,7 @@ Two-zone treatment:
 Browser caches arena PNG independently from styles.css. Hash-based filename ensures a changed PNG is always fetched fresh.
 
 ## History
-- Left arm reconstruction (session prior): x=0–750, y=530–1024 → `arena-clean-37eb9e66.png`
-- Right hand + paper reconstruction (this session): x=820–1260, y=540–920 → `arena-clean-432c25ea.png`
-- `hand-right.png` (Jul 22, unreferenced) and `arena-clean-37eb9e66.png` deleted after upgrade.
+- Left arm reconstruction: x=0–750, y=530–1024 → `arena-clean-37eb9e66.png`
+- Right hand + paper reconstruction: x=820–1260, y=540–920 → `arena-clean-432c25ea.png`
+- Lower court-floor replacement (user-supplied reference image, 596×203): scaled to 1536×523, gamma-corrected (pow 1.25), composited at PNG y=418 with 130px gradient blend → `arena-clean-058a88fb.png` (current). Reference image placed so its court arc aligns with existing arena key lines; upper arena (y=0–418) is completely untouched.
+- `hand-right.png` (Jul 22, unreferenced) deleted.
