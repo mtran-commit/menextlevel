@@ -1,0 +1,99 @@
+THE LEFT HAND + BLACK RECTANGLE ARE STILL PRESENT IN THE LIVE RENDER
+
+The latest screenshot proves the issue is NOT resolved.
+
+Do not tell me the arena is clean based on file inspection alone.
+
+I want you to debug the ACTUAL rendered pixels in the browser.
+
+Step 1 — prove which image is rendering
+
+Temporarily replace the currently referenced arena background with an unmistakable test image in DEVELOPMENT ONLY, for example a solid magenta background.
+
+Reload the exact same page/device.
+
+If the left hand and rectangle disappear, then the arena background is still the source.
+
+If they remain, another layer is responsible.
+
+Then revert the test immediately.
+
+Step 2 — inspect the live DOM/network
+
+In browser dev tools, confirm the exact URL currently loaded for the arena background.
+
+Report:
+
+exact asset URL
+response status
+cache status
+whether service worker served it
+whether browser memory/disk cache served it
+actual file hash/ETag
+
+Do not assume ?v=15 is enough.
+
+Step 3 — disable service worker/PWA cache
+
+Temporarily disable/unregister the service worker and clear:
+
+Cache Storage
+service worker cache
+browser image cache
+app shell cache
+
+Then reload the page.
+
+If the old hand disappears, the PWA/service-worker cache was the cause.
+
+Step 4 — search for every visual source
+
+Search the project for any image containing this same left hand or rectangular patch.
+
+Check:
+
+arena.png
+arena variants
+overlay PNGs
+background images
+hand assets
+mobile assets
+desktop assets
+generated screenshots used as backgrounds
+CSS background-image
+pseudo-elements
+canvas draw calls
+Step 5 — permanent fix
+
+Use content-hashed filenames instead of query-string versioning, for example:
+
+arena-clean-a1b2c3.png
+
+Update the app to reference the new filename.
+
+Do not reuse arena.png.
+
+This guarantees the browser cannot confuse it with the old cached asset.
+
+Step 6 — verify visually
+
+Test:
+
+desktop
+iPhone/mobile
+
+The final screenshot must show:
+
+no left hand
+no black rectangle
+continuous court
+only the new right hand
+
+Do not mark the task complete until the actual rendered screenshot confirms this.
+
+Also tell me whether the root cause was:
+
+A. stale browser cache
+B. service worker/PWA cache
+C. another visual asset/layer
+D. combination of the above
