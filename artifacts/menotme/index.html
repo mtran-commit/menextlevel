@@ -27,7 +27,6 @@
   <div class="team">
     <div class="tl"><span class="tl-full">TEAM ME NEXT LEVEL</span><span class="tl-short">ME NEXT LEVEL</span></div>
     <div class="score" id="meScore">0</div>
-    <div class="tn">YOU GOT THIS</div>
   </div>
   <button class="bell" id="finalBell" aria-label="Final bell">
     <small>FINAL BELL</small><strong id="clock">23:59</strong>
@@ -35,7 +34,6 @@
   <div class="team">
     <div class="tl"><span class="tl-full">TEAM HOLDING ME BACK</span><span class="tl-short">HOLDING ME BACK</span></div>
     <div class="score" id="notMeScore">0</div>
-    <div class="tn">NOT TODAY</div>
   </div>
 </div>
 
@@ -74,10 +72,6 @@
     <div class="toast" id="toast">SWISH +1</div>
   </div>
 
-  <div class="panels">
-    <section class="panel assets"><div class="panel-head"><h2>★ Assets (Team Me Next Level)</h2><button class="plus" id="panelAddAsset">+</button></div><div class="tag-list" id="assets"></div></section>
-    <section class="panel liabilities"><div class="panel-head"><h2>Liabilities (Team Holding Me Back)</h2><button class="plus" id="panelAddLiability">+</button></div><div class="tag-list" id="liabilities"></div></section>
-  </div>
 </div>
 
 <div class="meter-row">
@@ -88,6 +82,10 @@
   <button id="audioQuick" class="audio-quick" type="button" aria-label="Toggle all audio">🔊 AUDIO ON</button>
 </div>
 
+<div class="panels">
+  <section class="panel assets"><div class="panel-head"><h2>★ Assets (Team Me Next Level)</h2><button class="plus" id="panelAddAsset">+</button></div><div class="tag-list" id="assets"></div></section>
+  <section class="panel liabilities"><div class="panel-head"><h2>Liabilities (Team Holding Me Back)</h2><button class="plus" id="panelAddLiability">+</button></div><div class="tag-list" id="liabilities"></div></section>
+</div>
 
 <div class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">WHAT MOVES YOU FORWARD?</h3><input id="tagInput" placeholder="Type your own..."><div id="modalHint" class="modal-hint" aria-live="polite"></div><div class="inspire-row"><span class="inspire-label">Need inspiration?</span><div class="inspire-chips" id="inspireChips"></div></div><div class="actions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Add</button></div></div></div>
 

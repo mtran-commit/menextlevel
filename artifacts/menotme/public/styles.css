@@ -25,7 +25,6 @@ button{cursor:pointer}
 .team{text-align:center}
 .tl{font-size:clamp(9px,1.6vw,15px);letter-spacing:.14em;font-weight:700}
 .tl-short{display:none}
-.tn{font-size:clamp(7px,1.2vw,11px);font-weight:800;letter-spacing:.1em;color:#ddd}
 .score{font-weight:800;font-family:"Courier New",ui-monospace,monospace;font-size:clamp(38px,7.4vw,84px);line-height:1;color:var(--led);text-shadow:0 0 6px rgba(255,0,51,.9),0 0 16px rgba(255,0,51,.55),0 0 34px rgba(255,0,51,.3)}
 .bell{width:clamp(78px,11vw,120px);aspect-ratio:1;border-radius:50%;border:2px solid #fff;background:#030303;color:#fff;box-shadow:0 0 16px rgba(255,255,255,.35),inset 0 0 14px rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .bell small{font-size:clamp(6px,1vw,10px);letter-spacing:.12em;color:#ccc}
@@ -145,16 +144,14 @@ button{cursor:pointer}
 #menuGuestItems,#menuUserItems{display:flex;flex-direction:column;gap:0}
 
 /* ---------- Panels ---------- */
-.panels{display:contents}
-.panel{position:absolute;z-index:6;background:rgba(2,2,2,.9);border:1px solid var(--line);border-radius:14px;padding:1%;overflow:hidden;box-shadow:0 0 18px rgba(255,255,255,.06)}
-.panel.assets{left:1.95%;top:35.4%;width:15.43%;height:54.6%}
-.panel.liabilities{left:81.05%;top:35.4%;width:17.12%;height:54.6%}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4%}
-.panel h2{margin:0;font-size:clamp(7px,0.85vw,12px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:12px 4% 20px}
+.panel{position:relative;background:rgba(2,2,2,.9);border:1px solid var(--line);border-radius:14px;padding:14px 16px;overflow:hidden;box-shadow:0 0 18px rgba(255,255,255,.06);height:260px;display:flex;flex-direction:column}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.panel h2{margin:0;font-size:clamp(9px,1.1vw,13px);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .plus{width:22px;height:22px;border-radius:50%;border:1px solid #666;background:#090909;color:#fff;display:grid;place-items:center;padding:0}
-.tag-list{height:84%;overflow:auto;scrollbar-width:none}
+.tag-list{flex:1;overflow:auto;scrollbar-width:none}
 .tag-list::-webkit-scrollbar{display:none}
-.tag{width:100%;margin-bottom:3%;border:1px solid rgba(255,255,255,.22);background:#030303;color:#fff;border-radius:8px;padding:4% 5%;font-size:clamp(7px,0.95vw,11px);display:flex;gap:6px;align-items:center;text-align:left}
+.tag{width:100%;margin-bottom:6px;border:1px solid rgba(255,255,255,.22);background:#030303;color:#fff;border-radius:8px;padding:8px 10px;font-size:clamp(9px,0.95vw,12px);display:flex;gap:6px;align-items:center;text-align:left}
 .tag.active{background:#fff;color:#000;box-shadow:0 0 10px rgba(255,255,255,.45)}
 .tag.scored{opacity:.35}
 .tag small{margin-left:auto;font-size:.75em}
@@ -312,8 +309,8 @@ button{cursor:pointer}
   .sign.s5{left:16.36%;width:10.16%}
   .sign.d1{left:75.00%;width:9.70%}
   .sign.d2{left:86.10%;width:9.46%}
-  .panels{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
-  .panel.assets,.panel.liabilities{position:static;left:auto;top:auto;width:auto;height:230px;padding:8px}
+  .panels{grid-template-columns:1fr;padding:10px 4% 20px;gap:12px}
+  .panel{height:230px;padding:10px 12px}
   .tag{font-size:11px}
   /* Panel headings: min-width:0 allows the flex item to shrink below its text min-content
      so text-overflow:ellipsis actually triggers. flex-shrink:0 on .plus keeps it always
