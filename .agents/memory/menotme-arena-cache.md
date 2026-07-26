@@ -34,3 +34,7 @@ Browser caches arena PNG independently from styles.css. Hash-based filename ensu
 - Right hand + paper reconstruction: x=820–1260, y=540–920 → `arena-clean-432c25ea.png`
 - Lower court-floor replacement (user-supplied reference image, 596×203): scaled to 1536×523, gamma-corrected (pow 1.25), composited at PNG y=418 with 130px gradient blend → `arena-clean-058a88fb.png` (current). Reference image placed so its court arc aligns with existing arena key lines; upper arena (y=0–418) is completely untouched.
 - `hand-right.png` (Jul 22, unreferenced) deleted.
+- Left fans crowd reconstruction (black void x=0–450, y=195–515 in PNG): generated dark crowd silhouettes via AI, multiplied to 15/255 mean brightness to match right-crowd reference (14/255), feathered right-edge blend 90px gradient, composited at y=195 → `arena-clean-b98650be.png` (current). Void was caused by a prior editing session darkening that region.
+
+## Key lesson: fans-area void
+Left fans zone (image x=0–450, y=230–500) had avg brightness 8–15/255 — a solid black rectangle baked into the PNG pixels, NOT a CSS overlay. Any future "black rectangle in fans area" report should verify PNG pixel values with ImageMagick before hunting for DOM elements.
