@@ -1,25 +1,35 @@
 ---
 name: MeNotMe Arena Cache Busting
-description: arena.png must carry a version query string in every CSS background-image reference or browsers serve stale versions showing the old illustrated left hand.
+description: arena PNG changes must use a new content-hash filename in all three CSS rules; both old hands were baked into the arena PNG, not separate DOM elements.
 ---
 
 ## Rule
-Every time `arena.png` changes on disk, bump `?v=N` in ALL THREE CSS rules that reference it in `styles.css`:
-1. `.stage { background-image: url(assets/arena.png?v=N) }`
-2. `#rimFront { background-image: url(assets/arena.png?v=N) }`
-3. `#netImg { background-image: url(assets/arena.png?v=N) }`
+The arena PNG uses **content-hash filenames** (e.g. `arena-clean-432c25ea.png`) — not query-string versioning. Every time the PNG changes, a new hash name is generated and ALL THREE CSS rules in `styles.css` must be updated:
+1. `.stage { background-image: url(assets/arena-clean-HASH.png) }`
+2. `#rimFront { background-image: url(assets/arena-clean-HASH.png) }`
+3. `#netImg { background-image: url(assets/arena-clean-HASH.png) }`
+
+Use: `sed -i 's/arena-clean-OLD\.png/arena-clean-NEW.png/g' artifacts/menotme/public/styles.css`  
+And do the same in `artifacts/menotme/dist/public/styles.css`, then copy the new PNG to both `public/assets/` and `dist/public/assets/`.
+
+## Critical finding: both "legacy hands" were baked into the arena PNG
+When the user reported THREE visible hands (left arm, right hand + paper, new overlay hand), the root cause was:
+- The arena background PNG itself had photorealistic hand/arm artwork baked in as part of the original illustration (NOT separate DOM/CSS elements)
+- The new `#handWrap` overlay (added later) created an additional visible hand on top of the baked ones
+- Searching HTML/JS/CSS found NO separate hand DOM elements beyond `#handWrap`
+
+## Reconstruction technique (for right-hand zone)
+The baked right hand occupied PNG x=820–1260, y=540–920.
+Two-zone treatment:
+1. **Arc zone y=540–600**: blur+darken (×0.05) then restore pixels originally >75% as court lines
+2. **Hand zone y=600–920**: tile clean floor strip from y=935–990 (same x range, vertically flipped alternating strips for texture variation) + mild blur + Gaussian noise
+3. After tiling: one targeted darkening pass (×0.03) on any tiling artifact bright spots
+4. Court arc lines at y≈580 (originally 255 brightness) must be verified after each pass
 
 ## Why
-`styles.css` itself is loaded with `?v=N` (cache-busted via `<link>` tag in index.html), so the CSS file is always fresh. But within the CSS, `url(assets/arena.png)` without a version string is treated as a separate resource request — browsers cache it independently. After fixing arena.png on disk, users continue seeing the old illustrated left hand/rectangle because the browser never re-fetches the unchanged URL.
-
-## How to apply
-Whenever `arena.png` is regenerated or pixel-edited (ImageMagick FX, restore from git, etc.), also run:
-```bash
-sed -i 's/arena\.png?v=[0-9]*/arena.png?v=NEW/' artifacts/menotme/public/styles.css
-```
-Match the version with the rest of the static assets in index.html.
+Browser caches arena PNG independently from styles.css. Hash-based filename ensures a changed PNG is always fetched fresh.
 
 ## History
-- Version mismatch caused the "left hand and rectangle returned together" bug — the browser was serving a pre-FX arena.png despite the file on disk being correct.
-- The FX region originally started at x=80, leaving pixels up to 228 RGB at x=0–79 (the hand extends to the image's left edge). Fixed by using `-region "750x494+0+530"` (x starts at 0).
-- `?v=13` collided with an earlier session's cache of the same URL containing the old hand. Bumped to `?v=14`. Whenever arena.png changes, the version number must increase — never reuse a string that has previously pointed to an old copy.
+- Left arm reconstruction (session prior): x=0–750, y=530–1024 → `arena-clean-37eb9e66.png`
+- Right hand + paper reconstruction (this session): x=820–1260, y=540–920 → `arena-clean-432c25ea.png`
+- `hand-right.png` (Jul 22, unreferenced) and `arena-clean-37eb9e66.png` deleted after upgrade.
