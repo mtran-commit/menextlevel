@@ -231,11 +231,10 @@ function triggerButtonShoot(){
   setTimeout(()=>{setHandState("THROWING");animateThrow(.72,0,0,0);shoot(.72)},110);
 }
 $("shoot").onclick=triggerButtonShoot;
-$("assetShot").onclick=triggerButtonShoot;
-$("addAsset").onclick=$("panelAddAsset").onclick=()=>openModal("asset");$("addLiability").onclick=$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>{$("modal").classList.remove("show");clearModalHint()};$("save").onclick=saveTag;
+$("panelAddAsset").onclick=()=>openModal("asset");$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>{$("modal").classList.remove("show");clearModalHint()};$("save").onclick=saveTag;
 $("tagInput").addEventListener("input",clearModalHint);
 $("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;clearModalHint();$("tagInput").focus()}});
-$("liabilityList").onclick=()=>$("historyPanel").classList.add("show");$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
+$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} — ${state.notme} Holding Me Back`;try{if(navigator.share)await navigator.share({title:"Me Next Level",text:t})}catch(e){}};
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);
