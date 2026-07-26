@@ -10,6 +10,7 @@ import {
   uniqueIndex,
   index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 // ---------- Users ----------
 export const usersTable = pgTable("users", {
@@ -53,13 +54,16 @@ export const assetsTable = pgTable(
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    normalizedName: text("normalized_name").notNull().default(""),
+    // Nullable so the Publish diff adds the column without a conflicting default.
+    // A startup DML backfill in the API server populates it for existing rows.
+    normalizedName: text("normalized_name"),
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (t) => [
     uniqueIndex("assets_user_name_idx").on(t.userId, t.name),
-    uniqueIndex("assets_user_norm_idx").on(t.userId, t.normalizedName),
+    // Partial index: NULLs are excluded, so pre-migration rows don't conflict.
+    uniqueIndex("assets_user_norm_idx").on(t.userId, t.normalizedName).where(sql`normalized_name IS NOT NULL`),
   ],
 );
 
@@ -69,13 +73,14 @@ export const liabilitiesTable = pgTable(
     id: serial("id").primaryKey(),
     userId: text("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    normalizedName: text("normalized_name").notNull().default(""),
+    // Same nullable + partial-index pattern as assetsTable.
+    normalizedName: text("normalized_name"),
     active: boolean("active").default(true).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (t) => [
     uniqueIndex("liabilities_user_name_idx").on(t.userId, t.name),
-    uniqueIndex("liabilities_user_norm_idx").on(t.userId, t.normalizedName),
+    uniqueIndex("liabilities_user_norm_idx").on(t.userId, t.normalizedName).where(sql`normalized_name IS NOT NULL`),
   ],
 );
 
