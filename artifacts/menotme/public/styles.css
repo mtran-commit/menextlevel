@@ -182,11 +182,6 @@ button{cursor:pointer}
 .combo-wrap{margin-left:auto;font-size:clamp(8px,1.2vw,12px);letter-spacing:.14em;font-weight:700;display:flex;align-items:baseline;gap:8px}
 .combo{font-weight:800;font-size:clamp(16px,2.6vw,28px)}
 
-/* ---------- Bottom nav ---------- */
-.bottomnav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 3% calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:20}
-.nb{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:1px solid transparent;border-radius:12px;color:#9a9a9a;font-size:clamp(6px,1vw,10px);font-weight:700;letter-spacing:.08em;padding:7px 2px;touch-action:manipulation}
-.nb svg{width:20px;height:20px}
-.nb.active,.nb:hover{color:#fff;border-color:var(--line);background:#050505;box-shadow:0 0 12px rgba(255,255,255,.12)}
 
 /* ---------- Overlays (unchanged mechanics) ---------- */
 .gate{display:none;position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:50;width:64%;padding:10px;border:1px solid #fff;border-radius:12px;background:#000;text-align:center;font-size:clamp(8px,1.5vw,12px)}

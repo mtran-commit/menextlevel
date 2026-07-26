@@ -168,13 +168,9 @@ $("closeMenu").onclick=()=>$("menuModal").classList.remove("show");
 $("menuArena").onclick=()=>{$("menuModal").classList.remove("show");openArena()};
 $("menuFame").onclick=()=>{$("menuModal").classList.remove("show");openFame()};
 $("menuHistory").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
-const NAV=["navHome","navFame","navCalendar","navStats","navProfile"];
-function setActive(id){NAV.forEach(n=>$(n).classList.toggle("active",n===id))}
-$("navHome").onclick=()=>{setActive("navHome");window.scrollTo({top:0,behavior:"smooth"})};
-$("navFame").onclick=()=>{setActive("navHome");openFame()};
-$("navCalendar").onclick=()=>{setActive("navHome");$("historyPanel").classList.add("show")};
-$("navStats").onclick=()=>{setActive("navHome");$("historyPanel").classList.add("show")};
-$("navProfile").onclick=()=>{setActive("navHome");openArena()};
+$("menuHome").onclick=()=>{$("menuModal").classList.remove("show");window.scrollTo({top:0,behavior:"smooth"})};
+$("menuCalendar").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
+$("menuStats").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
 
 ensureArenaState();
 renderSigns();

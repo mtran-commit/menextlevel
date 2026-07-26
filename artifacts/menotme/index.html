@@ -88,13 +88,6 @@
   <button id="audioQuick" class="audio-quick" type="button" aria-label="Toggle all audio">🔊 AUDIO ON</button>
 </div>
 
-<nav class="bottomnav">
-  <button class="nb active" id="navHome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4v-9z" stroke-linejoin="round"/></svg>HOME</button>
-  <button class="nb" id="navFame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="9" r="4"/><path d="M6 21c1.5-3 3.5-4 6-4s4.5 1 6 4" stroke-linecap="round"/></svg>WALL OF FAME</button>
-  <button class="nb" id="navCalendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>CALENDAR</button>
-  <button class="nb" id="navStats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V10M12 20V4M19 20v-7" stroke-linecap="round"/></svg>STATS</button>
-  <button class="nb" id="navProfile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.7-3.5 4.4-5 8-5s6.3 1.5 8 5" stroke-linecap="round"/></svg>PROFILE</button>
-</nav>
 
 <div class="modal" id="modal"><div class="modal-card"><h3 id="modalTitle">WHAT MOVES YOU FORWARD?</h3><input id="tagInput" placeholder="Type your own..."><div id="modalHint" class="modal-hint" aria-live="polite"></div><div class="inspire-row"><span class="inspire-label">Need inspiration?</span><div class="inspire-chips" id="inspireChips"></div></div><div class="actions"><button class="secondary" id="cancel">Cancel</button><button class="primary" id="save">Add</button></div></div></div>
 
@@ -150,8 +143,12 @@
 <div class="modal" id="menuModal"><div class="modal-card">
   <h3>Menu</h3>
   <div class="menu-list">
-    <button class="secondary" id="menuArena">Manage My Arena</button>
+    <button class="secondary" id="menuHome">Home</button>
     <button class="secondary" id="menuFame">Wall of Fame</button>
+    <button class="secondary" id="menuCalendar">Calendar</button>
+    <button class="secondary" id="menuStats">Stats</button>
+    <div class="menu-auth-divider"></div>
+    <button class="secondary" id="menuArena">Manage My Arena</button>
     <button class="secondary" id="menuHistory">History & Friend Challenge</button>
     <button class="secondary" id="menuHowTo">How to Play</button>
     <div class="menu-auth-divider"></div>
@@ -168,7 +165,7 @@
 </div></div>
 
 </div>
-<script src="led-logo.js?v=15"></script>
+<script src="led-logo.js?v=16"></script>
 <script>
   // Boot the LED logo once the DOM is ready (script runs after body, so DOM exists)
   (function(){
@@ -176,8 +173,8 @@
     if (el && window.LEDLogo) window.LEDLogo.init(el);
   })();
 </script>
-<script src="app.js?v=15"></script>
-<script src="arena.js?v=15"></script>
+<script src="app.js?v=16"></script>
+<script src="arena.js?v=16"></script>
 <script src="crowd-audio.js?v=15"></script>
 <script src="intro.js?v=15"></script>
 <script src="sponsors.js?v=15"></script>
