@@ -446,6 +446,9 @@ function fab() {
   if (userBtns) userBtns.style.display = "";
   const arenaProfile = document.getElementById("arenaProfile") as HTMLButtonElement | null;
   if (arenaProfile) arenaProfile.onclick = () => togglePanel("account");
+  // Bottom nav Profile → open account panel for signed-in users
+  const navProfileBtn = document.getElementById("navProfile") as HTMLButtonElement | null;
+  if (navProfileBtn) navProfileBtn.onclick = () => togglePanel("account");
 
   // Menu — hide guest items, show signed-in items
   const menuGuestItems = document.getElementById("menuGuestItems");
@@ -807,6 +810,9 @@ function guestFab() {
     document.getElementById("menuModal")?.classList.remove("show");
     showAuthOverlay("up");
   };
+  // Bottom nav Profile → open auth overlay for guests
+  const navProfile = document.getElementById("navProfile") as HTMLButtonElement | null;
+  if (navProfile) navProfile.onclick = () => showAuthOverlay("up");
 }
 
 // ---------- boot ----------

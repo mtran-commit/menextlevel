@@ -82,12 +82,6 @@ window.arenaCelebrate=function(){
   setTimeout(()=>window.arenaReact(4),1500);
 };
 
-/* ---------- Asset Shot button: select next available asset ---------- */
-$("assetShot").onclick=()=>{
-  const i=state.assets.findIndex(a=>!a.scored);
-  if(i>=0)selectAsset(i);
-};
-
 /* ---------- Wall of Fame ---------- */
 function openFame(){
   const MILE=[[7,"📸","7 Days Straight — Paparazzi autograph"],[30,"🏆","30 Days — Me Next Level Champion"],[60,"🖼️","60 Days — Me Next Level Wall of Fame"],[90,"🎽","90 Days — Jersey retired"]];
