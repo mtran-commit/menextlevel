@@ -689,7 +689,7 @@ async function renderAccount() {
     if (user.role === "admin") {
       p.appendChild(el("hr", "mnm-sep"));
       const adminLink = el("a", undefined, "OPEN ADMIN DASHBOARD");
-      adminLink.setAttribute("href", `${BASE}/admin.html`);
+      adminLink.setAttribute("href", `${BASE}/admin/`);
       adminLink.setAttribute("style", "color:#fff;font-size:11px;letter-spacing:1px");
       p.appendChild(adminLink);
     }

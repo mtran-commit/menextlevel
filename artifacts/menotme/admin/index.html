@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Admin — Me Next Level</title>
+<style>
+/* ── Reset ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000;--white:#fff;--red:#ff0033;
+  --g9:#0d0d0d;--g8:#111;--g7:#1a1a1a;--g6:#222;--g5:#333;--g4:#555;--g3:#888;--g2:#bbb;
+  --sidebar:220px;
+}
+html,body{height:100%;color-scheme:dark}
+body{background:var(--black);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;font-size:13px;min-height:100vh}
+
+/* ── Gate ── */
+#gate{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--black);z-index:200;gap:16px;text-align:center;padding:32px
+}
+#gate h2{font-size:18px;letter-spacing:3px;font-weight:700}
+#gate p{color:var(--g3);font-size:12px;max-width:360px;line-height:1.6}
+#gate .g-logo{font-size:9px;letter-spacing:3px;color:var(--red);font-weight:700;margin-bottom:8px}
+#gate .btn{display:inline-block;margin-top:4px}
+
+/* ── Shell ── */
+#shell{display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+#sidebar{
+  width:var(--sidebar);background:var(--g9);border-right:1px solid var(--g6);
+  display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:10
+}
+.sb-brand{padding:18px 16px 14px;border-bottom:1px solid var(--g6)}
+.sb-brand canvas{display:block;width:100%;max-width:180px;height:auto;margin:0 auto}
+.sb-label{font-size:8px;letter-spacing:3px;color:var(--red);font-weight:700;text-align:center;margin-top:6px;text-transform:uppercase}
+.sb-divider{height:1px;background:var(--g6);margin:4px 0}
+nav{flex:1;padding:8px 0}
+nav button{
+  width:100%;background:none;border:none;border-left:3px solid transparent;
+  color:var(--g3);padding:11px 18px;text-align:left;font-size:10px;letter-spacing:1.5px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:10px;transition:color .15s,background .15s,border-color .15s;
+  font-family:inherit;text-transform:uppercase
+}
+nav button svg{width:15px;height:15px;flex-shrink:0;opacity:.5;transition:opacity .15s}
+nav button:hover{color:var(--white);background:rgba(255,255,255,.04)}
+nav button:hover svg{opacity:.8}
+nav button.active{color:var(--white);border-left-color:var(--red);background:rgba(255,0,51,.07)}
+nav button.active svg{opacity:1}
+.sb-footer{padding:14px 16px;border-top:1px solid var(--g6);display:flex;flex-direction:column;gap:8px}
+.sb-footer a{color:var(--g4);font-size:10px;letter-spacing:1px;text-decoration:none;display:block;padding:3px 0;transition:color .15s}
+.sb-footer a:hover{color:var(--white)}
+#signOutBtn{
+  background:none;border:1px solid var(--g5);color:var(--g3);border-radius:6px;
+  padding:8px;font-size:9px;letter-spacing:2px;font-weight:700;cursor:pointer;
+  width:100%;font-family:inherit;transition:all .15s;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px
+}
+#signOutBtn:hover{border-color:var(--red);color:var(--red)}
+#signOutBtn svg{width:13px;height:13px}
+
+/* ── Content area ── */
+#content{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-width:0}
+#topbar{
+  padding:13px 24px;border-bottom:1px solid var(--g6);display:flex;align-items:center;
+  justify-content:space-between;background:var(--g9);position:sticky;top:0;z-index:5
+}
+#topbar-title{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--white)}
+.admin-pill{
+  font-size:8px;letter-spacing:2px;background:var(--red);color:var(--white);
+  padding:3px 8px;border-radius:4px;font-weight:700;text-transform:uppercase
+}
+main{padding:24px;max-width:1120px;width:100%}
+
+/* ── Cards ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:20px}
+.card{background:var(--g9);border:1px solid var(--g6);border-radius:10px;padding:15px;transition:border-color .15s}
+.card:hover{border-color:var(--g5)}
+.card b{display:block;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-0.5px;line-height:1}
+.card span{font-size:9px;color:var(--g3);letter-spacing:1.5px;font-weight:600;text-transform:uppercase;display:block;margin-top:6px}
+.card.accent b{color:var(--red)}
+.card.dim b{color:var(--g2)}
+
+/* ── Section title ── */
+.sec{font-size:10px;letter-spacing:2.5px;font-weight:700;color:var(--g3);
+  margin:22px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--g6);text-transform:uppercase}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:9px;letter-spacing:1.5px;color:var(--g3);font-weight:700;text-transform:uppercase;
+  text-align:left;padding:9px 10px;border-bottom:1px solid var(--g6)}
+td{padding:9px 10px;border-bottom:1px solid var(--g7);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── Badges ── */
+.badge{display:inline-block;font-size:9px;letter-spacing:1px;font-weight:700;
+  padding:2px 7px;border-radius:4px;text-transform:uppercase;white-space:nowrap}
+.badge-admin{background:var(--red);color:#fff}
+.badge-active{background:rgba(68,204,120,.12);color:#66cc88;border:1px solid rgba(68,204,120,.2)}
+.badge-suspended{background:rgba(255,50,0,.12);color:#ff6644;border:1px solid rgba(255,50,0,.25)}
+.badge-open{background:rgba(255,200,0,.1);color:#ffcc00;border:1px solid rgba(255,200,0,.2)}
+.badge-resolved{background:rgba(100,200,100,.08);color:#88bb88}
+.badge-dismissed{background:var(--g7);color:var(--g3)}
+.badge-info{background:rgba(255,255,255,.07);color:var(--g2)}
+.badge-error{background:rgba(255,0,51,.12);color:#ff6666;border:1px solid rgba(255,0,51,.2)}
+
+/* ── Buttons ── */
+.btn{
+  background:none;border:1px solid var(--g5);color:var(--white);border-radius:6px;
+  padding:5px 11px;font-size:10px;letter-spacing:1px;font-weight:700;cursor:pointer;
+  transition:all .15s;white-space:nowrap;font-family:inherit;text-transform:uppercase
+}
+.btn:hover{border-color:var(--white)}
+.btn.primary{background:var(--white);color:var(--black);border-color:var(--white)}
+.btn.primary:hover{background:var(--g2);border-color:var(--g2)}
+.btn.danger{border-color:rgba(255,0,51,.5);color:#ff6644}
+.btn.danger:hover{border-color:var(--red);background:rgba(255,0,51,.08)}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ── Forms ── */
+input,textarea,select{
+  background:var(--g8);color:var(--white);border:1px solid var(--g5);border-radius:7px;
+  padding:8px 12px;font-size:12px;font-family:inherit;outline:none;transition:border-color .15s
+}
+input:focus,textarea:focus,select:focus{border-color:var(--white)}
+textarea{resize:vertical;min-height:80px}
+.form-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.form-field label{font-size:9px;letter-spacing:1.5px;color:var(--g3);font-weight:700;text-transform:uppercase}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:12px}
+.search-row{display:flex;gap:10px;margin-bottom:16px;align-items:center}
+.search-row input{flex:1;max-width:320px}
+
+/* ── Activity ── */
+.activity{display:flex;flex-direction:column;gap:0}
+.activity-item{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--g7)}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;background:var(--g5);margin-top:4px;flex-shrink:0}
+.act-dot.red{background:var(--red)}
+.act-dot.green{background:#44cc88}
+.act-info{flex:1;min-width:0}
+.act-action{font-size:12px;font-weight:600;color:var(--white)}
+.act-meta{font-size:10px;color:var(--g3);margin-top:2px}
+
+/* ── Misc ── */
+.muted{color:var(--g3);font-size:11px}
+.empty{padding:40px;text-align:center;color:var(--g4);font-size:11px;letter-spacing:1px}
+.loading-msg{padding:40px;text-align:center;color:var(--g4);font-size:11px;letter-spacing:1px}
+
+/* ── Checkbox ── */
+input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--red)}
+
+/* ── Achievement rule row ── */
+.rule-row{background:var(--g9);border:1px solid var(--g6);border-radius:10px;padding:16px;margin-bottom:10px}
+.rule-row .rule-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.rule-milestone{font-size:20px;font-weight:700;min-width:50px;color:var(--white)}
+.rule-row input[type=text]{background:var(--g7);width:100%}
+
+/* ── 2-col layout ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:720px){.two-col{grid-template-columns:1fr}}
+
+/* ── Mobile sidebar ── */
+@media(max-width:680px){
+  #sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
+  .sb-brand,.sb-footer{display:none}
+  nav{display:flex;flex-wrap:wrap;padding:6px;flex:none;width:100%}
+  nav button{width:auto;border-left:none;border-bottom:3px solid transparent;padding:8px 12px;font-size:9px}
+  nav button.active{border-bottom-color:var(--red);border-left:none;background:rgba(255,0,51,.07)}
+  #content{margin-left:0}
+  main{padding:14px}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Gate (shown while checking auth / for non-admins) ── -->
+<div id="gate">
+  <div class="g-logo">ME NEXT LEVEL</div>
+  <p class="muted" id="gateMsg">Verifying access…</p>
+</div>
+
+<!-- ── Admin shell ── -->
+<div id="shell" style="display:none">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <canvas id="ledLogo" width="180" height="44" aria-label="Me Next Level" role="img"></canvas>
+      <div class="sb-label">Super Admin</div>
+    </div>
+
+    <nav id="nav">
+      <button data-tab="dashboard" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button data-tab="users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Users
+      </button>
+      <button data-tab="reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Reports
+      </button>
+      <button data-tab="statistics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Statistics
+      </button>
+      <button data-tab="announcements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Announcements
+      </button>
+      <button data-tab="rules">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Achievement Rules
+      </button>
+      <button data-tab="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Audit Logs
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <a href="../">← Back to Game</a>
+      <button id="signOutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div id="content">
+    <div id="topbar">
+      <span id="topbar-title">DASHBOARD</span>
+      <span class="admin-pill">Super Admin</span>
+    </div>
+    <main id="main">
+      <div class="loading-msg">Loading…</div>
+    </main>
+  </div>
+
+</div>
+
+<script type="module" src="../src/admin.ts"></script>
+<script src="../led-logo.js"></script>
+<script>
+  // Init LED logo once the DOM+led-logo.js are ready
+  window.addEventListener('load', () => {
+    const c = document.getElementById('ledLogo');
+    if (c && window.LEDLogo) window.LEDLogo.init(c);
+  });
+</script>
+</body>
+</html>

@@ -80,6 +80,8 @@ router.get("/admin/stats", async (_req, res) => {
   const [{ value: dau }] = await db.select({ value: count() }).from(usersTable).where(gte(usersTable.lastSeenAt, since1));
   const [{ value: wau }] = await db.select({ value: count() }).from(usersTable).where(gte(usersTable.lastSeenAt, since7));
   const [{ value: matches }] = await db.select({ value: count() }).from(dailyMatchesTable);
+  const [{ value: totalAssetsCompleted }] = await db.select({ value: count() }).from(assetsTable);
+  const [{ value: totalLiabilitiesDefeated }] = await db.select({ value: count() }).from(liabilitiesTable);
 
   const streakStats = await db
     .select({
@@ -114,6 +116,8 @@ router.get("/admin/stats", async (_req, res) => {
     dau,
     wau,
     totalMatches: matches,
+    totalAssetsCompleted,
+    totalLiabilitiesDefeated,
     streaks: streakStats[0],
     topAssets,
     topLiabilities,
