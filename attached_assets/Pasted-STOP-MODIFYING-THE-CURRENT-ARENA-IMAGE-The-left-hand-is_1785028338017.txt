@@ -1,0 +1,106 @@
+STOP MODIFYING THE CURRENT ARENA IMAGE.
+
+The left hand is STILL visible in the latest screenshot.
+
+We have attempted multiple removals and this keeps returning or creating rectangles.
+
+I want to permanently change the architecture.
+
+1. ARENA BACKGROUND MUST CONTAIN ZERO HANDS
+
+Create/restore a clean master arena background containing ONLY:
+
+audience
+advertising boards
+basketball court
+hoop/net
+court lighting and lines
+
+It must contain:
+
+NO LEFT HAND
+NO RIGHT HAND
+NO PAPER
+NO BLACK/GRAY RECTANGLES USED TO COVER OLD HANDS
+
+Do NOT edit the current contaminated arena.png by painting over the hand again.
+
+2. FIND THE ORIGINAL CLEAN SOURCE
+
+Search:
+
+Replit checkpoints
+git history
+previous arena assets
+/public
+/assets
+generated images
+old arena versions
+
+Find the original arena before hands were added.
+
+If it exists, use that as the new master background.
+
+3. PROVE WHERE THIS LEFT HAND COMES FROM
+
+Before making the change, temporarily REMOVE arena.png completely from the rendered arena.
+
+Refresh the preview.
+
+If this exact left hand disappears, we have definitive proof it is baked into arena.png.
+
+If the hand remains, continue disabling visual layers ONE AT A TIME until the exact source is identified.
+
+Do not guess.
+
+4. SEPARATE GAME OBJECTS
+
+The architecture must permanently become:
+
+cleanArenaBackground
+
+courtLightingLayer
+
+rightHandLayer
+
+heldPaperLayer
+
+projectilePaperLayer
+
+There must be NO leftHandLayer.
+
+5. RIGHT HAND
+
+Only the new realistic right hand is allowed.
+
+It must be a transparent independent asset/animation so changing the hand can NEVER modify the arena background again.
+
+6. IMPORTANT
+
+Do not use:
+
+cloning to cover the left hand
+black rectangles
+gradients
+blur
+masks
+CSS overlays
+
+to hide it.
+
+I want the underlying clean court restored.
+
+7. VERIFY BEFORE REPORTING SUCCESS
+
+Refresh the actual application and take a screenshot.
+
+Visually verify:
+
+NO LEFT HAND
+NO RECTANGLE
+ONLY RIGHT THROWING HAND
+COURT CONTINUES NATURALLY UNDER WHERE THE LEFT HAND USED TO BE
+
+Do not say it is fixed until the rendered screenshot proves it.
+
+Also tell me the exact filename that contained the old left hand so we know the root cause has been permanently removed.

@@ -33,7 +33,7 @@ button{cursor:pointer}
 
 /* ---------- Arena stage ---------- */
 .arena-wrap{position:relative;width:100%}
-.stage{position:relative;width:100%;aspect-ratio:1536/666;overflow:hidden;background-color:#000;background-image:url(assets/arena.png?v=14);background-repeat:no-repeat;background-size:100% 153.75%;background-position:0% 64.8%}
+.stage{position:relative;width:100%;aspect-ratio:1536/666;overflow:hidden;background-color:#000;background-image:url(assets/arena.png?v=15);background-repeat:no-repeat;background-size:100% 153.75%;background-position:0% 64.8%}
 .live{position:absolute;z-index:5}
 
 .aud-label{position:absolute;top:1.6%;z-index:6;border:1px solid var(--line);border-radius:999px;background:rgba(0,0,0,.82);padding:.5% 1.2%;font-size:clamp(6px,1vw,12px);font-weight:800;letter-spacing:.1em}
@@ -64,9 +64,9 @@ button{cursor:pointer}
 
 /* Hoop occlusion / net layers: pixel copies of the arena art */
 .hoop-fx{position:absolute;pointer-events:none}
-#rimFront{left:48.05%;top:16.37%;width:3.78%;height:1.80%;z-index:11;background-image:url(assets/arena.png?v=14);background-repeat:no-repeat;background-size:2648.3% 8533.3%;background-position:49.93% 33.70%}
+#rimFront{left:48.05%;top:16.37%;width:3.78%;height:1.80%;z-index:11;background-image:url(assets/arena.png?v=15);background-repeat:no-repeat;background-size:2648.3% 8533.3%;background-position:49.93% 33.70%}
 #netWrap{left:48.44%;top:18.02%;width:2.99%;height:4.95%;z-index:9;background:#000;overflow:hidden}
-#netImg{position:absolute;inset:0;transform-origin:50% 0;background-image:url(assets/arena.png?v=14);background-repeat:no-repeat;background-size:3339.1% 3103.0%;background-position:49.93% 35.52%}
+#netImg{position:absolute;inset:0;transform-origin:50% 0;background-image:url(assets/arena.png?v=15);background-repeat:no-repeat;background-size:3339.1% 3103.0%;background-position:49.93% 35.52%}
 @keyframes netSwish{0%{transform:none}28%{transform:translateY(10%) scaleY(1.16)}50%{transform:translateY(6%) translateX(3%) scaleY(1.09)}74%{transform:translateY(2%) translateX(-2%) scaleY(1.03)}100%{transform:none}}
 .net-anim{animation:netSwish .55s cubic-bezier(.3,.7,.4,1)}
 
