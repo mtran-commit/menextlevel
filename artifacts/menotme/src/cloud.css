@@ -16,7 +16,6 @@
 @media (max-width:680px){
   .mnm-authbtn-full{display:none}
   .mnm-authbtn-short{display:inline}
-  #trophyBtn,#statsBtn{display:none}
 }
 /* Very small phones (≤375px): auth pill becomes icon-only.
    Right side shrinks to icon(31px)+gap(6px)+share(32px)=69px,

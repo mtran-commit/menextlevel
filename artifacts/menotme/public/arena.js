@@ -168,8 +168,6 @@ $("closeMenu").onclick=()=>$("menuModal").classList.remove("show");
 $("menuArena").onclick=()=>{$("menuModal").classList.remove("show");openArena()};
 $("menuFame").onclick=()=>{$("menuModal").classList.remove("show");openFame()};
 $("menuHistory").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
-$("trophyBtn").onclick=openFame;
-$("statsBtn").onclick=()=>$("historyPanel").classList.add("show");
 const NAV=["navHome","navFame","navCalendar","navStats","navProfile"];
 function setActive(id){NAV.forEach(n=>$(n).classList.toggle("active",n===id))}
 $("navHome").onclick=()=>{setActive("navHome");window.scrollTo({top:0,behavior:"smooth"})};
