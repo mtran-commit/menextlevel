@@ -294,7 +294,10 @@ button{cursor:pointer}
   /* Action bar: swap from flex to 5-column grid so each control gets its own lane.
      Regular columns: 1fr each. Shoot centre: 1.35fr (visually dominant).
      left/width expanded slightly so the outer cells don't crowd the stage vignette. */
-  .actionbar{left:6%;width:82%;display:grid;grid-template-columns:1fr 1fr 1.35fr 1fr 1fr}
+  /* Action bar: push lower on mobile so the throwing hand is visible above it.
+     top:84% + height:16% = 100% → bar sits flush at stage bottom, no overflow clip.
+     Hand-wrap top is ≈62% regardless of viewport width, giving ~22% gap (~66px at 390px). */
+  .actionbar{left:6%;width:82%;display:grid;grid-template-columns:1fr 1fr 1.35fr 1fr 1fr;top:84%;height:16%}
   /* Auth button on mobile: compact pill in the gap right of the action bar */
   #authBtn{left:89%;top:80.78%;width:9%;height:17.72%;border-radius:12px;font-size:clamp(5px,1.8vw,8px);gap:5%;padding:3% 2%}
   #authBtn svg{width:44%;max-width:18px}
