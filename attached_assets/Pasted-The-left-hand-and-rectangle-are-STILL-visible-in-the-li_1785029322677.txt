@@ -1,0 +1,98 @@
+The left hand and rectangle are STILL visible in the live render.
+
+Do not mark this fixed based on source-file inspection or pixel scans.
+
+I want a live-render isolation test on the exact page that is producing this screenshot.
+
+Step 1 — disable the arena background in the live page
+
+In the exact running build, temporarily set the stage background to:
+
+background-image: none !important;
+
+Refresh the same page.
+
+If the hand and rectangle disappear, then the currently rendered background asset is still responsible.
+
+If they remain, another layer is responsible.
+
+Step 2 — disable layers one-by-one
+
+Temporarily disable, one at a time:
+
+arena background
+arena mask
+court pulse
+hand overlays
+paper/shot layer
+any pseudo-elements
+any canvas/SVG overlay
+
+After each disable, refresh and observe whether the hand/rectangle disappears.
+
+Do not guess.
+
+Step 3 — inspect the actual rendered element
+
+In DevTools on the live page:
+
+inspect the exact rectangle area
+identify which DOM element is visually underneath the cursor
+report its class/id
+report its computed background-image
+report its background-color
+report any filter, mask, clip-path, box-shadow, opacity, and pseudo-elements
+Step 4 — verify loaded asset URL
+
+In Network tab, report the exact background image URL actually loaded by this live page.
+
+Confirm it is really:
+
+arena-clean-4b72fa69.png
+
+and not:
+
+an older arena file
+another hashed version
+an inline base64 image
+a CSS import pointing elsewhere
+a different mobile/desktop asset
+Step 5 — check the deployed build, not only workspace files
+
+Compare:
+
+source code in workspace
+built/deployed CSS
+final browser-computed styles
+
+There may be stale built CSS or a second stylesheet still referencing the old image.
+
+Search the entire built output for:
+
+arena.png
+
+arena-clean
+
+hand
+
+and report every match.
+
+Step 6 — no more visual patches
+
+Do not:
+
+paint over it
+mask it
+blur it
+cover it with black
+
+I want the exact live-render source identified and removed.
+
+Acceptance requirement
+
+Do not say “fixed” until the screenshot from the same live page shows:
+
+no left hand
+no rectangle
+continuous court
+only the right throwing hand
