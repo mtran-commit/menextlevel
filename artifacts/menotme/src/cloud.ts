@@ -210,8 +210,53 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
           await clerk.setActive({ session: res.createdSessionId });
           hideAuthOverlay();
           onSignedIn();
+        } else if (res.status === "needs_first_factor" || res.status === "needs_second_factor") {
+          // Clerk requires an email verification code (e.g. account email not yet verified).
+          // Show an inline code-entry form — do NOT dead-end the user.
+          const isFirst = res.status === "needs_first_factor";
+          const factors: any[] = (isFirst ? (res as any).supportedFirstFactors : (res as any).supportedSecondFactors) ?? [];
+          const emailFactor = factors.find((f: any) => f.strategy === "email_code");
+          if (emailFactor) {
+            if (isFirst) {
+              await (res as any).prepareFirstFactor({ strategy: "email_code", emailAddressId: emailFactor.emailAddressId });
+            } else {
+              await (res as any).prepareSecondFactor({ strategy: "email_code" });
+            }
+            // Swap form to code-entry UI
+            form.innerHTML = "";
+            form.appendChild(el("p", "mnm-muted", `A verification code was sent to ${esc(email.value.trim())}. Enter it below to sign in.`));
+            const codeInput = authField("Verification code");
+            const r1 = el("div", "mnm-row"); r1.appendChild(codeInput); form.appendChild(r1);
+            form.appendChild(err);
+            const verify = el("button", "mnm-btn solid", "VERIFY & SIGN IN");
+            verify.onclick = async () => {
+              verify.disabled = true;
+              try {
+                const done: any = isFirst
+                  ? await (res as any).attemptFirstFactor({ strategy: "email_code", code: codeInput.value.trim() })
+                  : await (res as any).attemptSecondFactor({ strategy: "email_code", code: codeInput.value.trim() });
+                if (done.status === "complete") {
+                  await clerk.setActive({ session: done.createdSessionId });
+                  hideAuthOverlay();
+                  onSignedIn();
+                } else {
+                  err.textContent = "Code incorrect or expired. Please try again.";
+                }
+              } catch (e) { showError(e); }
+              verify.disabled = false;
+            };
+            const r2 = el("div", "mnm-row"); r2.appendChild(verify); form.appendChild(r2);
+            const back = el("button", "mnm-btn", "BACK TO SIGN IN");
+            back.onclick = () => renderAuth("in");
+            const r3 = el("div", "mnm-row"); r3.appendChild(back); form.appendChild(r3);
+          } else {
+            // No email_code factor available — guide user to alternatives
+            console.warn("[MNM Auth] Sign-in non-complete, status:", res.status, res);
+            err.textContent = "Your account needs additional verification. Try Google sign-in or use Forgot Password to reset your account.";
+          }
         } else {
-          err.textContent = "Additional verification required — check your email.";
+          console.warn("[MNM Auth] Unexpected sign-in status:", res.status, res);
+          err.textContent = "Sign-in incomplete. Please try Google sign-in or reset your password.";
         }
       } catch (e) {
         showError(e);
