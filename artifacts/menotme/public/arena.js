@@ -25,17 +25,26 @@ function renderSigns(){
   const a=state.arena;
   if(a.showFans&&a.showSigns){
     const msgs=FAN_DEFAULTS(fanFirstName());
+    const isMob=matchMedia("(max-width:680px)").matches;
+    let fanTarget=host;
+    if(isMob){
+      const row=document.createElement("div");
+      row.className="fan-scroll-row";
+      host.appendChild(row);
+      fanTarget=row;
+    }
     LEFT.forEach((cls,i)=>{
       const fan=state.fans.length?state.fans[i%state.fans.length]:null;
       const d=document.createElement("div");
-      d.className="sign "+cls+" "+(i%2?"dark":"light");
+      // On mobile, omit the positional class (sN) — layout is handled by the scroll row
+      d.className=("sign "+(isMob?"":cls+" ")+(i%2?"dark":"light")).trim();
       let txt=msgs[i];
       if(fan&&fan.msg)txt=fan.msg.toUpperCase();
       else if(fan&&i===0)txt="GO "+(fan.nickname||fan.name).toUpperCase()+"!";
       if(fan&&fan.photo){const im=document.createElement("img");im.className="ava";im.alt="";im.src=fan.photo;d.appendChild(im)}
       const s=document.createElement("span");s.textContent=txt;d.appendChild(s);
       if(fan&&(fan.nickname||fan.name)&&!(i===0&&!fan.msg)){const w=document.createElement("span");w.className="who";w.textContent=fan.nickname||fan.name;d.appendChild(w)}
-      host.appendChild(d);
+      fanTarget.appendChild(d);
     });
   }
   if(a.showDoubters&&a.showSigns){
