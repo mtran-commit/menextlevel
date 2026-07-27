@@ -170,14 +170,6 @@ button{cursor:pointer}
 .inspire-chip{background:none;border:1px solid rgba(255,255,255,.22);color:#aaa;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;transition:border-color .14s,color .14s}
 .inspire-chip:hover{border-color:rgba(255,255,255,.7);color:#fff}
 
-/* ---------- Crowd energy / combo row ---------- */
-.meter-row{display:flex;align-items:center;gap:10px;padding:10px 4%;border-top:1px solid rgba(255,255,255,.08)}
-.crowd-label{font-size:clamp(7px,1.1vw,11px);letter-spacing:.14em;font-weight:700;white-space:nowrap}
-.crowd{flex:1;max-width:340px;height:8px;background:#111;overflow:hidden;border-radius:999px;border:1px solid rgba(255,255,255,.14)}
-.crowd-fill{height:100%;width:65%;background:#fff;box-shadow:0 0 8px #fff}
-.crowd-pct{font-size:clamp(8px,1.2vw,12px);font-weight:700}
-.combo-wrap{margin-left:auto;font-size:clamp(8px,1.2vw,12px);letter-spacing:.14em;font-weight:700;display:flex;align-items:baseline;gap:8px}
-.combo{font-weight:800;font-size:clamp(16px,2.6vw,28px)}
 
 
 /* ---------- Overlays (unchanged mechanics) ---------- */
@@ -422,8 +414,8 @@ button{cursor:pointer}
 }
 @media (prefers-reduced-motion:reduce){.sp-ribbon-track{animation:none}.sp-face.sp-in,.sp-face.sp-out{animation-duration:.01s}}
 
-/* ---------- Quick master audio toggle (meter row, beside Crowd Energy / Combo) ---------- */
-.audio-quick{margin-left:12px;background:#000;color:#fff;border:1px solid #555;border-radius:999px;padding:4px 12px;font-size:clamp(8px,1vw,11px);font-weight:800;letter-spacing:.12em;cursor:pointer;white-space:nowrap;flex:none}
+/* ---------- Quick master audio toggle (hamburger Sound section) ---------- */
+.audio-quick{margin:4px 0 8px;background:#000;color:#fff;border:1px solid #555;border-radius:999px;padding:4px 12px;font-size:clamp(8px,1vw,11px);font-weight:800;letter-spacing:.12em;cursor:pointer;white-space:nowrap;display:inline-block}
 .audio-quick:hover{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.25)}
 .audio-quick.off{color:#888;border-color:#444}
 @media (max-width:680px){.audio-quick{padding:3px 8px;margin-left:6px}}
