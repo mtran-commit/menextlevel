@@ -20,6 +20,47 @@ import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
+// ONE-TIME admin role transfer endpoint. Protected by ADMIN_TRANSFER_SECRET env var.
+// Safe to call multiple times — idempotent after the transfer is complete.
+// Remove this endpoint and redeploy once the transfer is confirmed.
+router.post("/admin/transfer", async (req, res) => {
+  const secret = process.env.ADMIN_TRANSFER_SECRET;
+  if (!secret || req.headers["x-transfer-secret"] !== secret) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+  const { targetUserId } = req.body as { targetUserId?: string };
+  if (!targetUserId) return res.status(400).json({ error: "targetUserId required" });
+
+  const [target] = await db.select().from(usersTable).where(eq(usersTable.id, targetUserId));
+  if (!target) return res.status(404).json({ error: "Target user not found" });
+  if (target.role === "admin") return res.json({ ok: true, message: "Already admin — no change needed" });
+
+  const [currentAdmin] = await db.select().from(usersTable).where(eq(usersTable.role, "admin")).limit(1);
+
+  // Promote target to admin
+  await db.update(usersTable).set({ role: "admin" }).where(eq(usersTable.id, targetUserId));
+
+  // Demote previous admin to user (if one existed and it's different)
+  if (currentAdmin && currentAdmin.id !== targetUserId) {
+    await db.update(usersTable).set({ role: "user" }).where(eq(usersTable.id, currentAdmin.id));
+  }
+
+  await logAudit({
+    actorId: "system",
+    userId: targetUserId,
+    action: "admin_role_transferred",
+    details: {
+      from: currentAdmin ? { id: currentAdmin.id, email: currentAdmin.email } : null,
+      to: { id: target.id, email: target.email },
+    },
+  });
+
+  return res.json({
+    ok: true,
+    transferred: { from: currentAdmin?.email ?? null, to: target.email },
+  });
+});
+
 // Bootstrap: the very first user may claim super-admin (only while no admin exists).
 router.post("/admin/claim", requireAuth, async (req: AuthedRequest, res) => {
   const [existing] = await db.select().from(usersTable).where(eq(usersTable.role, "admin")).limit(1);
