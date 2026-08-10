@@ -181,19 +181,8 @@ async function boot() {
       gate.innerHTML = `
         <div class="g-logo">ME NEXT LEVEL</div>
         <h2>ACCESS DENIED</h2>
-        <p>This area is restricted to administrators.<br>
-        If no admin exists yet, the first user may claim the super-admin role.</p>
-        <button class="btn primary" id="claim">CLAIM SUPER ADMIN</button>
-        <p class="muted" id="claimMsg" style="margin-top:8px"></p>
+        <p>This area is restricted to administrators.</p>
         <a class="btn" href="../" style="margin-top:4px">BACK TO GAME</a>`;
-      document.getElementById("claim")!.onclick = async () => {
-        try {
-          await api("/admin/claim", { method: "POST" });
-          location.reload();
-        } catch {
-          document.getElementById("claimMsg")!.textContent = "An admin already exists. Request access from them.";
-        }
-      };
       return;
     }
   } catch {
