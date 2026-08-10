@@ -155,8 +155,26 @@ function showSignInForm() {
           submitBtn.disabled = false;
         }
       } else if ((res as any).status === "needs_new_password") {
-        // Admin-set password requires user to confirm a new password on first login
         showNewPasswordStep(res);
+      } else if ((res as any).status === "needs_client_trust") {
+        // Clerk dev-mode: device not yet trusted on this domain — verify via email OTP
+        const factors: any[] = (res as any).supportedFirstFactors ?? [];
+        const emailFactor = factors.find((f: any) => f.strategy === "email_code");
+        if (emailFactor) {
+          await (res as any).prepareFirstFactor({ strategy: "email_code", emailAddressId: emailFactor.emailAddressId });
+          showOTPStep(res, true, emailFactor);
+        } else {
+          // fallback: try phone or any available factor
+          const anyFactor = factors[0];
+          if (anyFactor) {
+            await (res as any).prepareFirstFactor({ strategy: anyFactor.strategy, emailAddressId: anyFactor.emailAddressId });
+            showOTPStep(res, true, anyFactor);
+          } else {
+            errEl.textContent = "⚠ Device trust check required but no verification method available. Contact your administrator.";
+            errEl.style.display = "block";
+            submitBtn.disabled = false;
+          }
+        }
       } else {
         errEl.textContent = `⚠ Sign-in incomplete (status: ${(res as any).status ?? "unknown"}). Please try again.`;
         errEl.style.display = "block";
