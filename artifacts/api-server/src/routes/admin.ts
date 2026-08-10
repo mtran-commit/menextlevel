@@ -1,5 +1,7 @@
 import { Router, type IRouter } from "express";
 import { clerkClient } from "@clerk/express";
+import jwt from "jsonwebtoken";
+import { timingSafeEqual } from "crypto";
 import {
   achievementRulesTable,
   announcementsTable,
@@ -59,6 +61,43 @@ router.post("/admin/transfer", async (req, res) => {
     ok: true,
     transferred: { from: currentAdmin?.email ?? null, to: target.email },
   });
+});
+
+// ── Admin credential login / logout (public — no requireAuth) ───────────────
+
+router.post("/admin/login", async (req, res) => {
+  const { email, password } = req.body ?? {};
+  const adminEmail = process.env.ADMIN_EMAIL ?? "";
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "";
+  const jwtSecret = process.env.ADMIN_JWT_SECRET ?? "";
+
+  // Constant-time comparison to avoid timing attacks
+  let emailMatch = false;
+  let passwordMatch = false;
+  try {
+    emailMatch = timingSafeEqual(Buffer.from(String(email ?? "")), Buffer.from(adminEmail));
+  } catch { /* length mismatch — stays false */ }
+  try {
+    passwordMatch = timingSafeEqual(Buffer.from(String(password ?? "")), Buffer.from(adminPassword));
+  } catch { /* length mismatch — stays false */ }
+
+  if (!emailMatch || !passwordMatch) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  const token = jwt.sign({ sub: "admin", role: "admin" }, jwtSecret, { expiresIn: "24h" });
+  res.cookie("admin_token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  return res.json({ ok: true });
+});
+
+router.post("/admin/logout", (_req, res) => {
+  res.clearCookie("admin_token", { httpOnly: true, sameSite: "lax" });
+  return res.json({ ok: true });
 });
 
 // Bootstrap: the very first user may claim super-admin (only while no admin exists).

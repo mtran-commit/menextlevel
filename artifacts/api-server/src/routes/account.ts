@@ -9,6 +9,10 @@ import { logger } from "../lib/logger";
 const router: IRouter = Router();
 
 router.get("/account/profile", requireAuth, async (req: AuthedRequest, res) => {
+  // Synthetic admin from cookie-based credential login (no DB row)
+  if (req.userId === "admin") {
+    return res.json({ user: { id: "admin", role: "admin", username: "admin", status: "active" } });
+  }
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!));
   return res.json({ user });
 });

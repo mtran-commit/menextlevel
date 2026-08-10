@@ -66,122 +66,28 @@ function showSignInForm() {
   const errEl    = document.getElementById("si-err")!;
   const submitBtn = document.getElementById("si-submit")  as HTMLButtonElement;
 
-  const showErr = (e: unknown) => {
-    const msg =
-      (e as { errors?: { longMessage?: string; message?: string }[] })?.errors?.[0]?.longMessage ??
-      (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ??
-      "Something went wrong. Try again.";
-    errEl.textContent = "⚠ " + msg;
-    errEl.style.display = "block";
-  };
-
-  const showOTPStep = (res: any, isFirst: boolean, emailFactor: any) => {
-    gate.innerHTML = `
-      <div class="g-logo">ME NEXT LEVEL</div>
-      <h2>VERIFY YOUR EMAIL</h2>
-      <p class="si-hint">A verification code was sent to <strong>${esc(emailEl.value.trim())}</strong>. Enter it below.</p>
-      <form id="adminOTPForm" class="signin-form">
-        <div class="form-field">
-          <label for="si-code">Verification Code</label>
-          <input id="si-code" type="text" inputmode="numeric" placeholder="000000" autocomplete="one-time-code" required>
-        </div>
-        <div id="si-err2" class="si-error" style="display:none"></div>
-        <button class="btn primary" type="submit" id="si-verify">VERIFY &amp; SIGN IN</button>
-      </form>
-      <button class="btn" id="si-back" style="margin-top:8px">BACK TO SIGN IN</button>
-      <a class="btn" href="../" style="margin-top:8px">GO TO GAME</a>`;
-
-    document.getElementById("si-back")!.onclick = () => showSignInForm();
-
-    const otpForm  = document.getElementById("adminOTPForm") as HTMLFormElement;
-    const codeEl   = document.getElementById("si-code")   as HTMLInputElement;
-    const errEl2   = document.getElementById("si-err2")!;
-    const verifyBtn = document.getElementById("si-verify") as HTMLButtonElement;
-
-    otpForm.onsubmit = async (ev) => {
-      ev.preventDefault();
-      verifyBtn.disabled = true;
-      errEl2.style.display = "none";
-      try {
-        const done: any = isFirst
-          ? await (res as any).attemptFirstFactor({ strategy: "email_code", code: codeEl.value.trim() })
-          : await (res as any).attemptSecondFactor({ strategy: "email_code", code: codeEl.value.trim() });
-        if (done.status === "complete") {
-          await clerk.setActive({ session: done.createdSessionId });
-          await boot();
-        } else {
-          errEl2.textContent = "⚠ Code incorrect or expired. Please try again.";
-          errEl2.style.display = "block";
-          verifyBtn.disabled = false;
-        }
-      } catch (e) {
-        const msg =
-          (e as { errors?: { longMessage?: string; message?: string }[] })?.errors?.[0]?.longMessage ??
-          (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ??
-          "Something went wrong. Try again.";
-        errEl2.textContent = "⚠ " + msg;
-        errEl2.style.display = "block";
-        verifyBtn.disabled = false;
-      }
-    };
-  };
-
   form.onsubmit = async (ev) => {
     ev.preventDefault();
     submitBtn.disabled = true;
     errEl.style.display = "none";
     try {
-      const res = await clerk.client!.signIn.create({
-        identifier: emailEl.value.trim(),
-        password: passEl.value,
+      const res = await fetch(`${BASE}/api/admin/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailEl.value.trim(), password: passEl.value }),
       });
-      if (res.status === "complete") {
-        await clerk.setActive({ session: res.createdSessionId });
+      const data = await res.json();
+      if (data.ok) {
         await boot();
-      } else if (res.status === "needs_first_factor" || res.status === "needs_second_factor") {
-        const isFirst = res.status === "needs_first_factor";
-        const factors: any[] = (isFirst ? (res as any).supportedFirstFactors : (res as any).supportedSecondFactors) ?? [];
-        const emailFactor = factors.find((f: any) => f.strategy === "email_code");
-        if (emailFactor) {
-          if (isFirst) {
-            await (res as any).prepareFirstFactor({ strategy: "email_code", emailAddressId: emailFactor.emailAddressId });
-          } else {
-            await (res as any).prepareSecondFactor({ strategy: "email_code" });
-          }
-          showOTPStep(res, isFirst, emailFactor);
-        } else {
-          errEl.textContent = "⚠ Your account needs additional verification. Contact your Clerk administrator.";
-          errEl.style.display = "block";
-          submitBtn.disabled = false;
-        }
-      } else if ((res as any).status === "needs_new_password") {
-        showNewPasswordStep(res);
-      } else if ((res as any).status === "needs_client_trust") {
-        // Clerk dev-mode: device not yet trusted on this domain — verify via email OTP
-        const factors: any[] = (res as any).supportedFirstFactors ?? [];
-        const emailFactor = factors.find((f: any) => f.strategy === "email_code");
-        if (emailFactor) {
-          await (res as any).prepareFirstFactor({ strategy: "email_code", emailAddressId: emailFactor.emailAddressId });
-          showOTPStep(res, true, emailFactor);
-        } else {
-          // fallback: try phone or any available factor
-          const anyFactor = factors[0];
-          if (anyFactor) {
-            await (res as any).prepareFirstFactor({ strategy: anyFactor.strategy, emailAddressId: anyFactor.emailAddressId });
-            showOTPStep(res, true, anyFactor);
-          } else {
-            errEl.textContent = "⚠ Device trust check required but no verification method available. Contact your administrator.";
-            errEl.style.display = "block";
-            submitBtn.disabled = false;
-          }
-        }
       } else {
-        errEl.textContent = `⚠ Sign-in incomplete (status: ${(res as any).status ?? "unknown"}). Please try again.`;
+        errEl.textContent = "⚠ " + (data.error ?? "Invalid credentials. Try again.");
         errEl.style.display = "block";
         submitBtn.disabled = false;
       }
-    } catch (e) {
-      showErr(e);
+    } catch {
+      errEl.textContent = "⚠ Network error. Please try again.";
+      errEl.style.display = "block";
       submitBtn.disabled = false;
     }
   };
@@ -230,13 +136,6 @@ function showNewPasswordStep(signInRes: any) {
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 async function boot() {
-  await clerk.load();
-
-  if (!clerk.user) {
-    showSignInForm();
-    return;
-  }
-
   try {
     const { user } = await api("/account/profile");
     if (user.role !== "admin") {
@@ -247,7 +146,12 @@ async function boot() {
         <a class="btn" href="../" style="margin-top:4px">BACK TO GAME</a>`;
       return;
     }
-  } catch {
+  } catch (e: any) {
+    // 401 means not authenticated — show sign-in form
+    if (e?.status === 401) {
+      showSignInForm();
+      return;
+    }
     gate.innerHTML = `
       <div class="g-logo">ME NEXT LEVEL</div>
       <h2>ACCESS CHECK FAILED</h2>
@@ -271,10 +175,10 @@ async function boot() {
     };
   });
 
-  // Sign out
+  // Sign out — clear admin cookie and return to sign-in form
   document.getElementById("signOutBtn")!.onclick = async () => {
-    await clerk.signOut();
-    window.location.href = `${BASE}/`;
+    await fetch(`${BASE}/api/admin/logout`, { method: "POST", credentials: "include" });
+    showSignInForm();
   };
 
   show("dashboard");

@@ -3,6 +3,7 @@ import { getAuth, clerkClient } from "@clerk/express";
 import { db, usersTable, userSettingsTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { DEFAULT_NOTIFICATION_PREFS } from "../lib/notify";
+import jwt from "jsonwebtoken";
 
 export interface AuthedRequest extends Request {
   userId?: string;
@@ -11,6 +12,22 @@ export interface AuthedRequest extends Request {
 
 export async function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
   try {
+    // Admin cookie check — bypasses Clerk entirely
+    const adminToken = (req as any).cookies?.admin_token;
+    if (adminToken) {
+      try {
+        const secret = process.env.ADMIN_JWT_SECRET ?? "";
+        const payload = jwt.verify(adminToken, secret) as { sub: string; role: string };
+        if (payload.role === "admin") {
+          req.userId = "admin";
+          req.userRole = "admin";
+          return next();
+        }
+      } catch {
+        // Invalid or expired token — fall through to Clerk
+      }
+    }
+
     const auth = getAuth(req);
     const userId = auth?.userId;
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
