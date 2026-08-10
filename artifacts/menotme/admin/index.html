@@ -167,6 +167,25 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--re
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:720px){.two-col{grid-template-columns:1fr}}
 
+/* ── Sign-in form (gate) ── */
+.signin-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+.signin-form .form-field{text-align:left}
+.signin-form input{
+  width:100%;background:var(--g8);color:var(--white);border:1px solid var(--g5);
+  border-radius:7px;padding:10px 14px;font-size:13px;font-family:inherit;
+  outline:none;transition:border-color .15s;letter-spacing:.02em
+}
+.signin-form input:focus{border-color:var(--white)}
+.signin-form .btn.primary{
+  width:100%;padding:11px;font-size:11px;letter-spacing:2px;margin-top:4px
+}
+.si-error{
+  color:#ff6644;font-size:11px;letter-spacing:.5px;
+  background:rgba(255,0,51,.08);border:1px solid rgba(255,0,51,.2);
+  border-radius:6px;padding:8px 12px;text-align:left
+}
+.si-hint{color:var(--g3);font-size:12px;max-width:340px;line-height:1.6;margin-bottom:4px}
+
 /* ── Mobile sidebar ── */
 @media(max-width:680px){
   #sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
