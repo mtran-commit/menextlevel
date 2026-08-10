@@ -29,6 +29,7 @@ if (!basePath) {
 
 export default defineConfig({
   base: basePath,
+  appType: 'mpa',
   plugins: [
     react(),
     tailwindcss(),
@@ -65,9 +66,10 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: path.resolve(import.meta.dirname, 'index.html'),
-        admin: path.resolve(import.meta.dirname, 'admin', 'index.html'),
-        shop: path.resolve(import.meta.dirname, 'shop', 'index.html'),
+        main:          path.resolve(import.meta.dirname, 'index.html'),
+        admin:         path.resolve(import.meta.dirname, 'admin', 'index.html'),
+        adminProducts: path.resolve(import.meta.dirname, 'admin', 'products.html'),
+        shop:          path.resolve(import.meta.dirname, 'shop', 'index.html'),
       },
     },
   },
