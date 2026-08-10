@@ -1,0 +1,83 @@
+STOP AND DEBUG ONLY THE IMAGE PATH
+
+The Shop products are loading correctly:
+
+Business Kit name loads
+Discovery Kit name loads
+prices load
+descriptions load
+
+So the database/product API is working.
+
+The only remaining failure is the product image itself.
+
+Do not change the Shop UI, product database structure, routing, or styling.
+
+I need you to debug ONLY this exact flow:
+
+Admin upload → storage object → saved image URL → public GET request → browser image render
+
+Required test
+
+Use ONE product only.
+
+Upload one fresh image from Super Admin.
+Capture the exact object/storage path created.
+Confirm the file physically exists in storage.
+Capture the exact imageUrl saved in the production database.
+Request that exact URL directly.
+Confirm it returns:
+
+HTTP 200
+
+and an image content type such as:
+
+image/jpeg
+or
+image/png
+
+Open the exact same URL directly in the browser.
+Confirm the public /shop page uses that exact same URL in the <img src>.
+If it returns 404
+
+Do not add another workaround.
+
+Compare:
+
+actual uploaded object key
+database imageUrl/object key
+retrieval route object key
+
+Character-for-character.
+
+They must be identical.
+
+If it returns 401/403
+
+The retrieval route is incorrectly protected.
+
+Product images on the public Shop must be publicly retrievable through the app’s image endpoint, even though uploading remains admin-only.
+
+If it returns 200 but still does not display
+
+Check:
+
+response Content-Type
+CSP
+browser console errors
+URL encoding
+<img src> value
+whether the response is HTML/JSON instead of actual image bytes
+Important
+
+Do not ask me to republish again until you can prove on the dev server that:
+
+a freshly uploaded image returns HTTP 200 and visibly renders on the Shop page.
+
+Once that works in dev, then ask me for one final publish.
+
+I do not want more speculative fixes or repeated deployments.
+
+And I’d add one more sentence:
+
+Please report back with the exact result of each step, especially the uploaded object path, saved database URL, GET status code and Content-Type.
