@@ -134,10 +134,8 @@ button{cursor:pointer}
 .profile-btn{min-width:4.5vw;text-align:center}
 .acct-short{display:none}
 @media (max-width:680px){
-  .arena-auth-bar{top:4.8%}
-  .arena-auth-btn{font-size:clamp(6px,2.4vw,10px);padding:2px 7px;border-radius:2px}
-  .acct-full{display:none}
-  .acct-short{display:inline}
+  /* Hide arena auth buttons on mobile — Sign In / Create Account live in the hamburger menu instead */
+  .arena-auth-bar{display:none!important}
 }
 /* ---------- Menu auth divider ---------- */
 .menu-auth-divider{height:1px;background:rgba(255,255,255,.18);margin:10px 0}
