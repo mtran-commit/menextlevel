@@ -112,16 +112,25 @@ export class ObjectStorageService {
   }
 
   async uploadObjectEntity(body: Buffer, contentType: string): Promise<string> {
-    const privateObjectDir = this.getPrivateObjectDir();
-    const objectId = randomUUID();
-    const fullPath = `${privateObjectDir}/uploads/${objectId}`;
-    const { bucketName, objectName } = parseObjectPath(fullPath);
-    const bucket = objectStorageClient.bucket(bucketName);
-    const file = bucket.file(objectName);
-    await file.save(body, { metadata: { contentType }, resumable: false });
-    return this.normalizeObjectEntityPath(
-      `https://storage.googleapis.com/${bucketName}/${objectName}`,
-    );
+    // Get a presigned PUT URL from the sidecar — same path generation as
+    // getObjectEntityUploadURL, so normalizeObjectEntityPath will round-trip correctly.
+    const uploadURL = await this.getObjectEntityUploadURL();
+    const objectPath = this.normalizeObjectEntityPath(uploadURL);
+
+    // PUT directly to GCS from the server (no browser CORS involved).
+    const response = await fetch(uploadURL, {
+      method: 'PUT',
+      body,
+      headers: { 'Content-Type': contentType },
+      signal: AbortSignal.timeout(60_000),
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => response.status.toString());
+      throw new Error(`GCS upload failed: ${text}`);
+    }
+
+    return objectPath;
   }
 
   async getObjectEntityUploadURL(): Promise<string> {
