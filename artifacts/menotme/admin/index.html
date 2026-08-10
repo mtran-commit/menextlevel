@@ -49,6 +49,12 @@ nav button:hover{color:var(--white);background:rgba(255,255,255,.04)}
 nav button:hover svg{opacity:.8}
 nav button.active{color:var(--white);border-left-color:var(--red);background:rgba(255,0,51,.07)}
 nav button.active svg{opacity:1}
+/* Shop/Products nav link — same look as nav buttons but as <a> */
+.nav-link-ext{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;color:var(--g3);font-size:11px;font-weight:600;letter-spacing:.06em;background:none;border:none;border-left:3px solid transparent;cursor:pointer;transition:color .15s,background .15s;text-decoration:none;text-align:left}
+.nav-link-ext svg{width:15px;height:15px;flex-shrink:0;opacity:.5;transition:opacity .15s}
+.nav-link-ext:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.nav-link-ext:hover svg{opacity:.8}
+@media(max-width:768px){.nav-link-ext{width:auto;border-left:none;border-bottom:3px solid transparent;padding:8px 12px;font-size:9px}}
 .sb-footer{padding:14px 16px;border-top:1px solid var(--g6);display:flex;flex-direction:column;gap:8px}
 .sb-footer a{color:var(--g4);font-size:10px;letter-spacing:1px;text-decoration:none;display:block;padding:3px 0;transition:color .15s}
 .sb-footer a:hover{color:var(--white)}
@@ -221,6 +227,10 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--re
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         Audit Logs
       </button>
+      <a href="products.html" class="nav-link-ext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Shop / Products
+      </a>
     </nav>
 
     <div class="sb-footer">

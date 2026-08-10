@@ -174,6 +174,7 @@ $("addDoubter").onclick=()=>{
 /* ---------- Header & nav ---------- */
 $("menuBtn").onclick=()=>$("menuModal").classList.add("show");
 $("closeMenu").onclick=()=>$("menuModal").classList.remove("show");
+$("menuShop").onclick=()=>{$("menuModal").classList.remove("show");const base=location.pathname.replace(/\/$/,"").replace(/\/[^/]*$/,"");window.location.href=(base||"")+"/shop/"};
 $("menuArena").onclick=()=>{$("menuModal").classList.remove("show");openArena()};
 $("menuFame").onclick=()=>{$("menuModal").classList.remove("show");openFame()};
 $("menuHistory").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};

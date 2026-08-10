@@ -1,0 +1,197 @@
+SUPER ADMIN — SHOP MANAGEMENT + ORDERS
+
+Add a new protected Super Admin section called:
+
+SHOP
+
+It should contain two tabs:
+
+PRODUCTS
+ORDERS
+
+PRODUCTS
+
+Super Admin must be able to manage the Shop without touching code.
+
+For every product/kit allow me to:
+
+Upload product picture
+Replace product picture
+Add multiple pictures if needed
+Change product name
+Change price
+Change currency
+Change short description
+Change full description
+Change “What’s Included”
+Set product active/inactive
+Mark product sold out
+Set stock quantity if we decide to track inventory
+Change display order
+Duplicate a product
+Delete a product
+
+Add:
+
++ ADD NEW PRODUCT
+
+Any change made in Super Admin must update /shop automatically.
+
+Do not hard-code product information into the Shop page.
+
+PRODUCT IMAGE UPLOAD
+
+Product pictures should upload to secure app storage.
+
+Show a preview before saving.
+
+Allow Super Admin to replace/delete pictures.
+
+Optimise uploaded images for web/mobile without destroying image quality.
+
+ORDERS
+
+Add an ORDERS tab inside Super Admin.
+
+Display every order with:
+
+Order number
+Date/time
+Customer full name
+Email
+Phone if collected
+Product ordered
+Quantity
+Product price
+Shipping cost
+Total paid
+Payment status
+Order status
+Delivery/shipping address
+Stripe payment ID/reference
+ORDER STATUS
+
+Allow Super Admin to update each order:
+
+New
+
+Paid
+
+Processing
+
+Packed
+
+Shipped
+
+Delivered
+
+Cancelled
+
+Refunded
+
+Allow me to add:
+
+Tracking number
+Courier
+Internal admin note
+ORDER DETAILS
+
+Clicking an order should open a detailed order page/modal showing the complete customer and transaction information.
+
+Add buttons where appropriate:
+
+MARK AS PROCESSING
+
+MARK AS SHIPPED
+
+MARK AS DELIVERED
+
+REFUND
+
+Refund actions must require confirmation.
+
+SEARCH & FILTER
+
+Super Admin should be able to search orders by:
+
+Customer name
+Email
+Order number
+Product
+
+And filter by:
+
+Date
+Payment status
+Order status
+Product
+SHOP DASHBOARD
+
+At the top of the Shop Admin section show:
+
+Total orders
+New orders
+Revenue
+Orders today
+Orders this week
+Orders this month
+Best-selling kit
+DATABASE
+
+Create proper product and order records.
+
+Product records should include at minimum:
+
+id
+name
+slug
+short_description
+description
+whats_included
+price
+currency
+image_url
+active
+sold_out
+stock_quantity
+display_order
+created_at
+updated_at
+
+Order records should include at minimum:
+
+id
+order_number
+user_id if logged in
+customer_name
+customer_email
+customer_phone
+shipping_address
+subtotal
+shipping
+total
+currency
+payment_status
+order_status
+stripe_payment_id
+tracking_number
+courier
+admin_notes
+created_at
+updated_at
+
+Use separate order-item records so one order can support multiple products in the future.
+
+SHOP PAGE
+
+/shop must pull the current product information from the database/API.
+
+If I change a picture, price or description in Super Admin, the public Shop must reflect the update automatically.
+
+IMPORTANT
+
+Do not redesign or modify the existing Me Next Level arena/game.
+
+This is a separate /shop page plus a Shop management section inside the existing Super Admin dashboard.
+
+I’d definitely include orders from day one. Even if you initially sell only 3–5 kits, you want one place where you can see who bought what, whether they paid, and whether you shipped it.

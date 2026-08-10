@@ -1,0 +1,139 @@
+Create a new page called SHOP
+
+Add a new page to Me Next Level called:
+
+SHOP
+
+URL:
+
+/shop
+
+Do not redesign or modify the existing arena/game.
+
+The Shop is a separate page.
+
+Shop page purpose
+
+Display Me Next Level physical kits for sale.
+
+Each kit card must show:
+
+Product image
+Kit name
+Short description
+Price
+ORDER NOW button
+Layout
+
+Keep the Me Next Level visual identity:
+
+black background
+white text
+premium warm-gold accents
+clean product photography
+subtle borders
+minimal design
+
+Desktop:
+
+show products in a 2–3 column responsive grid.
+
+Mobile:
+
+show one product card per row.
+
+Example product card
+
+DISCOVERY KIT
+
+[product image]
+
+$99 AUD
+
+A 30-day kit designed to help you understand yourself, build better habits and move toward your next level.
+
+ORDER NOW
+
+Product detail
+
+Clicking the image, product title or ORDER NOW should open the product detail/checkout flow.
+
+Product detail should support:
+
+larger product images
+full description
+what's included
+price
+quantity
+Order Now / Buy Now
+Navigation
+
+Add SHOP to the hamburger menu.
+
+Do not add it over the main arena unless there is already room in the approved navigation.
+
+IMPORTANT — Super Admin management
+
+Add a section inside Super Admin called:
+
+SHOP / PRODUCTS
+
+Super Admin must be able to:
+
+Add a new kit/product
+Upload product picture
+Change picture
+Product name
+Price
+Description
+Full description
+What's included
+Set product active/inactive
+Change display order
+Delete product
+
+Changes made in Super Admin should update the Shop page automatically without editing code.
+
+Database
+
+Create a products table/data model containing at minimum:
+
+id
+name
+slug
+short_description
+description
+price
+currency
+image_url
+active
+display_order
+created_at
+updated_at
+Orders
+
+Prepare the product structure so checkout/orders can be connected to Stripe.
+
+Do not implement a complicated cart unless already needed.
+
+For V1, Buy Now / Order Now per product is sufficient.
+
+Existing product examples
+
+Prepare the shop to support kits such as:
+
+Discovery Kit
+Business Kit
+Relationship Kit
+Fitness / Discipline Kit
+Consistency / Keep Going Kit
+
+Do not hard-code these permanently. Admin must be able to rename, add or delete products.
+
+Critical rule
+
+Do not change the existing Me Next Level game UI.
+
+Add /shop as a new standalone page and add product management to Super Admin.
+
+I’d also ask Replit to make the product image large and dominant—for these kits, the visual of the box and what is inside will probably sell the product more than lots of te

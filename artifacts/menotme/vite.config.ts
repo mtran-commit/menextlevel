@@ -67,6 +67,7 @@ export default defineConfig({
       input: {
         main: path.resolve(import.meta.dirname, 'index.html'),
         admin: path.resolve(import.meta.dirname, 'admin', 'index.html'),
+        shop: path.resolve(import.meta.dirname, 'shop', 'index.html'),
       },
     },
   },

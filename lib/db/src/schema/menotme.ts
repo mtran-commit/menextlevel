@@ -272,6 +272,80 @@ export const sponsorEventsTable = pgTable(
   (t) => [index("sponsor_events_campaign_idx").on(t.campaignId, t.event, t.createdAt)],
 );
 
+// ---------- Products (Shop) ----------
+export const productsTable = pgTable(
+  "products",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull().unique(),
+    shortDescription: text("short_description").notNull().default(""),
+    description: text("description").notNull().default(""),
+    whatsIncluded: text("whats_included").notNull().default(""),
+    price: text("price").notNull().default("0.00"),
+    currency: text("currency").notNull().default("AUD"),
+    imageUrl: text("image_url").notNull().default(""),
+    active: boolean("active").notNull().default(true),
+    soldOut: boolean("sold_out").notNull().default(false),
+    stockQuantity: integer("stock_quantity"),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [index("products_active_order_idx").on(t.active, t.displayOrder)]
+);
+export type Product = typeof productsTable.$inferSelect;
+
+// ---------- Orders ----------
+export const ordersTable = pgTable(
+  "orders",
+  {
+    id: serial("id").primaryKey(),
+    orderNumber: text("order_number").notNull().unique(),
+    userId: text("user_id"),
+    customerName: text("customer_name").notNull().default(""),
+    customerEmail: text("customer_email").notNull().default(""),
+    customerPhone: text("customer_phone").notNull().default(""),
+    shippingAddress: jsonb("shipping_address").notNull().default({}),
+    subtotal: text("subtotal").notNull().default("0.00"),
+    shipping: text("shipping").notNull().default("0.00"),
+    total: text("total").notNull().default("0.00"),
+    currency: text("currency").notNull().default("AUD"),
+    paymentStatus: text("payment_status").notNull().default("pending"), // pending | paid | failed | refunded
+    orderStatus: text("order_status").notNull().default("new"),         // new | paid | processing | packed | shipped | delivered | cancelled | refunded
+    stripePaymentId: text("stripe_payment_id").notNull().default(""),
+    trackingNumber: text("tracking_number").notNull().default(""),
+    courier: text("courier").notNull().default(""),
+    adminNotes: text("admin_notes").notNull().default(""),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => [
+    index("orders_status_idx").on(t.orderStatus),
+    index("orders_payment_idx").on(t.paymentStatus),
+    index("orders_created_idx").on(t.createdAt),
+    index("orders_email_idx").on(t.customerEmail),
+  ]
+);
+export type Order = typeof ordersTable.$inferSelect;
+
+export const orderItemsTable = pgTable(
+  "order_items",
+  {
+    id: serial("id").primaryKey(),
+    orderId: integer("order_id").notNull().references(() => ordersTable.id, { onDelete: "cascade" }),
+    productId: integer("product_id"),
+    productName: text("product_name").notNull().default(""),
+    productSlug: text("product_slug").notNull().default(""),
+    quantity: integer("quantity").notNull().default(1),
+    unitPrice: text("unit_price").notNull().default("0.00"),
+    currency: text("currency").notNull().default("AUD"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [index("order_items_order_idx").on(t.orderId)]
+);
+export type OrderItem = typeof orderItemsTable.$inferSelect;
+
 // ---------- Audit logs ----------
 export const auditLogsTable = pgTable(
   "audit_logs",
