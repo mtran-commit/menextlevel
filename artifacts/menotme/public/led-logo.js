@@ -34,6 +34,11 @@
     V: [[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]],
   };
 
+  /* ── Accent colour (change one place to retheme NEXT dots) ───────────── */
+  const GOLD_R = 200, GOLD_G = 148, GOLD_B = 58;
+  const GOLD_SOCKET = `rgba(${Math.round(GOLD_R*.20)},${Math.round(GOLD_G*.16)},${Math.round(GOLD_B*.10)},0.72)`;
+  const GOLD_GLOW   = `rgba(${GOLD_R},${GOLD_G},${GOLD_B},0.85)`;
+
   /* ── Word definitions ─────────────────────────────────────────────────── */
   const WORDS = [
     { text: 'ME',    color: 'white' },
@@ -163,7 +168,7 @@
           /* -- Draw dark socket (always visible) ------------------------- */
           ctx.beginPath();
           ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
-          if      (color === 'red')   ctx.fillStyle = 'rgba(55,0,8,0.72)';
+          if      (color === 'red')   ctx.fillStyle = GOLD_SOCKET;
           else if (color === 'white') ctx.fillStyle = 'rgba(22,22,22,0.72)';
           else                        ctx.fillStyle = 'rgba(14,14,14,0.60)';
           ctx.fill();
@@ -175,9 +180,9 @@
             ctx.arc(cx, cy, Math.max(litR, dotR * 0.12), 0, Math.PI * 2);
 
             if (color === 'red') {
-              ctx.fillStyle = `rgba(255,${Math.round(bright*18)},${Math.round(bright*28)},${bright.toFixed(3)})`;
+              ctx.fillStyle = `rgba(${GOLD_R},${Math.round(GOLD_G*bright)},${Math.round(GOLD_B*bright)},${bright.toFixed(3)})`;
               if (bright > 0.50) {
-                ctx.shadowColor = 'rgba(255,0,24,0.85)';
+                ctx.shadowColor = GOLD_GLOW;
                 ctx.shadowBlur  = dotR * 3.0;
               }
             } else if (color === 'white') {

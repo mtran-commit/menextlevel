@@ -1,4 +1,4 @@
-:root{--white:#fff;--black:#000;--line:rgba(255,255,255,.24);--led:#ff0033}
+:root{--white:#fff;--black:#000;--line:rgba(255,255,255,.24);--accent-gold:#C8943A;--accent-gold-bright:#E0B24F;--accent-gold-dark:#8A6426;--accent-gold-rgb:200,148,58;--led:var(--accent-gold)}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 body{display:flex;justify-content:center}
@@ -25,7 +25,7 @@ button{cursor:pointer}
 .team{text-align:center}
 .tl{font-size:clamp(9px,1.6vw,15px);letter-spacing:.14em;font-weight:700}
 .tl-short{display:none}
-.score{font-weight:800;font-family:"Courier New",ui-monospace,monospace;font-size:clamp(38px,7.4vw,84px);line-height:1;color:var(--led);text-shadow:0 0 6px rgba(255,0,51,.9),0 0 16px rgba(255,0,51,.55),0 0 34px rgba(255,0,51,.3)}
+.score{font-weight:800;font-family:"Courier New",ui-monospace,monospace;font-size:clamp(38px,7.4vw,84px);line-height:1;color:var(--led);text-shadow:0 0 6px rgba(var(--accent-gold-rgb),.85),0 0 14px rgba(var(--accent-gold-rgb),.45),0 0 34px rgba(var(--accent-gold-rgb),.25)}
 .bell{width:clamp(78px,11vw,120px);aspect-ratio:1;border-radius:50%;border:2px solid #fff;background:#030303;color:#fff;box-shadow:0 0 16px rgba(255,255,255,.35),inset 0 0 14px rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .bell small{font-size:clamp(6px,1vw,10px);letter-spacing:.12em;color:#ccc}
 .bell strong{font-size:clamp(16px,2.8vw,28px)}
@@ -373,7 +373,7 @@ button{cursor:pointer}
 #introOverlay.io-out{opacity:0;pointer-events:none}
 .io-card{text-align:center;padding:28px 34px;max-width:420px}
 .io-label{font-size:11px;letter-spacing:.35em;color:#9aa;margin:0 0 10px}
-.io-score{font-family:"Courier New",monospace;font-size:44px;font-weight:900;color:#ff0033;text-shadow:0 0 14px rgba(255,0,51,.8);margin:0}
+.io-score{font-family:"Courier New",monospace;font-size:44px;font-weight:900;color:var(--accent-gold);text-shadow:0 0 6px rgba(var(--accent-gold-rgb),.85),0 0 14px rgba(var(--accent-gold-rgb),.45);margin:0}
 .io-winner{font-size:12px;letter-spacing:.22em;color:#fff;margin:10px 0 0}
 #ioResult{transition:opacity .5s,transform .5s}
 #ioResult.io-gone{opacity:0;transform:translateY(-14px)}

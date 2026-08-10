@@ -8,7 +8,7 @@
 /* ── Reset ── */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --black:#000;--white:#fff;--red:#ff0033;
+  --black:#000;--white:#fff;--accent-gold:#C8943A;--accent-gold-bright:#E0B24F;--accent-gold-dark:#8A6426;--accent-gold-rgb:200,148,58;--red:var(--accent-gold);
   --g9:#0d0d0d;--g8:#111;--g7:#1a1a1a;--g6:#222;--g5:#333;--g4:#555;--g3:#888;--g2:#bbb;
   --sidebar:220px;
 }
@@ -47,7 +47,7 @@ nav button{
 nav button svg{width:15px;height:15px;flex-shrink:0;opacity:.5;transition:opacity .15s}
 nav button:hover{color:var(--white);background:rgba(255,255,255,.04)}
 nav button:hover svg{opacity:.8}
-nav button.active{color:var(--white);border-left-color:var(--red);background:rgba(255,0,51,.07)}
+nav button.active{color:var(--white);border-left-color:var(--red);background:rgba(var(--accent-gold-rgb),.07)}
 nav button.active svg{opacity:1}
 /* Shop/Products nav link — same look as nav buttons but as <a> */
 .nav-link-ext{display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;color:var(--g3);font-size:11px;font-weight:600;letter-spacing:.06em;background:none;border:none;border-left:3px solid transparent;cursor:pointer;transition:color .15s,background .15s;text-decoration:none;text-align:left}
@@ -110,7 +110,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .badge-resolved{background:rgba(100,200,100,.08);color:#88bb88}
 .badge-dismissed{background:var(--g7);color:var(--g3)}
 .badge-info{background:rgba(255,255,255,.07);color:var(--g2)}
-.badge-error{background:rgba(255,0,51,.12);color:#ff6666;border:1px solid rgba(255,0,51,.2)}
+.badge-error{background:rgba(220,60,60,.12);color:#ff6666;border:1px solid rgba(220,60,60,.2)}
 
 /* ── Buttons ── */
 .btn{
@@ -121,8 +121,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .btn:hover{border-color:var(--white)}
 .btn.primary{background:var(--white);color:var(--black);border-color:var(--white)}
 .btn.primary:hover{background:var(--g2);border-color:var(--g2)}
-.btn.danger{border-color:rgba(255,0,51,.5);color:#ff6644}
-.btn.danger:hover{border-color:var(--red);background:rgba(255,0,51,.08)}
+.btn.danger{border-color:rgba(220,60,60,.5);color:#ff6644}
+.btn.danger:hover{border-color:#dc3c3c;background:rgba(220,60,60,.08)}
 .btn-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 
 /* ── Forms ── */
@@ -181,7 +181,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--re
 }
 .si-error{
   color:#ff6644;font-size:11px;letter-spacing:.5px;
-  background:rgba(255,0,51,.08);border:1px solid rgba(255,0,51,.2);
+  background:rgba(220,60,60,.08);border:1px solid rgba(220,60,60,.2);
   border-radius:6px;padding:8px 12px;text-align:left
 }
 .si-hint{color:var(--g3);font-size:12px;max-width:340px;line-height:1.6;margin-bottom:4px}
@@ -192,7 +192,7 @@ input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--re
   .sb-brand,.sb-footer{display:none}
   nav{display:flex;flex-wrap:wrap;padding:6px;flex:none;width:100%}
   nav button{width:auto;border-left:none;border-bottom:3px solid transparent;padding:8px 12px;font-size:9px}
-  nav button.active{border-bottom-color:var(--red);border-left:none;background:rgba(255,0,51,.07)}
+  nav button.active{border-bottom-color:var(--red);border-left:none;background:rgba(var(--accent-gold-rgb),.07)}
   #content{margin-left:0}
   main{padding:14px}
   .cards{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
