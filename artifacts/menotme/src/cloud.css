@@ -2,9 +2,27 @@
 .mnm-overlay{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;overflow:auto}
 .mnm-overlay h1{color:#fff;font-size:34px;font-style:italic;font-weight:800;letter-spacing:.5px;margin:0}
 .mnm-overlay p.mnm-slogan{color:#bbb;font-size:12px;margin:0 0 10px}
-.mnm-auth-toggle{display:flex;gap:8px}
-.mnm-auth-toggle button{background:#000;color:#fff;border:1px solid #fff;border-radius:999px;padding:7px 18px;font-size:12px;letter-spacing:1px;cursor:pointer}
-.mnm-auth-toggle button.active{background:#fff;color:#000}
+/* Auth overlay – segmented toggle */
+.mnm-seg{display:inline-flex;gap:0;background:#111;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:3px}
+.mnm-seg button{background:transparent;color:#fff;border:none;border-radius:999px;padding:7px 18px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:inherit;font-weight:600;transition:background .15s,color .15s}
+.mnm-seg button.active{background:#fff;color:#000;font-weight:700}
+/* Auth input */
+.mnm-input{width:100%;background:#0a0a0a;color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:10px;padding:13px 14px;font-size:14px;outline:none;box-sizing:border-box;font-family:inherit}
+.mnm-input:focus{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.mnm-input::placeholder{color:#555}
+/* Auth card */
+.mnm-auth-card{padding:22px 24px!important;border-radius:18px!important;border:1px solid rgba(255,255,255,.55)!important;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 40px rgba(255,255,255,.08)!important}
+/* Google button */
+.mnm-btn-google{display:flex!important;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 16px!important;font-size:13px}
+/* Hairline divider */
+.mnm-divider{display:flex;align-items:center;gap:10px;color:#555;font-size:11px;letter-spacing:1px;margin:2px 0}
+.mnm-divider::before,.mnm-divider::after{content:"";flex:1;border-top:1px solid #333}
+/* Primary CTA button */
+.mnm-btn-primary{width:100%;padding:13px!important;font-size:13px!important;font-weight:800!important;letter-spacing:2px;border-radius:10px!important}
+/* Ghost / secondary buttons */
+.mnm-btn-ghost{background:transparent!important;border:none!important;color:#555!important;font-size:11px;letter-spacing:1px;text-decoration:underline;cursor:pointer;padding:4px 0!important;border-radius:0!important}
+/* Error message */
+.mnm-auth-err{font-size:11px;color:#fff;background:rgba(255,255,255,.07);border-radius:8px;padding:6px 10px;min-height:0;display:none}
 .mnm-fab{position:fixed;right:8px;top:76px;z-index:9000;display:flex;flex-direction:column;gap:8px}
 .mnm-fab button{width:38px;height:38px;border-radius:50%;background:#000;color:#fff;border:1px solid #fff;font-size:16px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center}
 /* ---------- Auth pill button (header, top-right) ---------- */
@@ -50,7 +68,7 @@
 .mnm-onb-card h3{justify-content:center;text-align:center}
 .mnm-onb-card .mnm-row{justify-content:center}
 .mnm-onb-card input{text-align:center}
-.mnm-btn.ghost{border-color:#555;color:#aaa}
+.mnm-btn.ghost{border-color:#333;color:#666}
 .mnm-hint{position:fixed;left:50%;bottom:85px;transform:translateX(-50%);z-index:9700;background:#000;border:1px solid #fff;color:#fff;font-size:11px;letter-spacing:1px;border-radius:999px;padding:8px 18px;animation:mnmPulse 1.6s ease-in-out infinite}
 .mnm-glow{box-shadow:0 0 0 2px #fff,0 0 18px rgba(255,255,255,.85)!important;animation:mnmPulse 1.6s ease-in-out infinite}
 .mnm-glow-ring{outline:2px solid #fff;outline-offset:2px;box-shadow:0 0 22px rgba(255,255,255,.7);animation:mnmPulse 1.6s ease-in-out infinite;border-radius:50%}

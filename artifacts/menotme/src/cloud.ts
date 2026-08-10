@@ -114,7 +114,7 @@ function authField(placeholder: string, type = "text"): HTMLInputElement {
   i.type = type;
   i.placeholder = placeholder;
   i.autocomplete = type === "password" ? "current-password" : type === "email" ? "email" : "off";
-  i.setAttribute("style", "width:min(300px,80vw)");
+  i.className = "mnm-input";
   return i;
 }
 
@@ -144,7 +144,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
   overlay.appendChild(el("p", "mnm-slogan", esc(heading ?? "Save your Me Next Level progress. Protect your streak. Play on any device.")));
 
   if (mode !== "forgot") {
-    const toggle = el("div", "mnm-auth-toggle");
+    const toggle = el("div", "mnm-seg");
     const bIn = el("button", mode === "in" ? "active" : undefined, "SIGN IN");
     const bUp = el("button", mode === "up" ? "active" : undefined, "CREATE FREE ACCOUNT");
     bIn.onclick = () => renderAuth("in");
@@ -153,11 +153,10 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
     overlay.appendChild(toggle);
   }
 
-  const form = el("div", "mnm-panel") as HTMLDivElement;
+  const form = el("div", "mnm-panel mnm-auth-card") as HTMLDivElement;
   form.setAttribute("style", "position:static;width:min(340px,92vw)");
   overlay.appendChild(form);
-  const err = el("p", "mnm-muted");
-  err.setAttribute("style", "min-height:14px");
+  const err = el("p", "mnm-auth-err");
 
   const email = authField("Email", "email");
   const password = authField("Password", "password");
@@ -167,7 +166,8 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
       (e as { errors?: { longMessage?: string; message?: string }[] })?.errors?.[0]?.longMessage ??
       (e as { errors?: { message?: string }[] })?.errors?.[0]?.message ??
       "Something went wrong. Try again.";
-    err.textContent = msg;
+    err.textContent = "\u26a0 " + msg;
+    (err as HTMLElement).style.display = "block";
   };
 
   const row = (n: HTMLElement) => {
@@ -178,7 +178,8 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
 
   // Google OAuth (works for both sign-in and sign-up via transfer flow)
   if (mode !== "forgot") {
-    const google = el("button", "mnm-btn solid", "CONTINUE WITH GOOGLE");
+    const google = el("button", "mnm-btn solid mnm-btn-google");
+    google.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M21.35 11.1H12v3.2h5.59c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57C20.8 18.5 22 15.1 22 12c0-.66-.06-1.29-.17-1.9z"/><path d="M12 22c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 22 12 22z"/><path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>CONTINUE WITH GOOGLE';
     google.onclick = async () => {
       google.disabled = true;
       try {
@@ -194,16 +195,16 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
       }
     };
     row(google);
-    row(el("p", "mnm-muted", "— or use email —"));
+    const divider = el("div", "mnm-divider"); divider.innerHTML = "<span>or</span>"; form.appendChild(divider);
   }
 
   if (mode === "in") {
     row(email);
     row(password);
-    const go = el("button", "mnm-btn solid", "SIGN IN");
+    const go = el("button", "mnm-btn solid mnm-btn-primary", "SIGN IN");
     go.onclick = async () => {
       go.disabled = true;
-      err.textContent = "";
+      err.textContent = ""; (err as HTMLElement).style.display = "none";
       try {
         const res = await clerk.client!.signIn.create({ identifier: email.value.trim(), password: password.value });
         if (res.status === "complete") {
@@ -228,7 +229,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
             const codeInput = authField("Verification code");
             const r1 = el("div", "mnm-row"); r1.appendChild(codeInput); form.appendChild(r1);
             form.appendChild(err);
-            const verify = el("button", "mnm-btn solid", "VERIFY & SIGN IN");
+            const verify = el("button", "mnm-btn solid mnm-btn-primary", "VERIFY & SIGN IN");
             verify.onclick = async () => {
               verify.disabled = true;
               try {
@@ -240,7 +241,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
                   hideAuthOverlay();
                   onSignedIn();
                 } else {
-                  err.textContent = "Code incorrect or expired. Please try again.";
+                  err.textContent = "\u26a0 Code incorrect or expired. Please try again."; (err as HTMLElement).style.display = "block";
                 }
               } catch (e) { showError(e); }
               verify.disabled = false;
@@ -252,11 +253,11 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
           } else {
             // No email_code factor available — guide user to alternatives
             console.warn("[MNM Auth] Sign-in non-complete, status:", res.status, res);
-            err.textContent = "Your account needs additional verification. Try Google sign-in or use Forgot Password to reset your account.";
+            err.textContent = "\u26a0 Your account needs additional verification. Try Google sign-in or use Forgot Password to reset your account."; (err as HTMLElement).style.display = "block";
           }
         } else {
           console.warn("[MNM Auth] Unexpected sign-in status:", res.status, res);
-          err.textContent = "Sign-in incomplete. Please try Google sign-in or reset your password.";
+          err.textContent = "\u26a0 Sign-in incomplete. Please try Google sign-in or reset your password."; (err as HTMLElement).style.display = "block";
         }
       } catch (e) {
         showError(e);
@@ -264,18 +265,18 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
       go.disabled = false;
     };
     row(go);
-    const forgot = el("button", "mnm-btn", "FORGOT PASSWORD?");
+    const forgot = el("button", "mnm-btn-ghost", "FORGOT PASSWORD?");
     forgot.onclick = () => renderAuth("forgot");
     row(forgot);
   } else if (mode === "up") {
     row(email);
     password.autocomplete = "new-password";
     row(password);
-    const go = el("button", "mnm-btn solid", "CREATE FREE ACCOUNT");
+    const go = el("button", "mnm-btn solid mnm-btn-primary", "CREATE FREE ACCOUNT");
     const codeInput = authField("Verification code");
     go.onclick = async () => {
       go.disabled = true;
-      err.textContent = "";
+      err.textContent = ""; (err as HTMLElement).style.display = "none";
       try {
         const su = await clerk.client!.signUp.create({ emailAddress: email.value.trim(), password: password.value });
         await su.prepareEmailAddressVerification({ strategy: "email_code" });
@@ -285,7 +286,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
         const r = el("div", "mnm-row");
         r.appendChild(codeInput);
         form.appendChild(r);
-        const verify = el("button", "mnm-btn solid", "VERIFY EMAIL");
+        const verify = el("button", "mnm-btn solid mnm-btn-primary", "VERIFY EMAIL");
         verify.onclick = async () => {
           verify.disabled = true;
           try {
@@ -295,7 +296,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
               hideAuthOverlay();
               onSignedIn();
             } else {
-              err.textContent = "Verification incomplete — check the code.";
+              err.textContent = "\u26a0 Verification incomplete — check the code."; (err as HTMLElement).style.display = "block";
             }
           } catch (e) {
             showError(e);
@@ -316,10 +317,10 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
     // forgot password
     form.appendChild(el("p", "mnm-muted", "Enter your email and we'll send a reset code."));
     row(email);
-    const send = el("button", "mnm-btn solid", "SEND RESET CODE");
+    const send = el("button", "mnm-btn solid mnm-btn-primary", "SEND RESET CODE");
     send.onclick = async () => {
       send.disabled = true;
-      err.textContent = "";
+      err.textContent = ""; (err as HTMLElement).style.display = "none";
       try {
         await clerk.client!.signIn.create({
           strategy: "reset_password_email_code",
@@ -336,7 +337,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
         const r2 = el("div", "mnm-row");
         r2.appendChild(newPw);
         form.appendChild(r2);
-        const doReset = el("button", "mnm-btn solid", "RESET PASSWORD");
+        const doReset = el("button", "mnm-btn solid mnm-btn-primary", "RESET PASSWORD");
         doReset.onclick = async () => {
           doReset.disabled = true;
           try {
@@ -358,7 +359,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
               onSignedIn();
               return;
             }
-            err.textContent = "Could not finish the reset. Try again.";
+            err.textContent = "\u26a0 Could not finish the reset. Try again."; (err as HTMLElement).style.display = "block";
           } catch (e) {
             showError(e);
           }
@@ -367,7 +368,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
         const r3 = el("div", "mnm-row");
         r3.appendChild(doReset);
         form.appendChild(r3);
-        const back2 = el("button", "mnm-btn", "BACK TO SIGN IN");
+        const back2 = el("button", "mnm-btn-ghost", "BACK TO SIGN IN");
         back2.onclick = () => renderAuth("in");
         const r4 = el("div", "mnm-row");
         r4.appendChild(back2);
@@ -379,7 +380,7 @@ function renderAuth(mode: "in" | "up" | "forgot", heading?: string) {
       send.disabled = false;
     };
     row(send);
-    const back = el("button", "mnm-btn", "BACK TO SIGN IN");
+    const back = el("button", "mnm-btn-ghost", "BACK TO SIGN IN");
     back.onclick = () => renderAuth("in");
     row(back);
   }
