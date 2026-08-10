@@ -1,10 +1,40 @@
 import { Readable } from "stream";
-import { Router, type IRouter, type Request, type Response } from "express";
+import express, { Router, type IRouter, type Request, type Response } from "express";
 import { ObjectNotFoundError, ObjectStorageService } from "../lib/objectStorage";
 import { requireAuth, requireAdmin } from "../middlewares/auth";
 
 const router: IRouter = Router();
 const objectStorageService = new ObjectStorageService();
+
+/**
+ * POST /storage/uploads
+ * Admin-only: upload a file through the server directly to object storage.
+ * Avoids CORS issues with browser-to-GCS direct uploads.
+ */
+router.post(
+  "/storage/uploads",
+  requireAuth,
+  requireAdmin,
+  express.raw({ type: "*/*", limit: "20mb" }),
+  async (req: Request, res: Response) => {
+    try {
+      const contentType =
+        (req.headers["content-type"] as string) || "application/octet-stream";
+      const body = req.body as Buffer;
+      if (!body || !body.length) {
+        res.status(400).json({ error: "Empty body" });
+        return;
+      }
+      const objectPath = await objectStorageService.uploadObjectEntity(
+        body,
+        contentType,
+      );
+      res.json({ objectPath });
+    } catch (err: any) {
+      res.status(500).json({ error: err?.message ?? "Upload failed" });
+    }
+  },
+);
 
 /**
  * POST /storage/uploads/request-url

@@ -533,12 +533,20 @@ document.getElementById('pImageFile').addEventListener('change',async function()
   progress.style.display='block';
   bar.style.width='10%';
   try{
-    // Step 1: get presigned URL
-    const {uploadURL,objectPath}=await api('/admin/products/image-upload-url',{method:'POST',body:JSON.stringify({name:file.name,size:file.size,contentType:file.type})});
-    bar.style.width='40%';
-    // Step 2: upload directly to GCS
-    await fetch(uploadURL,{method:'PUT',body:file,headers:{'Content-Type':file.type}});
+    // Upload via server (avoids CORS issues with direct-to-GCS uploads)
+    bar.style.width='30%';
+    const uploadResp=await fetch(BASE+'/api/storage/uploads',{
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':file.type},
+      body:file
+    });
+    if(!uploadResp.ok){
+      const e=await uploadResp.json().catch(()=>({error:'Upload failed'}));
+      throw new Error(e.error||'Upload failed');
+    }
     bar.style.width='100%';
+    const {objectPath}=await uploadResp.json();
     currentImagePath=objectPath;
     const serveUrl=BASE+'/api/storage'+objectPath;
     currentImageUrl=serveUrl;
