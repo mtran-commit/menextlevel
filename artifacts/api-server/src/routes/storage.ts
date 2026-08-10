@@ -62,7 +62,8 @@ router.post(
 router.get(
   "/storage/public-objects/{*filePath}",
   async (req: Request, res: Response) => {
-    const filePath = (req.params as any).filePath as string;
+    const raw = (req.params as any).filePath;
+    const filePath = Array.isArray(raw) ? raw.join("/") : String(raw);
     try {
       const file = await objectStorageService.searchPublicObject(filePath);
       if (!file) {
@@ -90,24 +91,17 @@ router.get(
 
 /**
  * GET /storage/objects/*
- * Serves private object entities uploaded via presigned URLs.
- * Admin-only for now; open up per-ACL as needed.
+ * Redirects to a sidecar-signed GCS GET URL.
+ * No auth required — product images on the public shop must be browser-accessible.
  */
 router.get(
   "/storage/objects/{*objectKey}",
   async (req: Request, res: Response) => {
-    const objectPath = "/objects/" + (req.params as any).objectKey;
+    const rawKey = (req.params as any).objectKey;
+    const objectPath = "/objects/" + (Array.isArray(rawKey) ? rawKey.join("/") : String(rawKey));
     try {
-      const file = await objectStorageService.getObjectEntityFile(objectPath);
-      const response = await objectStorageService.downloadObject(file, 86400);
-      const contentType = response.headers.get("content-type") ?? "application/octet-stream";
-      res.setHeader("Content-Type", contentType);
-      res.setHeader("Cache-Control", "public, max-age=86400");
-      if (response.body) {
-        Readable.from(response.body as any).pipe(res);
-      } else {
-        res.end();
-      }
+      const signedURL = await objectStorageService.getObjectEntitySignedURL(objectPath);
+      res.redirect(302, signedURL);
     } catch (err: any) {
       if (err instanceof ObjectNotFoundError) {
         res.status(404).json({ error: "Not found" });
