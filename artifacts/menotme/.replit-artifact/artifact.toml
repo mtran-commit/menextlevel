@@ -19,12 +19,24 @@ serve = "static"
 publicDir = "artifacts/menotme/dist/public"
 
 [[services.production.rewrites]]
+from = "/admin/products.html"
+to = "/admin/products.html"
+
+[[services.production.rewrites]]
 from = "/admin"
 to = "/admin/index.html"
 
 [[services.production.rewrites]]
 from = "/admin/*"
 to = "/admin/index.html"
+
+[[services.production.rewrites]]
+from = "/shop"
+to = "/shop/index.html"
+
+[[services.production.rewrites]]
+from = "/shop/*"
+to = "/shop/index.html"
 
 [[services.production.rewrites]]
 from = "/*"
