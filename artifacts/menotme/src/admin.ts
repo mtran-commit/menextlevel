@@ -154,13 +154,57 @@ function showSignInForm() {
           errEl.style.display = "block";
           submitBtn.disabled = false;
         }
+      } else if ((res as any).status === "needs_new_password") {
+        // Admin-set password requires user to confirm a new password on first login
+        showNewPasswordStep(res);
       } else {
-        errEl.textContent = "⚠ Sign-in incomplete. Please try again.";
+        errEl.textContent = `⚠ Sign-in incomplete (status: ${(res as any).status ?? "unknown"}). Please try again.`;
         errEl.style.display = "block";
         submitBtn.disabled = false;
       }
     } catch (e) {
       showErr(e);
+      submitBtn.disabled = false;
+    }
+  };
+}
+
+function showNewPasswordStep(signInRes: any) {
+  gate.innerHTML = `
+    <div class="g-logo">ME NEXT LEVEL</div>
+    <h2>SET NEW PASSWORD</h2>
+    <p style="color:var(--g3);font-size:12px;letter-spacing:1px;margin-bottom:16px">Your account requires a new password.</p>
+    <form id="adminNewPwForm" class="signin-form">
+      <div class="form-field">
+        <label for="np-password">New Password</label>
+        <input id="np-password" type="password" placeholder="••••••••" required autocomplete="new-password">
+      </div>
+      <div id="np-err" class="si-error" style="display:none"></div>
+      <button type="submit" class="btn primary" id="np-submit">SET PASSWORD</button>
+    </form>`;
+
+  const form     = document.getElementById("adminNewPwForm") as HTMLFormElement;
+  const passEl   = document.getElementById("np-password") as HTMLInputElement;
+  const errEl    = document.getElementById("np-err") as HTMLElement;
+  const submitBtn = document.getElementById("np-submit") as HTMLButtonElement;
+
+  form.onsubmit = async (ev) => {
+    ev.preventDefault();
+    submitBtn.disabled = true;
+    errEl.style.display = "none";
+    try {
+      const res = await signInRes.resetPassword({ password: passEl.value });
+      if (res.status === "complete") {
+        await clerk.setActive({ session: res.createdSessionId });
+        await boot();
+      } else {
+        errEl.textContent = "⚠ Could not set password. Please try again.";
+        errEl.style.display = "block";
+        submitBtn.disabled = false;
+      }
+    } catch (e: any) {
+      errEl.textContent = `⚠ ${e?.errors?.[0]?.longMessage ?? e?.errors?.[0]?.message ?? e?.message ?? "Error setting password."}`;
+      errEl.style.display = "block";
       submitBtn.disabled = false;
     }
   };
