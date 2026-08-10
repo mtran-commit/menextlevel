@@ -6,7 +6,7 @@ const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 const clerk = new Clerk(
   publishableKeyFromHost(window.location.hostname, import.meta.env.VITE_CLERK_PUBLISHABLE_KEY),
-  import.meta.env.VITE_CLERK_PROXY_URL ? { proxyUrl: import.meta.env.VITE_CLERK_PROXY_URL } : undefined,
+  { proxyUrl: `${window.location.origin}/api/__clerk` },
 );
 
 const gate  = document.getElementById("gate")!;
