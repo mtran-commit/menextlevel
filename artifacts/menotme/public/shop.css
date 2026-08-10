@@ -26,6 +26,30 @@ a{color:inherit;text-decoration:none}
 }
 .shop-back:hover{color:var(--white);border-color:rgba(255,255,255,.5)}
 
+/* ── Lifestyle hero strip ────────────────────────────────────────────────────*/
+.shop-lifestyle-strip{
+  background:var(--black);
+  padding:24px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  /* On narrow screens allow horizontal scroll rather than destroying aspect ratio */
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;          /* Firefox */
+}
+.shop-lifestyle-strip::-webkit-scrollbar{display:none}
+
+.shop-lifestyle-img{
+  display:block;
+  /* Full width on desktop; on very narrow screens keep natural size so
+     people/branding are never squashed — the strip becomes scrollable instead */
+  width:100%;
+  min-width:600px;               /* preserve readability — below this it scrolls */
+  height:auto;
+  object-fit:contain;
+  object-position:center;
+}
+
 /* ── Hero ────────────────────────────────────────────────────────────────────*/
 .shop-hero{
   text-align:center;padding:72px 5% 52px;
