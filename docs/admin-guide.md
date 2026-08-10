@@ -112,11 +112,23 @@ Revenue, order counts, best-selling products, recent activity.
 
 - Admin panel checks only the `admin_token` cookie — it ignores Clerk entirely
 - The game checks only the Clerk session — it ignores `admin_token` entirely
-- Navigating from `/admin/` to `/` shows you as a **guest** in the game
-- Navigating from `/` to `/admin/` while logged into the game does **not** grant admin access
+- The two systems are fully isolated — neither one bleeds into the other
 
-### One exception
-If you separately sign into the *game* using a Clerk account that has `role: admin` in the database (e.g. `admin@menextlevel.com`), the game will recognise it and show an **"Open Admin Dashboard"** link in the profile panel. This is intentional — it gives real admin users a shortcut. It does not bypass the admin panel's own JWT login.
+### Behaviour by scenario
+
+| Logged in via | Visit `/admin/` | Visit `/` |
+|---|---|---|
+| Admin panel (JWT) only | ✅ Full access | 👤 Guest |
+| Game Clerk account (any role) | 🔒 Sign-in form required | ✅ Logged-in player |
+| Both independently | ✅ Full access | ✅ Logged-in player |
+
+**Key rules:**
+
+1. **Admin panel → Game:** Signing into `/admin/` sets only the JWT cookie. The game does not know about it, so you appear as a guest at `/`.
+
+2. **Game → Admin panel:** Even if your Clerk game account has `role: admin`, the admin panel still shows the sign-in form. The Clerk session grants no access to `/admin/` — the JWT credentials (`ADMIN_EMAIL` / `ADMIN_PASSWORD`) are always required.
+
+3. **Admin-role Clerk accounts:** If you sign into the *game* with a Clerk account that has `role: admin` in the database, the game shows an **"Open Admin Dashboard"** shortcut link in your profile panel. Clicking it takes you to `/admin/` — which still requires its own separate JWT login. This shortcut is a convenience link only, not an access bypass.
 
 ---
 
