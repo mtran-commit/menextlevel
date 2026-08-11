@@ -741,7 +741,11 @@ function openOrderModal(o){
         <div class="modal-field"><label>Name</label><span>${esc(o.customerName)||'—'}</span></div>
         <div class="modal-field"><label>Email</label><span>${esc(o.customerEmail)||'—'}</span></div>
         <div class="modal-field"><label>Phone</label><span>${esc(o.customerPhone)||'—'}</span></div>
-        <div class="modal-field"><label>Shipping Address</label><span>${esc(addrStr(o.shippingAddress))}</span></div>
+        <div class="modal-field" style="grid-column:1/-1">
+          <label>Shipping Address</label>
+          <span id="modalShipAddr">${esc(addrStr(o.shippingAddress))}</span>
+          ${!addrStr(o.shippingAddress)&&o.stripeCheckoutSessionId?`<button class="btn btn-outline" style="margin-top:6px;font-size:10px;padding:4px 10px" onclick="syncStripe('${o.id}')">⟳ Sync from Stripe</button>`:''}
+        </div>
       </div>
     </div>
 
@@ -818,6 +822,18 @@ window.confirmRefund=async function(id){
     orderModalOverlay.classList.remove('show');
     refreshStats();
   }catch(err){toast('Error: '+err.message,true);}
+};
+
+window.syncStripe=async function(id){
+  try{
+    const res=await api('/admin/orders/'+id+'/sync-stripe',{method:'POST'});
+    const idx=orders.findIndex(o=>o.id===Number(id));
+    if(idx!==-1)orders[idx]={...orders[idx],...res.order};
+    renderOrders();
+    toast('Synced from Stripe');
+    // Refresh the modal
+    openOrder(orders.find(o=>o.id===Number(id)));
+  }catch(err){toast('Sync failed: '+err.message,true);}
 };
 
 window.saveOrder=async function(id){

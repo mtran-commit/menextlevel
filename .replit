@@ -26,3 +26,6 @@ channel = "stable-25_05"
 
 [userenv.production]
 ADMIN_TRANSFER_SECRET = "66d8e1a975ac4e377785d2583f50a39a0da303255cfae16c335f09ae7714a82c"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-6a27799e-9c26-4afc-9cc9-c44d8ca7742c"

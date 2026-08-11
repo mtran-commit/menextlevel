@@ -1,4 +1,4 @@
-import { getCachedStripeSync } from './stripeClient';
+import { getCachedStripeSync, getUncachableStripeClient } from './stripeClient';
 import { db, ordersTable } from '@workspace/db';
 import { eq } from 'drizzle-orm';
 import { logger } from './logger';
@@ -64,8 +64,20 @@ export class WebhookHandlers {
       return;
     }
 
-    const customerDetails = session.customer_details;
-    const shippingDetails = session.shipping_details;
+    // Re-fetch the session from Stripe with shipping_details expanded —
+    // the raw webhook payload doesn't always include nested objects.
+    let fullSession = session;
+    try {
+      const stripe = await getUncachableStripeClient();
+      fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ['shipping_details', 'customer_details'],
+      });
+    } catch (err) {
+      logger.warn({ sessionId: session.id, err }, 'Could not re-fetch session from Stripe — using webhook payload');
+    }
+
+    const customerDetails = fullSession.customer_details;
+    const shippingDetails = fullSession.shipping_details;
 
     const paymentIntentId =
       typeof session.payment_intent === 'string'

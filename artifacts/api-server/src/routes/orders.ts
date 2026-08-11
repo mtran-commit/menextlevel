@@ -3,6 +3,7 @@ import { db, ordersTable, orderItemsTable, productsTable } from "@workspace/db";
 import { asc, desc, eq, ilike, or, and, gte, lte, count, sum, sql, inArray } from "drizzle-orm";
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middlewares/auth";
 import { logAudit } from "../lib/audit";
+import { getUncachableStripeClient } from "../lib/stripeClient";
 
 const router: IRouter = Router();
 
@@ -149,6 +150,46 @@ router.get("/admin/orders/:id", async (req, res) => {
   if (!order) return res.status(404).json({ error: "Not found" });
   const items = await db.select().from(orderItemsTable).where(eq(orderItemsTable.orderId, id));
   return res.json({ order: { ...order, items } });
+});
+
+// ── Sync shipping/customer details from Stripe ────────────────────────────────
+
+router.post("/admin/orders/:id/sync-stripe", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
+  const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id)).limit(1);
+  if (!order) return res.status(404).json({ error: "Not found" });
+  if (!order.stripeCheckoutSessionId) return res.status(400).json({ error: "No Stripe session ID on this order" });
+
+  let stripe;
+  try { stripe = await getUncachableStripeClient(); }
+  catch { return res.status(500).json({ error: "Stripe not connected" }); }
+
+  const session = await stripe.checkout.sessions.retrieve(order.stripeCheckoutSessionId, {
+    expand: ["shipping_details", "customer_details"],
+  });
+
+  const customerDetails = session.customer_details;
+  const shippingDetails = session.shipping_details;
+
+  const updates: Partial<typeof ordersTable.$inferInsert> = { updatedAt: new Date() };
+  if (customerDetails?.name)  updates.customerName  = customerDetails.name;
+  if (customerDetails?.email) updates.customerEmail = customerDetails.email;
+  if (customerDetails?.phone) updates.customerPhone = customerDetails.phone;
+  if (shippingDetails?.address) {
+    updates.shippingAddress = {
+      name:        shippingDetails.name ?? customerDetails?.name ?? "",
+      line1:       shippingDetails.address.line1        ?? "",
+      line2:       shippingDetails.address.line2        ?? "",
+      city:        shippingDetails.address.city         ?? "",
+      state:       shippingDetails.address.state        ?? "",
+      postal_code: shippingDetails.address.postal_code  ?? "",
+      country:     shippingDetails.address.country      ?? "",
+    };
+  }
+
+  const [updated] = await db.update(ordersTable).set(updates).where(eq(ordersTable.id, id)).returning();
+  return res.json({ order: updated });
 });
 
 // ── Create order (used by checkout flow later) ────────────────────────────────
