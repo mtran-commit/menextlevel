@@ -104,6 +104,26 @@ async function main() {
   }
 
   // ---------------------------------------------------------------------------
+  // Idempotent DDL: add confirmation email tracking columns to orders if missing.
+  // ---------------------------------------------------------------------------
+  try {
+    await db.execute(sql`
+      ALTER TABLE orders
+      ADD COLUMN IF NOT EXISTS confirmation_email_status TEXT,
+      ADD COLUMN IF NOT EXISTS confirmation_email_attempts INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS confirmation_email_locked_at TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS confirmation_email_sent_at TIMESTAMPTZ
+    `);
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS orders_confirm_email_idx
+      ON orders (confirmation_email_status)
+      WHERE confirmation_email_status IS NOT NULL
+    `);
+  } catch (err) {
+    logger.error({ err }, "confirmation email columns migration failed — server starting anyway");
+  }
+
+  // ---------------------------------------------------------------------------
   // Start HTTP server
   // ---------------------------------------------------------------------------
   app.listen(port, (err) => {
@@ -130,6 +150,18 @@ async function main() {
   }
   setTimeout(schedulerTick, 10_000);
   setInterval(schedulerTick, 5 * 60_000);
+
+  // Email delivery sweeper — retries any 'pending' confirmation emails
+  async function emailRetryTick() {
+    try {
+      const { WebhookHandlers } = await import("./lib/webhookHandlers");
+      await WebhookHandlers.retryPendingEmails();
+    } catch (err) {
+      logger.error({ err }, "email retry sweeper failed");
+    }
+  }
+  setTimeout(emailRetryTick, 60_000);          // first run 1 min after startup
+  setInterval(emailRetryTick, 5 * 60_000);     // then every 5 minutes
 }
 
 main().catch((err) => {

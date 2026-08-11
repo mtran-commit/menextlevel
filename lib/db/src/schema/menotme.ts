@@ -318,6 +318,16 @@ export const ordersTable = pgTable(
     trackingNumber: text("tracking_number").notNull().default(""),
     courier: text("courier").notNull().default(""),
     adminNotes: text("admin_notes").notNull().default(""),
+    // Email delivery tracking
+    // null      = pre-feature order (never touch)
+    // pending   = waiting to be claimed by a worker
+    // in_flight = a worker holds the lease and is sending right now
+    // sent      = successfully delivered (terminal)
+    // failed    = max attempts exhausted (terminal)
+    confirmationEmailStatus: text("confirmation_email_status"),
+    confirmationEmailAttempts: integer("confirmation_email_attempts").notNull().default(0),
+    confirmationEmailLockedAt: timestamp("confirmation_email_locked_at"), // when current in_flight lease was acquired
+    confirmationEmailSentAt: timestamp("confirmation_email_sent_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
@@ -326,6 +336,7 @@ export const ordersTable = pgTable(
     index("orders_payment_idx").on(t.paymentStatus),
     index("orders_created_idx").on(t.createdAt),
     index("orders_email_idx").on(t.customerEmail),
+    index("orders_confirm_email_idx").on(t.confirmationEmailStatus),
   ]
 );
 export type Order = typeof ordersTable.$inferSelect;
