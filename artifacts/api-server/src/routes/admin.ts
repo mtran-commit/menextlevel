@@ -67,18 +67,24 @@ router.post("/admin/transfer", async (req, res) => {
 
 router.post("/admin/login", async (req, res) => {
   const { email, password } = req.body ?? {};
-  const adminEmail = process.env.ADMIN_EMAIL ?? "";
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "";
+  const adminEmail = (process.env.ADMIN_EMAIL ?? "").trim();
+  const adminPassword = (process.env.ADMIN_PASSWORD ?? "").trim();
   const jwtSecret = process.env.ADMIN_JWT_SECRET ?? "";
+
+  // Trim submitted values to absorb copy-paste whitespace
+  const submittedEmail = String(email ?? "").trim();
+  const submittedPassword = String(password ?? "").trim();
+
+  logger.info({ submittedEmail, emailLength: submittedEmail.length, passwordLength: submittedPassword.length }, "Admin login attempt");
 
   // Constant-time comparison to avoid timing attacks
   let emailMatch = false;
   let passwordMatch = false;
   try {
-    emailMatch = timingSafeEqual(Buffer.from(String(email ?? "")), Buffer.from(adminEmail));
+    emailMatch = timingSafeEqual(Buffer.from(submittedEmail), Buffer.from(adminEmail));
   } catch { /* length mismatch — stays false */ }
   try {
-    passwordMatch = timingSafeEqual(Buffer.from(String(password ?? "")), Buffer.from(adminPassword));
+    passwordMatch = timingSafeEqual(Buffer.from(submittedPassword), Buffer.from(adminPassword));
   } catch { /* length mismatch — stays false */ }
 
   if (!emailMatch || !passwordMatch) {
