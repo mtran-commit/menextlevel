@@ -33,7 +33,13 @@ export async function getStripeCredentials(): Promise<{ secretKey: string; publi
   }
 
   const data = await resp.json();
-  const settings = data.items?.[0]?.settings;
+  const items: { settings: { secret?: string; publishable?: string; account_id?: string } }[] =
+    data.items ?? [];
+
+  // Prefer the live connection (sk_live_...) when present; fall back to sandbox.
+  const liveItem  = items.find(i => i.settings?.secret?.startsWith("sk_live_"));
+  const chosen    = liveItem ?? items[0];
+  const settings  = chosen?.settings;
 
   // Replit Stripe connector exposes: secret, publishable, account_id
   if (!settings?.secret) {
