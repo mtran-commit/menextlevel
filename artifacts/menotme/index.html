@@ -90,42 +90,50 @@
 <div class="modal wide" id="arenaModal"><div class="modal-card arena-card">
   <h3>Manage My Arena</h3>
   <div class="arena-scroll">
-    <h4>★ My Fans</h4>
+    <span class="pref-group-title">★ My Fans</span>
     <p class="hint">Your supporters in the front row. Private — never shared.</p>
     <div id="fanList"></div>
     <div class="fan-form">
       <input id="fanName" placeholder="Name" maxlength="30">
       <input id="fanNick" placeholder="Nickname (optional)" maxlength="20">
       <input id="fanMsg" placeholder="Support message (optional)" maxlength="26">
-      <label class="filelabel">Photo (optional) <input type="file" id="fanPhoto" accept="image/*"></label>
+      <div class="photo-upload" id="photoUploadArea">
+        <input type="file" id="fanPhoto" accept="image/*">
+        <span class="photo-upload-label"><span class="pu-icon">🖼</span><span id="photoUploadText">Tap to choose photo (optional)</span></span>
+      </div>
       <button class="secondary" id="addFan">+ Add Fan</button>
     </div>
-    <h4>✕ My Doubters</h4>
+    <span class="pref-group-title">✕ My Doubters</span>
     <p class="hint">Names stay private and are never shown on signs.</p>
     <div id="doubterList"></div>
     <div class="fan-form">
       <input id="doubterName" placeholder="Name or nickname" maxlength="30">
       <button class="secondary" id="addDoubter">+ Add Doubter</button>
     </div>
-    <h4>Arena Preferences</h4>
-    <label class="pref"><input type="checkbox" id="prefFans" checked> Show Fans</label>
-    <label class="pref"><input type="checkbox" id="prefDoubters" checked> Show Doubters</label>
-    <label class="pref"><input type="checkbox" id="prefSigns" checked> Show Fan Signs</label>
-    <label class="pref"><input type="checkbox" id="prefReactions" checked> Crowd Reactions</label>
-    <h4>Sound</h4>
-    <button id="audioQuick" class="audio-quick" type="button" aria-label="Toggle all audio">🔊 AUDIO ON</button>
-    <label class="pref"><input type="checkbox" id="prefSoundMaster" checked> Sound On</label>
-    <label class="pref"><input type="checkbox" id="prefCrowdAudio" checked> Crowd Audio</label>
-    <label class="pref"><input type="checkbox" id="prefFanVoices" checked> Fan Voices</label>
-    <label class="pref"><input type="checkbox" id="prefDoubterVoices" checked> Doubter Voices</label>
-    <label class="pref"><input type="checkbox" id="prefMusic"> Music / Beats</label>
-    <label class="pref"><input type="checkbox" id="prefGameIntro" checked> Game Intro Sound</label>
-    <label class="pref"><input type="checkbox" id="prefCommentator" checked> Commentator</label>
-    <label class="pref"><input type="checkbox" id="prefSoundFx" checked> Sound Effects</label>
-    <label class="pref"><input type="checkbox" id="prefInspireAudio" checked> Inspirational Audio</label>
-    <label class="pref"><input type="checkbox" id="prefInspireText" checked> Inspirational Text</label>
-    <label class="pref"><input type="checkbox" id="prefHaptics" checked> Haptics</label>
-    <h4>Help</h4>
+    <span class="pref-group-title">Arena Preferences</span>
+    <div class="pref-group">
+      <label class="pref-toggle"><input type="checkbox" id="prefFans" checked><span class="track"></span><span class="pref-label">Show Fans</span></label>
+      <label class="pref-toggle"><input type="checkbox" id="prefDoubters" checked><span class="track"></span><span class="pref-label">Show Doubters</span></label>
+      <label class="pref-toggle"><input type="checkbox" id="prefSigns" checked><span class="track"></span><span class="pref-label">Show Fan Signs</span></label>
+      <label class="pref-toggle"><input type="checkbox" id="prefReactions" checked><span class="track"></span><span class="pref-label">Crowd Reactions</span></label>
+    </div>
+    <span class="pref-group-title">Sound</span>
+    <div class="pref-group">
+      <label class="pref-toggle"><input type="checkbox" id="prefSoundMaster" checked><span class="track"></span><span class="pref-label">Sound On</span></label>
+      <div class="sound-sub">
+        <label class="pref-toggle"><input type="checkbox" id="prefCrowdAudio" checked><span class="track"></span><span class="pref-label">Crowd Audio</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefFanVoices" checked><span class="track"></span><span class="pref-label">Fan Voices</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefDoubterVoices" checked><span class="track"></span><span class="pref-label">Doubter Voices</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefMusic"><span class="track"></span><span class="pref-label">Music / Beats</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefGameIntro" checked><span class="track"></span><span class="pref-label">Game Intro Sound</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefCommentator" checked><span class="track"></span><span class="pref-label">Commentator</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefSoundFx" checked><span class="track"></span><span class="pref-label">Sound Effects</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefInspireAudio" checked><span class="track"></span><span class="pref-label">Inspirational Audio</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefInspireText" checked><span class="track"></span><span class="pref-label">Inspirational Text</span></label>
+        <label class="pref-toggle"><input type="checkbox" id="prefHaptics" checked><span class="track"></span><span class="pref-label">Haptics</span></label>
+      </div>
+    </div>
+    <span class="pref-group-title">Help</span>
     <button class="secondary" id="howToPlay">How to Play</button>
   </div>
   <div class="actions"><button class="primary" id="closeArena">Done</button></div>

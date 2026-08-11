@@ -214,7 +214,6 @@ button{cursor:pointer}
 .arena-card{text-align:left}
 .arena-card h3{text-align:center}
 .arena-scroll{max-height:min(58vh,460px);overflow:auto;padding-right:4px}
-.arena-card h4{margin:14px 0 2px;letter-spacing:.08em}
 .hint{margin:2px 0 8px;font-size:11px;color:#999}
 .modal-hint{font-size:11px;min-height:16px;margin:5px 0 3px;text-align:left;line-height:1.4;transition:opacity .2s}
 .modal-hint:empty{opacity:0}
@@ -223,12 +222,31 @@ button{cursor:pointer}
 @keyframes tagFlash{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 2px #fff,0 0 10px #fff}}
 .tag--flash{animation:tagFlash .9s ease-out}
 .fan-form{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px}
-.filelabel{font-size:11px;color:#bbb;display:flex;flex-direction:column;gap:4px}
 .fan-row{display:flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:6px 8px;margin-bottom:6px;font-size:13px}
 .fan-row img{width:26px;height:26px;border-radius:50%;object-fit:cover}
 .fan-row .fx{margin-left:auto;background:none;border:1px solid var(--line);color:#fff;border-radius:8px;padding:2px 8px;font-size:11px}
 .fan-row small{color:#999}
-.pref{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+/* Section group title */
+.pref-group-title{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#888;margin:14px 0 6px;font-weight:600}
+.pref-group-title::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.1)}
+/* Section group card */
+.pref-group{border:1px solid rgba(255,255,255,.14);border-radius:14px;background:#0d0d0d;padding:12px 14px;display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+/* Custom pill toggle */
+.pref-toggle{display:flex;align-items:center;gap:10px;min-height:32px;cursor:pointer;user-select:none}
+.pref-toggle input[type=checkbox]{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.pref-toggle .track{flex-shrink:0;width:42px;height:24px;border-radius:12px;border:1.5px solid rgba(255,255,255,.3);background:transparent;position:relative;transition:background .18s,border-color .18s}
+.pref-toggle .track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .18s,background .18s}
+.pref-toggle input:checked+.track{background:#fff;border-color:#fff}
+.pref-toggle input:checked+.track::after{transform:translateX(18px);background:#000}
+.pref-label{font-size:13px;color:#fff;white-space:nowrap}
+/* Sound sub-options indented group */
+.sound-sub{padding-left:16px;border-left:1px solid rgba(255,255,255,.1);margin-top:6px;display:flex;flex-direction:column;gap:2px}
+/* Styled photo upload area */
+.photo-upload{position:relative;border:1px dashed rgba(255,255,255,.3);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:border-color .18s}
+.photo-upload:hover{border-color:rgba(255,255,255,.55)}
+.photo-upload input[type=file]{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.photo-upload-label{font-size:12px;color:#bbb;pointer-events:none}
+.photo-upload-label .pu-icon{display:block;font-size:20px;margin-bottom:4px}
 .menu-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .menu-list button{padding:11px;border-radius:12px}
 

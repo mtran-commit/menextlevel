@@ -149,17 +149,20 @@ function toThumb(file,cb){
 }
 $("fanPhoto").onchange=e=>{
   const f=e.target.files[0];pendingPhoto=null;
-  if(!f)return;
+  const lbl=$("photoUploadText");
+  if(!f){if(lbl)lbl.textContent="Tap to choose photo (optional)";return}
   toThumb(f,thumb=>{
-    if(!thumb){alert("Could not read that image.");e.target.value="";return}
-    if(photoBytesUsed()+thumb.length>PHOTO_BUDGET){alert("Photo storage is full — remove a fan photo first.");e.target.value="";return}
+    if(!thumb){alert("Could not read that image.");e.target.value="";if(lbl)lbl.textContent="Tap to choose photo (optional)";return}
+    if(photoBytesUsed()+thumb.length>PHOTO_BUDGET){alert("Photo storage is full — remove a fan photo first.");e.target.value="";if(lbl)lbl.textContent="Tap to choose photo (optional)";return}
     pendingPhoto=thumb;
+    if(lbl)lbl.textContent=f.name;
   });
 };
 $("addFan").onclick=()=>{
   const name=$("fanName").value.trim();if(!name)return;
   state.fans.push({name,nickname:$("fanNick").value.trim(),msg:$("fanMsg").value.trim(),photo:pendingPhoto});
   $("fanName").value=$("fanNick").value=$("fanMsg").value="";$("fanPhoto").value="";pendingPhoto=null;
+  const lbl=$("photoUploadText");if(lbl)lbl.textContent="Tap to choose photo (optional)";
   saveState();renderManage();renderSigns();
 };
 $("addDoubter").onclick=()=>{
