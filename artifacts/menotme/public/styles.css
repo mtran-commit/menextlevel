@@ -201,6 +201,27 @@ button{cursor:pointer}
 .history-card small{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);line-height:1.3}
 .history-card strong,.history-card b{display:block;font-size:clamp(22px,4vw,30px);font-weight:800;line-height:1;color:#fff}
 .history-card--highlight{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);box-shadow:inset 0 0 14px rgba(255,255,255,.04)}
+/* Wall of Fame modal */
+.fame-heading{margin:0 0 16px;letter-spacing:.14em;font-size:clamp(13px,2.2vw,16px);text-transform:uppercase;border-bottom:1px solid var(--line);padding-bottom:12px}
+.fame-progress-section{margin-bottom:16px}
+.fame-streak-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px}
+.fame-streak-label span{color:#fff;font-weight:800;font-size:15px;letter-spacing:0;vertical-align:middle;margin:0 2px}
+.fame-progress{display:flex;flex-direction:column;gap:6px}
+.fame-bar{height:6px;width:100%;background:var(--line);border-radius:3px;overflow:hidden}
+.fame-bar-fill{height:100%;width:0%;background:#fff;border-radius:3px;transition:width .5s ease}
+.fame-progress-meta{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45);text-align:right}
+.fame-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+@media(max-width:340px){.fame-grid{grid-template-columns:1fr}}
+.fame-card{border:1px solid var(--line);border-radius:14px;padding:16px 10px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px;gap:6px;position:relative}
+.fame-card--achieved{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.04);box-shadow:0 0 16px rgba(255,255,255,.07),inset 0 0 12px rgba(255,255,255,.04)}
+.fame-card--locked{opacity:1}
+.fame-card-icon{font-size:2rem;line-height:1;transition:opacity .2s}
+.fame-card--locked .fame-card-icon{opacity:.25}
+.fame-card-name{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);line-height:1.3}
+.fame-card-status{font-size:8px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:2px}
+.fame-card--achieved .fame-card-status{color:#fff}
+.fame-card--locked .fame-card-status{color:rgba(255,255,255,.3)}
+.fame-lock-badge{position:absolute;top:8px;right:10px;font-size:10px;opacity:.35}
 #historyList:empty::after{content:"No completed days yet.";display:block;font-style:italic;color:rgba(255,255,255,.35);font-size:13px;padding:6px 2px 4px}
 .friend-card{border:1px solid rgba(255,255,255,.14);border-radius:14px;background:#0d0d0d;padding:14px 16px;display:flex;flex-direction:column;gap:0}
 .friend-card h3{margin:0 0 14px;border-bottom-color:rgba(255,255,255,.1)}

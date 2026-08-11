@@ -93,10 +93,28 @@ window.arenaCelebrate=function(){
 
 /* ---------- Wall of Fame ---------- */
 function openFame(){
-  const MILE=[[7,"📸","7 Days Straight — Paparazzi autograph"],[30,"🏆","30 Days — Me Next Level Champion"],[60,"🖼️","60 Days — Me Next Level Wall of Fame"],[90,"🎽","90 Days — Jersey retired"]];
-  $("fameList").innerHTML=
-    "<p style='margin:4px 0 12px'>Best streak: <b>"+state.best+"</b> days</p>"+
-    MILE.map(([d,ic,t])=>"<p style='margin:6px 0;opacity:"+(state.shown[d]?1:.35)+"'>"+ic+" "+t+(state.shown[d]?" — ACHIEVED":"")+"</p>").join("");
+  const MILE=[[7,"📸","Paparazzi"],[30,"🏆","Champion"],[60,"🖼️","Hall of Fame"],[90,"🎽","Jersey Retired"]];
+  const best=state.best||0;
+  // find next unachieved milestone for progress bar target
+  let nextTarget=MILE[0][0];
+  for(let i=0;i<MILE.length;i++){if(!state.shown[MILE[i][0]]){nextTarget=MILE[i][0];break;}}
+  const allDone=MILE.every(([d])=>state.shown[d]);
+  const pct=allDone?100:Math.min(100,Math.round((best/nextTarget)*100));
+  // streak header
+  $("fameBestDays").textContent=best;
+  // progress bar
+  $("fameBarFill").style.width=pct+"%";
+  $("fameProgressLabel").textContent=allDone?"All milestones achieved!":best+" / "+nextTarget+" days to next milestone";
+  // cards
+  $("fameGrid").innerHTML=MILE.map(([d,ic,name])=>{
+    const achieved=!!state.shown[d];
+    return "<div class='fame-card"+(achieved?" fame-card--achieved":" fame-card--locked")+"'>"
+      +(achieved?"":"<span class='fame-lock-badge'>🔒</span>")
+      +"<span class='fame-card-icon'>"+ic+"</span>"
+      +"<span class='fame-card-name'>"+name+"</span>"
+      +"<span class='fame-card-status'>"+(achieved?"ACHIEVED":d+" DAYS")+"</span>"
+      +"</div>";
+  }).join("");
   $("fameModal").classList.add("show");
 }
 $("closeFame").onclick=()=>$("fameModal").classList.remove("show");
