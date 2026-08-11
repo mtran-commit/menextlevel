@@ -159,15 +159,34 @@ router.post("/admin/orders/:id/sync-stripe", async (req, res) => {
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id)).limit(1);
   if (!order) return res.status(404).json({ error: "Not found" });
-  if (!order.stripeCheckoutSessionId) return res.status(400).json({ error: "No Stripe session ID on this order" });
+  if (!order.stripeCheckoutSessionId && !order.stripePaymentId) {
+    return res.status(400).json({ error: "No Stripe session or payment ID on this order" });
+  }
 
   let stripe;
   try { stripe = await getUncachableStripeClient(); }
   catch { return res.status(500).json({ error: "Stripe not connected" }); }
 
-  const session = await stripe.checkout.sessions.retrieve(order.stripeCheckoutSessionId, {
-    expand: ["shipping_details", "customer_details"],
-  });
+  // Resolve the checkout session — either directly by session ID or via payment intent lookup.
+  let session: Awaited<ReturnType<typeof stripe.checkout.sessions.retrieve>>;
+  if (order.stripeCheckoutSessionId) {
+    // NOTE: In Stripe API 2026-07-29+ shipping_details/customer_details are inline — do not expand.
+    session = await stripe.checkout.sessions.retrieve(order.stripeCheckoutSessionId);
+  } else {
+    // Look up the session from the payment intent ID.
+    const sessions = await stripe.checkout.sessions.list({
+      payment_intent: order.stripePaymentId!,
+      limit: 1,
+    });
+    if (!sessions.data.length) {
+      return res.status(404).json({ error: "No checkout session found for this payment intent" });
+    }
+    session = sessions.data[0] as typeof session;
+    // Persist the session ID so future syncs are faster.
+    await db.update(ordersTable)
+      .set({ stripeCheckoutSessionId: session.id })
+      .where(eq(ordersTable.id, id));
+  }
 
   const customerDetails = session.customer_details;
   const shippingDetails = session.shipping_details;

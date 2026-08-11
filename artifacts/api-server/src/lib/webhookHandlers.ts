@@ -64,14 +64,12 @@ export class WebhookHandlers {
       return;
     }
 
-    // Re-fetch the session from Stripe with shipping_details expanded —
-    // the raw webhook payload doesn't always include nested objects.
+    // Re-fetch the session to get shipping_details and customer_details.
+    // NOTE: In Stripe API 2026-07-29+ these fields are already inline (not expandable).
     let fullSession = session;
     try {
       const stripe = await getUncachableStripeClient();
-      fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-        expand: ['shipping_details', 'customer_details'],
-      });
+      fullSession = await stripe.checkout.sessions.retrieve(session.id);
     } catch (err) {
       logger.warn({ sessionId: session.id, err }, 'Could not re-fetch session from Stripe — using webhook payload');
     }

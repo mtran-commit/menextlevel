@@ -744,7 +744,7 @@ function openOrderModal(o){
         <div class="modal-field" style="grid-column:1/-1">
           <label>Shipping Address</label>
           <span id="modalShipAddr">${esc(addrStr(o.shippingAddress))}</span>
-          ${!addrStr(o.shippingAddress)&&o.stripeCheckoutSessionId?`<button class="btn btn-outline" style="margin-top:6px;font-size:10px;padding:4px 10px" onclick="syncStripe('${o.id}')">⟳ Sync from Stripe</button>`:''}
+          ${!addrStr(o.shippingAddress)&&(o.stripeCheckoutSessionId||o.stripePaymentId)?`<button class="btn btn-outline" style="margin-top:6px;font-size:10px;padding:4px 10px" onclick="syncStripe('${o.id}')">⟳ Sync from Stripe</button>`:''}
         </div>
       </div>
     </div>
