@@ -183,7 +183,31 @@ $("menuFame").onclick=()=>{$("menuModal").classList.remove("show");openFame()};
 $("menuHistory").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
 $("menuHome").onclick=()=>{$("menuModal").classList.remove("show");window.scrollTo({top:0,behavior:"smooth"})};
 $("menuCalendar").onclick=()=>{$("menuModal").classList.remove("show");if(window.openCalendar)window.openCalendar();else $("calendarPanel").classList.add("show")};
-$("menuStats").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
+$("menuStats").onclick=()=>{
+  $("menuModal").classList.remove("show");
+  // Populate stat cards from current state
+  const wins=state.weekly.meWins||0;
+  const losses=state.weekly.notMeWins||0;
+  const played=wins+losses;
+  $("statSeasonWins").textContent=wins;
+  $("statSeasonLosses").textContent=losses;
+  $("statGamesPlayed").textContent=played;
+  $("statWinRate").textContent=(played===0?0:Math.round(wins/played*100))+"%";
+  $("statStreak").textContent=state.streak||0;
+  $("statBest").textContent=state.best||0;
+  // Milestones
+  [7,30,60,90].forEach(d=>{
+    const el=$("statM"+d);if(!el)return;
+    const earned=state.shown&&state.shown[d];
+    el.classList.toggle("stat-milestone--earned",!!earned);
+    el.classList.toggle("stat-milestone--locked",!earned);
+  });
+  // Today
+  $("statTodayMe").textContent=state.me||0;
+  $("statTodayNotMe").textContent=state.notme||0;
+  $("statTodayCrowd").textContent=(state.crowd||65)+"%";
+  $("statsPanel").classList.add("show");
+};
 
 ensureArenaState();
 renderSigns();

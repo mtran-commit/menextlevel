@@ -104,6 +104,34 @@
 
 <div class="history-panel" id="historyPanel"><h2>Weekly History &amp; Friend Challenge</h2><div class="panel-body"><div class="history-grid"><div class="history-card"><small>Team Me Wins</small><strong id="weekMe">0</strong></div><div class="history-card"><small>Team Not Me Wins</small><strong id="weekNotMe">0</strong></div><div class="history-card"><small>Current Streak</small><strong id="weekStreak">0</strong></div><div class="history-card"><small>Best Streak</small><strong id="bestStreak">0</strong></div><div class="history-card history-card--highlight"><small>Today's Winner</small><b id="winner">DRAW</b></div></div><h3>Last 7 Days</h3><div id="historyList"></div><div class="friend-card"><h3>Friend Challenge</h3><label for="friendName">Friend's name</label><input id="friendName" placeholder="e.g. Alex"><label for="friendScore">Score to beat</label><input id="friendScore" type="number" min="0" placeholder="Friend's Team Me score"><p id="friendResult"></p></div></div><div class="panel-footer"><div class="actions"><button class="secondary" id="closeHistory">Close</button><button class="primary" id="saveFriend">Save Challenge</button></div></div></div>
 
+<div class="history-panel" id="statsPanel">
+  <h2>Stats</h2>
+  <div class="panel-body">
+    <div class="history-grid">
+      <div class="history-card"><small>Season Wins</small><strong id="statSeasonWins">0</strong></div>
+      <div class="history-card"><small>Season Losses</small><strong id="statSeasonLosses">0</strong></div>
+      <div class="history-card"><small>Games Played</small><strong id="statGamesPlayed">0</strong></div>
+      <div class="history-card"><small>Win Rate</small><strong id="statWinRate">0%</strong></div>
+      <div class="history-card"><small>Current Streak</small><strong id="statStreak">0</strong></div>
+      <div class="history-card"><small>Best Streak</small><strong id="statBest">0</strong></div>
+    </div>
+    <h3>Milestones</h3>
+    <div id="statMilestones" class="stat-milestones">
+      <span class="stat-milestone" data-days="7" id="statM7">📸 7 Days</span>
+      <span class="stat-milestone" data-days="30" id="statM30">🏆 30 Days</span>
+      <span class="stat-milestone" data-days="60" id="statM60">🖼️ 60 Days</span>
+      <span class="stat-milestone" data-days="90" id="statM90">🎽 90 Days</span>
+    </div>
+    <h3>Today</h3>
+    <div class="stat-today" id="statToday">
+      <span class="stat-today-cell"><small>Team Me</small><strong id="statTodayMe">0</strong></span>
+      <span class="stat-today-cell"><small>Team Not Me</small><strong id="statTodayNotMe">0</strong></span>
+      <span class="stat-today-cell"><small>Crowd Momentum</small><strong id="statTodayCrowd">65%</strong></span>
+    </div>
+  </div>
+  <div class="panel-footer"><div class="actions"><button class="secondary" id="closeStats">Close</button></div></div>
+</div>
+
 <div class="modal" id="fameModal"><div class="modal-card"><h3>Wall of Fame</h3><div id="fameList"></div><div class="actions"><button class="primary" id="closeFame">Close</button></div></div></div>
 
 <div class="modal wide" id="arenaModal"><div class="modal-card arena-card">

@@ -235,6 +235,7 @@ $("panelAddAsset").onclick=()=>openModal("asset");$("panelAddLiability").onclick
 $("tagInput").addEventListener("input",clearModalHint);
 $("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;clearModalHint();$("tagInput").focus()}});
 $("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");
+$("closeStats").onclick=()=>$("statsPanel").classList.remove("show");
 // ---- Calendar Panel ----
 (function(){
   let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
