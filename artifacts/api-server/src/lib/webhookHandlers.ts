@@ -1,8 +1,8 @@
-import Stripe from 'stripe';
-import { getStripeCredentials, getStripeSync } from './stripeClient';
+import { getCachedStripeSync } from './stripeClient';
 import { db, ordersTable } from '@workspace/db';
 import { eq } from 'drizzle-orm';
 import { logger } from './logger';
+import type Stripe from 'stripe';
 
 export class WebhookHandlers {
   static async processWebhook(payload: Buffer, signature: string): Promise<void> {
@@ -14,29 +14,35 @@ export class WebhookHandlers {
       );
     }
 
-    // 1. Verify signature and construct event for our business logic
-    const { secretKey, webhookSecret } = await getStripeCredentials();
-    const stripe = new Stripe(secretKey);
+    const sync = getCachedStripeSync();
+    if (!sync) {
+      throw new Error(
+        'StripeSync not initialized. ' +
+        'Ensure initStripeSync() has been called at startup.'
+      );
+    }
 
+    // 1. Verify signature and sync Stripe data to stripe.* tables.
+    //    stripe-replit-sync uses the webhook secret it obtained during
+    //    findOrCreateManagedWebhook() to verify the signature internally.
+    await sync.processWebhook(payload, signature);
+
+    // 2. Parse the now-verified payload for our business logic.
+    //    Safe to parse without re-verifying — sync.processWebhook() above
+    //    would have thrown if the signature was invalid.
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(payload, signature, webhookSecret ?? '');
-    } catch (err: any) {
-      throw new Error(`Stripe webhook signature verification failed: ${err.message}`);
+      event = JSON.parse(payload.toString()) as Stripe.Event;
+    } catch {
+      logger.warn('Webhook payload is not valid JSON — skipping business logic');
+      return;
     }
 
-    // 2. Handle our business logic
+    // 3. Handle checkout completion: mark order as paid in our DB
     if (event.type === 'checkout.session.completed') {
-      await WebhookHandlers.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
-    }
-
-    // 3. Sync Stripe data to stripe.* tables via stripe-replit-sync
-    try {
-      const sync = await getStripeSync();
-      await sync.processWebhook(payload, signature);
-    } catch (err) {
-      // Non-fatal: our order is already updated; log and continue
-      logger.warn({ err }, 'stripe-replit-sync processWebhook failed (non-fatal)');
+      await WebhookHandlers.handleCheckoutCompleted(
+        event.data.object as Stripe.Checkout.Session
+      );
     }
   }
 
@@ -69,26 +75,26 @@ export class WebhookHandlers {
     await db
       .update(ordersTable)
       .set({
-        paymentStatus: 'paid',
-        orderStatus: 'new',
+        paymentStatus:  'paid',
+        orderStatus:    'new',
         stripePaymentId: paymentIntentId,
-        customerName: customerDetails?.name ?? order.customerName,
-        customerEmail: customerDetails?.email ?? order.customerEmail,
-        customerPhone: customerDetails?.phone ?? order.customerPhone,
+        customerName:   customerDetails?.name   ?? order.customerName,
+        customerEmail:  customerDetails?.email  ?? order.customerEmail,
+        customerPhone:  customerDetails?.phone  ?? order.customerPhone,
         shippingAddress: shippingDetails?.address
           ? {
-              name: shippingDetails.name ?? customerDetails?.name ?? '',
-              line1: shippingDetails.address.line1 ?? '',
-              line2: shippingDetails.address.line2 ?? '',
-              city: shippingDetails.address.city ?? '',
-              state: shippingDetails.address.state ?? '',
-              postal_code: shippingDetails.address.postal_code ?? '',
-              country: shippingDetails.address.country ?? '',
+              name:        shippingDetails.name ?? customerDetails?.name ?? '',
+              line1:       shippingDetails.address.line1        ?? '',
+              line2:       shippingDetails.address.line2        ?? '',
+              city:        shippingDetails.address.city         ?? '',
+              state:       shippingDetails.address.state        ?? '',
+              postal_code: shippingDetails.address.postal_code  ?? '',
+              country:     shippingDetails.address.country      ?? '',
             }
           : order.shippingAddress,
-        // Use actual amount charged by Stripe (reflects any taxes/discounts applied)
-        total: ((session.amount_total ?? 0) / 100).toFixed(2),
-        updatedAt: new Date(),
+        // Use actual amount charged by Stripe (reflects taxes/discounts if any)
+        total:      ((session.amount_total ?? 0) / 100).toFixed(2),
+        updatedAt:  new Date(),
       })
       .where(eq(ordersTable.id, order.id));
 
