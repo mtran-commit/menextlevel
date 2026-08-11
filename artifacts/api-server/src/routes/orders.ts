@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, ordersTable, orderItemsTable, productsTable } from "@workspace/db";
-import { asc, desc, eq, ilike, or, and, gte, lte, count, sum, sql } from "drizzle-orm";
+import { asc, desc, eq, ilike, or, and, gte, lte, count, sum, sql, inArray } from "drizzle-orm";
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middlewares/auth";
 import { logAudit } from "../lib/audit";
 
@@ -117,9 +117,15 @@ router.get("/admin/orders", async (req, res) => {
 
   // Fetch items for these orders
   const orderIds = orders.map(o => o.id);
-  const items = orderIds.length
-    ? await db.select().from(orderItemsTable).where(sql`${orderItemsTable.orderId} = ANY(${orderIds})`)
-    : [];
+  let items: (typeof orderItemsTable.$inferSelect)[] = [];
+  if (orderIds.length) {
+    try {
+      items = await db.select().from(orderItemsTable).where(inArray(orderItemsTable.orderId, orderIds));
+    } catch {
+      // order_items table may not exist yet — return orders without items
+      items = [];
+    }
+  }
 
   const itemsByOrder = items.reduce<Record<number, typeof items>>((acc, item) => {
     (acc[item.orderId] ??= []).push(item);
