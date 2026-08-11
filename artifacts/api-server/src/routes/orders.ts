@@ -4,6 +4,7 @@ import { asc, desc, eq, ilike, or, and, gte, lte, count, sum, sql, inArray } fro
 import { requireAuth, requireAdmin, type AuthedRequest } from "../middlewares/auth";
 import { logAudit } from "../lib/audit";
 import { getUncachableStripeClient } from "../lib/stripeClient";
+import { syncOrderShippingFromStripe, isAddressPopulated } from "../lib/orderSync";
 
 const router: IRouter = Router();
 
@@ -153,12 +154,16 @@ router.get("/admin/orders/:id", async (req, res) => {
 });
 
 // ── Sync shipping/customer details from Stripe ────────────────────────────────
+// Uses the shared syncOrderShippingFromStripe function from orderSync.ts.
+// This is the same logic used by the webhook handler and any future backfill.
 
 router.post("/admin/orders/:id/sync-stripe", async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
+
   const [order] = await db.select().from(ordersTable).where(eq(ordersTable.id, id)).limit(1);
   if (!order) return res.status(404).json({ error: "Not found" });
+
   if (!order.stripeCheckoutSessionId && !order.stripePaymentId) {
     return res.status(400).json({ error: "No Stripe session or payment ID on this order" });
   }
@@ -167,48 +172,48 @@ router.post("/admin/orders/:id/sync-stripe", async (req, res) => {
   try { stripe = await getUncachableStripeClient(); }
   catch { return res.status(500).json({ error: "Stripe not connected" }); }
 
-  // Resolve the checkout session — either directly by session ID or via payment intent lookup.
-  let session: Awaited<ReturnType<typeof stripe.checkout.sessions.retrieve>>;
-  if (order.stripeCheckoutSessionId) {
-    // NOTE: In Stripe API 2026-07-29+ shipping_details/customer_details are inline — do not expand.
-    session = await stripe.checkout.sessions.retrieve(order.stripeCheckoutSessionId);
-  } else {
-    // Look up the session from the payment intent ID.
-    const sessions = await stripe.checkout.sessions.list({
-      payment_intent: order.stripePaymentId!,
-      limit: 1,
-    });
-    if (!sessions.data.length) {
-      return res.status(404).json({ error: "No checkout session found for this payment intent" });
+  try {
+    const updated = await syncOrderShippingFromStripe(order, stripe);
+    return res.json({ order: updated });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.message ?? "Stripe sync failed" });
+  }
+});
+
+// ── Bulk backfill: sync shipping for all paid orders missing an address ────────
+
+router.post("/admin/orders/backfill-addresses", async (_req, res) => {
+  let stripe;
+  try { stripe = await getUncachableStripeClient(); }
+  catch { return res.status(500).json({ error: "Stripe not connected" }); }
+
+  // Find all paid orders that have a Stripe reference but no shipping address yet.
+  const orders = await db
+    .select()
+    .from(ordersTable)
+    .where(
+      and(
+        eq(ordersTable.paymentStatus, "paid"),
+        sql`(${ordersTable.shippingAddress}->>'line1') IS NULL OR (${ordersTable.shippingAddress}->>'line1') = ''`
+      )
+    );
+
+  const results: { orderNumber: string; success: boolean; error?: string }[] = [];
+
+  for (const order of orders) {
+    if (!order.stripeCheckoutSessionId && !order.stripePaymentId) {
+      results.push({ orderNumber: order.orderNumber, success: false, error: "no Stripe reference" });
+      continue;
     }
-    session = sessions.data[0] as typeof session;
-    // Persist the session ID so future syncs are faster.
-    await db.update(ordersTable)
-      .set({ stripeCheckoutSessionId: session.id })
-      .where(eq(ordersTable.id, id));
+    try {
+      await syncOrderShippingFromStripe(order, stripe);
+      results.push({ orderNumber: order.orderNumber, success: true });
+    } catch (err: any) {
+      results.push({ orderNumber: order.orderNumber, success: false, error: err?.message });
+    }
   }
 
-  const customerDetails = session.customer_details;
-  const shippingDetails = session.shipping_details;
-
-  const updates: Partial<typeof ordersTable.$inferInsert> = { updatedAt: new Date() };
-  if (customerDetails?.name)  updates.customerName  = customerDetails.name;
-  if (customerDetails?.email) updates.customerEmail = customerDetails.email;
-  if (customerDetails?.phone) updates.customerPhone = customerDetails.phone;
-  if (shippingDetails?.address) {
-    updates.shippingAddress = {
-      name:        shippingDetails.name ?? customerDetails?.name ?? "",
-      line1:       shippingDetails.address.line1        ?? "",
-      line2:       shippingDetails.address.line2        ?? "",
-      city:        shippingDetails.address.city         ?? "",
-      state:       shippingDetails.address.state        ?? "",
-      postal_code: shippingDetails.address.postal_code  ?? "",
-      country:     shippingDetails.address.country      ?? "",
-    };
-  }
-
-  const [updated] = await db.update(ordersTable).set(updates).where(eq(ordersTable.id, id)).returning();
-  return res.json({ order: updated });
+  return res.json({ processed: results.length, results });
 });
 
 // ── Create order (used by checkout flow later) ────────────────────────────────

@@ -1,0 +1,106 @@
+Customer shipping address is not being saved into the order record.
+
+This has happened repeatedly across multiple orders, so I want the root cause fixed globally.
+
+Do NOT create another one-off patch for individual orders.
+
+Required fix
+
+Trace the complete production flow:
+
+Stripe Checkout → webhook → Stripe Checkout Session retrieval → shipping details → order database → Super Admin
+
+The shipping address must be captured automatically for every future order.
+
+Stripe data
+
+After checkout.session.completed, retrieve the full Checkout Session from Stripe and explicitly read the shipping/customer delivery data from the Stripe API response.
+
+Do not rely only on the abbreviated webhook payload if shipping details are not included there.
+
+Store:
+
+recipient name
+address line 1
+address line 2
+suburb/city
+state
+postcode
+country
+phone if collected
+
+Also keep the original Stripe shipping object/reference where appropriate for troubleshooting.
+
+Checkout configuration
+
+Confirm every physical product Checkout Session explicitly requests a shipping address.
+
+Australia must currently be allowed as a shipping country.
+
+Do not create a Checkout Session for a physical kit without shipping-address collection enabled.
+
+Database
+
+Make sure the production orders schema can actually store the complete shipping address.
+
+If the address is stored as JSON, validate and persist the whole object.
+
+If it uses separate fields, map every Stripe address field correctly.
+
+Do not allow the webhook handler to overwrite a previously saved address with null, {}, or blank values.
+
+One shared function
+
+Create ONE shared server-side function such as:
+
+syncShippingAddressFromStripe(order, checkoutSession)
+
+Use this same logic for:
+
+new checkout webhooks
+Sync from Stripe button
+existing-order backfill
+any future order reconciliation
+
+I do not want different address parsing logic in different parts of the app.
+
+Existing orders
+
+After the global fix is deployed, the existing Sync from Stripe function must use the same shared address-sync logic.
+
+That way old orders with missing addresses can be repaired from Stripe without manual database editing.
+
+Testing before asking me to publish
+
+In development/test mode create a brand-new order with a complete Australian shipping address.
+
+Prove:
+
+Stripe Checkout collected the address.
+Stripe's completed Checkout Session contains the address.
+The webhook reads it.
+The database stores it.
+Super Admin displays it.
+Sync from Stripe retrieves the same address.
+
+Show me the result of each step.
+
+Do NOT ask me to publish until a NEW test order shows its full shipping address correctly in Super Admin.
+
+Production after publishing
+
+Once deployed, verify one new live order end-to-end.
+
+The shipping address should populate automatically with no Sync button required.
+
+Important
+
+Do not modify:
+
+Stripe payment flow
+pricing
+Shop design
+product management
+Arena/game
+
+Fix only the shipping-address capture and synchronization architecture, but fix it everywhere that order data is processed.

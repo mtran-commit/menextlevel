@@ -36,10 +36,13 @@ export async function getStripeCredentials(): Promise<{ secretKey: string; publi
   const items: { settings: { secret?: string; publishable?: string; account_id?: string } }[] =
     data.items ?? [];
 
-  // Prefer the live connection (sk_live_...) when present; fall back to sandbox.
-  const liveItem  = items.find(i => i.settings?.secret?.startsWith("sk_live_"));
-  const chosen    = liveItem ?? items[0];
-  const settings  = chosen?.settings;
+  // In production always use the live key; in development always use the test key.
+  // This prevents accidental live charges during development testing.
+  const isProduction = process.env.NODE_ENV === 'production';
+  const liveItem = items.find(i => i.settings?.secret?.startsWith("sk_live_"));
+  const testItem = items.find(i => i.settings?.secret?.startsWith("sk_test_"));
+  const chosen   = isProduction ? (liveItem ?? items[0]) : (testItem ?? items[0]);
+  const settings = chosen?.settings;
 
   // Replit Stripe connector exposes: secret, publishable, account_id
   if (!settings?.secret) {

@@ -1,4 +1,5 @@
 import { getCachedStripeSync, getUncachableStripeClient } from './stripeClient';
+import { applySessionToOrder, syncOrderShippingFromStripe } from './orderSync';
 import { db, ordersTable } from '@workspace/db';
 import { eq } from 'drizzle-orm';
 import { logger } from './logger';
@@ -64,47 +65,20 @@ export class WebhookHandlers {
       return;
     }
 
-    // Re-fetch the session to get shipping_details and customer_details.
-    // NOTE: In Stripe API 2026-07-29+ these fields are already inline (not expandable).
-    let fullSession = session;
-    try {
-      const stripe = await getUncachableStripeClient();
-      fullSession = await stripe.checkout.sessions.retrieve(session.id);
-    } catch (err) {
-      logger.warn({ sessionId: session.id, err }, 'Could not re-fetch session from Stripe — using webhook payload');
-    }
-
-    const customerDetails = fullSession.customer_details;
-    const shippingDetails = fullSession.shipping_details;
-
     const paymentIntentId =
       typeof session.payment_intent === 'string'
         ? session.payment_intent
         : (session.payment_intent?.id ?? '');
 
+    // Mark order as paid first (non-blocking — shipping sync follows)
     await db
       .update(ordersTable)
       .set({
-        paymentStatus:  'paid',
-        orderStatus:    'new',
+        paymentStatus:   'paid',
+        orderStatus:     'new',
         stripePaymentId: paymentIntentId,
-        customerName:   customerDetails?.name   ?? order.customerName,
-        customerEmail:  customerDetails?.email  ?? order.customerEmail,
-        customerPhone:  customerDetails?.phone  ?? order.customerPhone,
-        shippingAddress: shippingDetails?.address
-          ? {
-              name:        shippingDetails.name ?? customerDetails?.name ?? '',
-              line1:       shippingDetails.address.line1        ?? '',
-              line2:       shippingDetails.address.line2        ?? '',
-              city:        shippingDetails.address.city         ?? '',
-              state:       shippingDetails.address.state        ?? '',
-              postal_code: shippingDetails.address.postal_code  ?? '',
-              country:     shippingDetails.address.country      ?? '',
-            }
-          : order.shippingAddress,
-        // Use actual amount charged by Stripe (reflects taxes/discounts if any)
-        total:      ((session.amount_total ?? 0) / 100).toFixed(2),
-        updatedAt:  new Date(),
+        total:           ((session.amount_total ?? 0) / 100).toFixed(2),
+        updatedAt:       new Date(),
       })
       .where(eq(ordersTable.id, order.id));
 
@@ -112,5 +86,34 @@ export class WebhookHandlers {
       { orderId: order.id, orderNumber: order.orderNumber, paymentIntent: paymentIntentId },
       'Order marked as paid via Stripe webhook'
     );
+
+    // Sync shipping / customer details via the shared orderSync function.
+    // Re-fetch the full session from Stripe so we have the latest inline fields
+    // (shipping_details, customer_details).  If the re-fetch fails, fall back to
+    // the session object from the webhook payload (which also has inline fields
+    // in Stripe API 2026-07-29+).
+    try {
+      const stripe = await getUncachableStripeClient();
+
+      // Try fetching the full session; fall back to the webhook payload session.
+      // NOTE: Do NOT pass expand params for shipping_details / customer_details —
+      // in Stripe API 2026-07-29+ they are inline and cannot be expanded (400 error).
+      let fullSession = session;
+      try {
+        fullSession = await stripe.checkout.sessions.retrieve(session.id);
+      } catch (fetchErr) {
+        logger.warn(
+          { sessionId: session.id, err: fetchErr },
+          'Could not re-fetch full session — applying shipping from webhook payload'
+        );
+      }
+
+      await applySessionToOrder(order.id, fullSession);
+    } catch (syncErr) {
+      logger.error(
+        { orderId: order.id, sessionId: session.id, err: syncErr },
+        'Shipping sync failed — order is paid but address may be missing'
+      );
+    }
   }
 }
