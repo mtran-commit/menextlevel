@@ -83,6 +83,25 @@
 
 <div class="ceremony" id="ceremony"><div class="ceremony-card"><h2 id="ceremonyTitle">Achievement</h2><div class="ceremony-icon" id="ceremonyIcon">🏆</div><p id="ceremonyText"></p><div class="signature" id="ceremonySignature">Team Me</div><div class="actions"><button class="secondary" id="editSignature">Edit Signature</button><button class="primary" id="closeCeremony">Continue</button></div></div></div>
 
+<div class="history-panel" id="calendarPanel">
+  <div class="cal-header">
+    <h2 id="calMonthLabel">MONTH YEAR</h2>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="calPrev">&#8592;</button>
+      <button class="cal-nav-btn" id="calNext">&#8594;</button>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div id="calendarGrid"></div>
+    <div class="cal-legend">
+      <span class="cal-legend-item"><span class="cal-swatch cal-swatch--me"></span>Team Me Win</span>
+      <span class="cal-legend-item"><span class="cal-swatch cal-swatch--notme"></span>Team Not Me Win</span>
+      <span class="cal-legend-item"><span class="cal-swatch cal-swatch--draw"></span>Draw</span>
+    </div>
+  </div>
+  <div class="panel-footer"><div class="actions"><button class="secondary" id="closeCalendar">Close</button></div></div>
+</div>
+
 <div class="history-panel" id="historyPanel"><h2>Weekly History &amp; Friend Challenge</h2><div class="panel-body"><div class="history-grid"><div class="history-card"><small>Team Me Wins</small><strong id="weekMe">0</strong></div><div class="history-card"><small>Team Not Me Wins</small><strong id="weekNotMe">0</strong></div><div class="history-card"><small>Current Streak</small><strong id="weekStreak">0</strong></div><div class="history-card"><small>Best Streak</small><strong id="bestStreak">0</strong></div><div class="history-card history-card--highlight"><small>Today's Winner</small><b id="winner">DRAW</b></div></div><h3>Last 7 Days</h3><div id="historyList"></div><div class="friend-card"><h3>Friend Challenge</h3><label for="friendName">Friend's name</label><input id="friendName" placeholder="e.g. Alex"><label for="friendScore">Score to beat</label><input id="friendScore" type="number" min="0" placeholder="Friend's Team Me score"><p id="friendResult"></p></div></div><div class="panel-footer"><div class="actions"><button class="secondary" id="closeHistory">Close</button><button class="primary" id="saveFriend">Save Challenge</button></div></div></div>
 
 <div class="modal" id="fameModal"><div class="modal-card"><h3>Wall of Fame</h3><div id="fameList"></div><div class="actions"><button class="primary" id="closeFame">Close</button></div></div></div>

@@ -182,7 +182,7 @@ $("menuArena").onclick=()=>{$("menuModal").classList.remove("show");openArena()}
 $("menuFame").onclick=()=>{$("menuModal").classList.remove("show");openFame()};
 $("menuHistory").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
 $("menuHome").onclick=()=>{$("menuModal").classList.remove("show");window.scrollTo({top:0,behavior:"smooth"})};
-$("menuCalendar").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
+$("menuCalendar").onclick=()=>{$("menuModal").classList.remove("show");if(window.openCalendar)window.openCalendar();else $("calendarPanel").classList.add("show")};
 $("menuStats").onclick=()=>{$("menuModal").classList.remove("show");$("historyPanel").classList.add("show")};
 
 ensureArenaState();

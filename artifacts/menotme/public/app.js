@@ -234,7 +234,48 @@ $("shoot").onclick=triggerButtonShoot;
 $("panelAddAsset").onclick=()=>openModal("asset");$("panelAddLiability").onclick=()=>openModal("liability");$("finalBell").onclick=finalBell;$("cancel").onclick=()=>{$("modal").classList.remove("show");clearModalHint()};$("save").onclick=saveTag;
 $("tagInput").addEventListener("input",clearModalHint);
 $("inspireChips").addEventListener("click",e=>{const b=e.target.closest(".inspire-chip");if(b){$("tagInput").value=b.dataset.val;clearModalHint();$("tagInput").focus()}});
-$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
+$("closeHistory").onclick=()=>$("historyPanel").classList.remove("show");
+// ---- Calendar Panel ----
+(function(){
+  let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+  const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  function buildHistoryMap(){
+    const map={};
+    (state.weekly.history||[]).forEach(h=>{
+      if(!h||!h.date)return;
+      const me=Number(h.me)||0,notme=Number(h.notme)||0;
+      map[h.date]=me>notme?"me":notme>me?"notme":"draw";
+    });
+    return map;
+  }
+  function renderCalendar(y,m){
+    calYear=y;calMonth=m;
+    $("calMonthLabel").textContent=MONTHS[m]+" "+y;
+    const grid=$("calendarGrid");
+    grid.innerHTML="";
+    DAYS.forEach(d=>{const el=document.createElement("div");el.className="cal-day-header";el.textContent=d;grid.appendChild(el);});
+    const firstDay=new Date(y,m,1).getDay();
+    const daysInMonth=new Date(y,m+1,0).getDate();
+    const map=buildHistoryMap();
+    for(let i=0;i<firstDay;i++){const el=document.createElement("div");el.className="cal-day cal-day--empty";grid.appendChild(el);}
+    for(let d=1;d<=daysInMonth;d++){
+      const el=document.createElement("div");el.className="cal-day";
+      const key=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+      if(key===today)el.classList.add("cal-day--today");
+      if(map[key])el.dataset.result=map[key];
+      el.textContent=d;
+      grid.appendChild(el);
+    }
+  }
+  window.openCalendar=function(){
+    const now=new Date();renderCalendar(now.getFullYear(),now.getMonth());$("calendarPanel").classList.add("show");
+  };
+  $("calPrev").onclick=()=>renderCalendar(calMonth===0?calYear-1:calYear,calMonth===0?11:calMonth-1);
+  $("calNext").onclick=()=>renderCalendar(calMonth===11?calYear+1:calYear,calMonth===11?0:calMonth+1);
+  $("closeCalendar").onclick=()=>$("calendarPanel").classList.remove("show");
+  $("calendarPanel").addEventListener("click",e=>{if(e.target===$("calendarPanel"))$("calendarPanel").classList.remove("show");});
+})();$("saveFriend").onclick=()=>{state.friend.name=$("friendName").value.trim();state.friend.score=$("friendScore").value===""?null:Number($("friendScore").value);render()};
 $("closeCeremony").onclick=()=>$("ceremony").classList.remove("show");$("editSignature").onclick=()=>{const n=prompt("Enter your signature:",state.signature);if(n&&n.trim()){state.signature=n.trim();$("ceremonySignature").textContent=state.signature;saveState()}};
 $("share").onclick=async()=>{const t=`Me Next Level: Me Next Level ${state.me} — ${state.notme} Holding Me Back`;try{if(navigator.share)await navigator.share({title:"Me Next Level",text:t})}catch(e){}};
 loadState();renderPower(0);render();updateClock();setInterval(updateClock,30000);

@@ -210,6 +210,28 @@ button{cursor:pointer}
 .friend-card input+label{margin-top:12px}
 #friendResult{font-size:12px;color:rgba(255,255,255,.5);margin:10px 0 2px;min-height:16px}
 
+/* Calendar Panel */
+#calendarPanel .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--line);padding-bottom:12px;flex-shrink:0}
+#calendarPanel .cal-header h2{margin:0;letter-spacing:.12em;font-size:clamp(13px,2.2vw,17px);text-transform:uppercase}
+.cal-nav{display:flex;gap:8px}
+.cal-nav-btn{background:none;border:1px solid var(--line);color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.cal-nav-btn:hover{background:rgba(255,255,255,.1)}
+#calendarGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-day-header{text-align:center;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:4px 0 8px}
+.cal-day{aspect-ratio:1;border:1px solid rgba(255,255,255,.1);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.45);position:relative;transition:border-color .15s}
+.cal-day--empty{border-color:transparent}
+.cal-day--today{border-color:rgba(255,255,255,.55);color:#fff}
+.cal-day[data-result="me"]{background:#fff;color:#000;border-color:#fff}
+.cal-day[data-result="notme"]{background:#444;color:rgba(255,255,255,.6);border-color:#555}
+.cal-day[data-result="draw"]{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);border-color:rgba(255,255,255,.25)}
+.cal-day[data-result="draw"]::after{content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45)}
+.cal-legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 2px 4px;border-top:1px solid rgba(255,255,255,.1)}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.cal-swatch{width:12px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,.2)}
+.cal-swatch--me{background:#fff}
+.cal-swatch--notme{background:#444}
+.cal-swatch--draw{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.25)}
+
 /* Manage My Arena */
 .arena-card{text-align:left}
 .arena-card h3{text-align:center}
