@@ -314,6 +314,7 @@ export const ordersTable = pgTable(
     paymentStatus: text("payment_status").notNull().default("pending"), // pending | paid | failed | refunded
     orderStatus: text("order_status").notNull().default("new"),         // new | paid | processing | packed | shipped | delivered | cancelled | refunded
     stripePaymentId: text("stripe_payment_id").notNull().default(""),
+    stripeCheckoutSessionId: text("stripe_checkout_session_id").notNull().default(""),
     trackingNumber: text("tracking_number").notNull().default(""),
     courier: text("courier").notNull().default(""),
     adminNotes: text("admin_notes").notNull().default(""),

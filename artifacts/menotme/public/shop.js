@@ -78,6 +78,11 @@ function openModal(product){
     incl.style.display="none";
   }
 
+  // Reset button state
+  const btn=document.getElementById("shopOrderBtn");
+  btn.disabled=false;
+  btn.textContent="ORDER NOW";
+
   document.getElementById("shopModal").classList.add("show");
   document.body.style.overflow="hidden";
 }
@@ -85,6 +90,39 @@ function openModal(product){
 function closeModal(){
   document.getElementById("shopModal").classList.remove("show");
   document.body.style.overflow="";
+}
+
+// ── Checkout ──────────────────────────────────────────────────────────────
+async function startCheckout(){
+  if(!currentProduct)return;
+
+  const btn=document.getElementById("shopOrderBtn");
+  btn.disabled=true;
+  btn.textContent="PROCESSING…";
+
+  try{
+    const res=await fetch(BASE+"/api/shop/create-checkout-session",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({productId:currentProduct.id,quantity:qty}),
+    });
+
+    if(!res.ok){
+      let msg="Checkout failed. Please try again.";
+      try{const err=await res.json();msg=err.error||msg;}catch(e){}
+      throw new Error(msg);
+    }
+
+    const data=await res.json();
+    if(!data.url)throw new Error("No checkout URL returned from server.");
+
+    // Redirect to Stripe Checkout hosted page
+    window.location.href=data.url;
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent="ORDER NOW";
+    alert("Something went wrong:\n\n"+err.message);
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
@@ -97,11 +135,7 @@ async function init(){
   document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
   document.getElementById("shopQtyDown").onclick=()=>{if(qty>1){qty--;document.getElementById("shopQtyNum").textContent=qty}};
   document.getElementById("shopQtyUp").onclick=()=>{if(qty<10){qty++;document.getElementById("shopQtyNum").textContent=qty}};
-  document.getElementById("shopOrderBtn").onclick=()=>{
-    if(!currentProduct)return;
-    // TODO: wire to Stripe checkout — passes product id + qty
-    alert("Checkout coming soon.\n\n"+qty+"× "+currentProduct.name+" — "+fmtPrice(currentProduct.price,currentProduct.currency));
-  };
+  document.getElementById("shopOrderBtn").onclick=startCheckout;
 
   // Load products
   try{

@@ -1,0 +1,251 @@
+ADD STRIPE CHECKOUT TO ME NEXT LEVEL SHOP
+
+Add Stripe payments to the public /shop page.
+
+Use Stripe Checkout hosted payment pages for V1.
+
+Do NOT build or store credit-card fields ourselves.
+
+CUSTOMER FLOW
+
+When a customer clicks:
+
+ORDER NOW
+
+Send the selected product ID and quantity to the server.
+Server retrieves the current product information from our database.
+Server creates a Stripe Checkout Session.
+Redirect customer to Stripe Checkout.
+Stripe collects payment and shipping information.
+After successful payment, redirect customer to:
+
+/shop/order-success
+
+If they cancel payment, return them to:
+
+/shop
+
+IMPORTANT SECURITY RULE
+
+Never accept the price sent from the browser as authoritative.
+
+The browser should send:
+
+product ID
+quantity
+
+The server must read the real price from our product database before creating the Stripe Checkout Session.
+
+This prevents customers from manipulating prices.
+
+STRIPE SECRETS
+
+Add Stripe credentials as Replit Secrets/environment variables.
+
+For example:
+
+STRIPE_SECRET_KEY
+
+STRIPE_PUBLISHABLE_KEY
+
+STRIPE_WEBHOOK_SECRET
+
+Never expose the Stripe secret key in frontend code.
+
+CHECKOUT SESSION
+
+Create a backend endpoint such as:
+
+POST /api/shop/create-checkout-session
+
+Use Stripe Checkout in:
+
+mode: payment
+
+Include:
+
+product
+quantity
+product price
+AUD currency
+customer email if already logged in
+product/order metadata
+SHIPPING ADDRESS
+
+These are physical Me Next Level kits, so collect a shipping address during Checkout.
+
+For initial launch, allow Australia:
+
+AU
+
+Structure the code so more countries can be added later.
+
+Stripe Checkout supports shipping-address collection and returns the shipping details with the completed Checkout Session.
+
+SHIPPING COST
+
+Prepare Checkout to support:
+
+fixed shipping price
+OR
+free shipping
+
+Shipping should be configurable from Super Admin in the future.
+
+Do not hard-code business logic throughout the frontend.
+
+CUSTOMER DETAILS
+
+Collect:
+
+Full name
+Email
+Shipping address
+Billing details where required
+Phone number if appropriate for delivery
+ORDER CREATION
+
+Before redirecting to Stripe, create an order in our database with status:
+
+PENDING_PAYMENT
+
+Store:
+
+order number
+product ID
+product name snapshot
+unit price snapshot
+quantity
+subtotal
+shipping
+total
+customer/user ID if logged in
+Stripe Checkout Session ID
+created date
+STRIPE WEBHOOK — CRITICAL
+
+Do NOT mark an order as paid just because the customer reaches the success page.
+
+Use a Stripe webhook.
+
+Handle:
+
+checkout.session.completed
+
+When Stripe confirms successful Checkout:
+
+find the order using Stripe metadata/session ID
+set payment status to PAID
+set order status to NEW
+save Stripe PaymentIntent/reference
+save customer name/email
+save shipping address
+save amount paid
+record payment timestamp
+
+Stripe recommends using webhooks such as checkout.session.completed to fulfil orders after Checkout.
+
+Webhook processing must be idempotent so receiving the same Stripe event twice cannot create duplicate orders or duplicate fulfilment.
+
+SUPER ADMIN ORDERS
+
+Connect successful Stripe purchases to:
+
+Super Admin → Shop → Orders
+
+Show:
+
+Order number
+Date
+Customer
+Email
+Product
+Quantity
+Total
+Payment status
+Order status
+Shipping address
+Stripe payment reference
+PAYMENT STATUS
+
+Support:
+
+Pending
+Paid
+Failed
+Refunded
+ORDER STATUS
+
+Support:
+
+New
+Processing
+Packed
+Shipped
+Delivered
+Cancelled
+Refunded
+SUCCESS PAGE
+
+Create:
+
+/shop/order-success
+
+After successful payment show:
+
+THANK YOU
+
+YOUR ORDER IS CONFIRMED
+
+Display:
+
+Order number
+Product
+Quantity
+Total paid
+Confirmation message
+
+Keep the black + white + premium gold Me Next Level design.
+
+TAX
+
+Structure Checkout so Stripe Tax can be enabled if required.
+
+Do not guess tax treatment in the frontend.
+
+Stripe Checkout supports automatic tax calculation when configured.
+
+TEST MODE FIRST
+
+Do NOT start with live payments.
+
+First configure Stripe test mode.
+
+Test:
+
+successful card payment
+declined card
+customer cancels Checkout
+different quantity
+shipping details saved
+order appears in Super Admin
+webhook marks order PAID
+refreshing success page does not create duplicate order
+
+Once all of those work, show me the test results before switching Stripe to live mode.
+
+IMPORTANT
+
+Do not change:
+
+Arena
+Daily Wins
+Daily Setbacks
+Fans/Doubters
+existing gameplay
+
+This task is only:
+
+Shop → Stripe Checkout → Order database → Super Admin Orders
+
+Do not ask me to publish until the complete payment flow has been proven working on the development environment.

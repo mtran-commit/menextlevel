@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Confirmed — Me Next Level</title>
+<link rel="stylesheet" href="../../public/shop-success.css">
+<link rel="icon" href="../../public/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+<header class="shop-header">
+  <a href="../../" class="shop-logo" aria-label="Me Next Level">
+    <canvas id="ledLogo" width="148" height="36" role="img" aria-label="Me Next Level"></canvas>
+  </a>
+  <a href="../" class="shop-back">← Back to Shop</a>
+</header>
+
+<main class="success-main" id="successMain">
+  <!-- Loading state shown initially -->
+  <div class="success-loading" id="stateLoading">
+    <div class="success-spinner"></div>
+    <span>VERIFYING YOUR ORDER…</span>
+  </div>
+
+  <!-- Success state (hidden until order loaded) -->
+  <div id="stateSuccess" style="display:none;width:100%;max-width:520px;margin:0 auto;text-align:center;">
+    <div class="success-check">✓</div>
+    <h1 class="success-title">THANK YOU</h1>
+    <p class="success-subtitle">Your order is confirmed</p>
+
+    <div class="success-card">
+      <p class="success-order-number">Order <span id="orderNum">—</span></p>
+      <hr class="success-divider">
+
+      <div class="success-row">
+        <span class="success-row-label">Product</span>
+        <span class="success-row-value" id="orderProduct">—</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">Quantity</span>
+        <span class="success-row-value" id="orderQty">—</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">Shipping</span>
+        <span class="success-row-value" id="orderShipping">Free</span>
+      </div>
+
+      <hr class="success-divider">
+
+      <div class="success-row">
+        <span class="success-total-label">Total Paid</span>
+        <span class="success-total-value" id="orderTotal">—</span>
+      </div>
+    </div>
+
+    <p class="success-msg">
+      We'll send confirmation and tracking details to your email when your order ships.
+      Australian shipping typically takes 5–10 business days.
+    </p>
+
+    <div class="success-actions">
+      <a href="../" class="success-btn-primary">BACK TO SHOP</a>
+      <a href="../../" class="success-btn-secondary">← BACK TO GAME</a>
+    </div>
+  </div>
+
+  <!-- Error state (hidden until error) -->
+  <div id="stateError" style="display:none;text-align:center;">
+    <p class="success-error" id="errorMsg">Unable to load your order. Your payment was processed — please check your email for confirmation.</p>
+    <br><br>
+    <div class="success-actions">
+      <a href="../" class="success-btn-primary">BACK TO SHOP</a>
+      <a href="../../" class="success-btn-secondary">← BACK TO GAME</a>
+    </div>
+  </div>
+</main>
+
+<footer class="shop-footer">
+  <span>© Me Next Level. All rights reserved.</span>
+  <a href="../../">← Back to Game</a>
+</footer>
+
+<script type="module" src="../../public/led-logo.js?v=16"></script>
+<script>
+window.addEventListener("load", function() {
+  var c = document.getElementById("ledLogo");
+  if (c && window.LEDLogo) window.LEDLogo.init(c);
+});
+</script>
+<script>
+(function () {
+"use strict";
+
+// Detect API base from path: /shop/order-success/ → strip to root
+var BASE = (function() {
+  var p = location.pathname;
+  // Remove /shop/order-success (and trailing slash/index.html)
+  var idx = p.indexOf("/shop/order-success");
+  return idx > 0 ? p.slice(0, idx) : "";
+})();
+
+function fmtPrice(amount, currency) {
+  return "$" + parseFloat(amount).toFixed(2) + " " + (currency || "AUD");
+}
+
+function show(id) {
+  document.getElementById("stateLoading").style.display = "none";
+  document.getElementById("stateSuccess").style.display = "none";
+  document.getElementById("stateError").style.display   = "none";
+  document.getElementById(id).style.display = "";
+}
+
+async function loadOrder() {
+  var params  = new URLSearchParams(location.search);
+  var session = params.get("session_id") || "";
+
+  if (!session || !session.startsWith("cs_")) {
+    show("stateError");
+    document.getElementById("errorMsg").textContent =
+      "No session found. If you completed payment, check your email for confirmation.";
+    return;
+  }
+
+  // Poll up to 8 seconds to allow webhook to fire first (idempotent)
+  var attempts = 0;
+  var maxAttempts = 4;
+
+  async function tryLoad() {
+    attempts++;
+    try {
+      var res = await fetch(BASE + "/api/shop/order-success?session_id=" + encodeURIComponent(session));
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var data = await res.json();
+      var order = data.order;
+      var items = order.items || [];
+
+      // Fill order details
+      document.getElementById("orderNum").textContent = order.orderNumber || "—";
+
+      var productNames = items.map(function(i) { return i.productName; }).join(", ") || "—";
+      document.getElementById("orderProduct").textContent = productNames;
+
+      var totalQty = items.reduce(function(s, i) { return s + (i.quantity || 1); }, 0);
+      document.getElementById("orderQty").textContent = totalQty;
+
+      var shippingAmt = parseFloat(order.shipping || "0");
+      document.getElementById("orderShipping").textContent =
+        shippingAmt === 0 ? "Free" : fmtPrice(order.shipping, order.currency);
+
+      document.getElementById("orderTotal").textContent =
+        fmtPrice(order.total, order.currency);
+
+      show("stateSuccess");
+    } catch (err) {
+      // Retry briefly if webhook hasn't fired yet
+      if (attempts < maxAttempts) {
+        setTimeout(tryLoad, 2000);
+      } else {
+        show("stateError");
+        document.getElementById("errorMsg").textContent =
+          "Your payment was processed, but we couldn't load order details right now. " +
+          "Please check your email for confirmation.";
+      }
+    }
+  }
+
+  tryLoad();
+}
+
+document.addEventListener("DOMContentLoaded", loadOrder);
+})();
+</script>
+</body>
+</html>

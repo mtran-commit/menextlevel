@@ -19,6 +19,41 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
+// ---------------------------------------------------------------------------
+// Stripe initialization — non-blocking; server starts regardless of outcome.
+// Requires the Stripe integration to be connected via the Integrations tab.
+// ---------------------------------------------------------------------------
+async function initStripe() {
+  try {
+    const { runMigrations } = await import("stripe-replit-sync");
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) throw new Error("DATABASE_URL required");
+
+    await runMigrations({ databaseUrl });
+    logger.info("Stripe schema ready");
+
+    const { getStripeSync } = await import("./lib/stripeClient");
+    const stripeSync = await getStripeSync();
+
+    const domain = process.env.REPLIT_DOMAINS?.split(",")[0];
+    if (domain) {
+      const webhookUrl = `https://${domain}/api/stripe/webhook`;
+      await stripeSync.findOrCreateManagedWebhook(webhookUrl);
+      logger.info({ webhookUrl }, "Stripe webhook configured");
+    }
+
+    // Sync existing Stripe data in the background (non-blocking)
+    stripeSync.syncBackfill()
+      .then(() => logger.info("Stripe data synced"))
+      .catch((err) => logger.warn({ err }, "Stripe syncBackfill failed"));
+  } catch (err) {
+    logger.warn(
+      { err },
+      "Stripe initialization failed — payment features unavailable until Stripe integration is connected",
+    );
+  }
+}
+
 async function main() {
   // ---------------------------------------------------------------------------
   // Idempotent DML backfill — safe to re-run on every startup.
@@ -61,6 +96,25 @@ async function main() {
   }
 
   // ---------------------------------------------------------------------------
+  // Idempotent DDL: add stripe_checkout_session_id to orders if missing.
+  // Drizzle schema is the source of truth; this ensures production DB is in sync
+  // without requiring drizzle-kit push to be run manually.
+  // ---------------------------------------------------------------------------
+  try {
+    await db.execute(sql`
+      ALTER TABLE orders
+      ADD COLUMN IF NOT EXISTS stripe_checkout_session_id TEXT NOT NULL DEFAULT ''
+    `);
+    await db.execute(sql`
+      CREATE INDEX IF NOT EXISTS orders_stripe_session_idx
+      ON orders (stripe_checkout_session_id)
+      WHERE stripe_checkout_session_id != ''
+    `);
+  } catch (err) {
+    logger.error({ err }, "stripe_checkout_session_id migration failed — server starting anyway");
+  }
+
+  // ---------------------------------------------------------------------------
   // Start HTTP server
   // ---------------------------------------------------------------------------
   app.listen(port, (err) => {
@@ -71,6 +125,9 @@ async function main() {
 
     logger.info({ port }, "Server listening");
   });
+
+  // Initialize Stripe in the background (non-blocking — won't crash if not configured)
+  initStripe().catch((err) => logger.error({ err }, "Stripe init threw unexpectedly"));
 
   // Background scheduler: timezone-aware daily resets + retention reminders.
   getVapidKeys().catch((err) => logger.error({ err }, "vapid init failed"));

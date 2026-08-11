@@ -66,10 +66,11 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main:          path.resolve(import.meta.dirname, 'index.html'),
-        admin:         path.resolve(import.meta.dirname, 'admin', 'index.html'),
-        adminProducts: path.resolve(import.meta.dirname, 'admin', 'products.html'),
-        shop:          path.resolve(import.meta.dirname, 'shop', 'index.html'),
+        main:         path.resolve(import.meta.dirname, 'index.html'),
+        admin:        path.resolve(import.meta.dirname, 'admin', 'index.html'),
+        adminProducts:path.resolve(import.meta.dirname, 'admin', 'products.html'),
+        shop:         path.resolve(import.meta.dirname, 'shop', 'index.html'),
+        shopSuccess:  path.resolve(import.meta.dirname, 'shop', 'order-success', 'index.html'),
       },
     },
   },
