@@ -1,0 +1,138 @@
+workflows:
+  ios-capacitor:
+    name: MeNotMe iOS
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+
+    # The Codemagic integration named in Step 5.
+    # Used for automatic code signing AND TestFlight publishing.
+    integrations:
+      app_store_connect: menotme_app_store
+
+    environment:
+      # Node 24 bundles npm 11 and satisfies Capacitor's Node ≥ 22 requirement.
+      node: "24"
+
+      # Automatic code signing: Codemagic fetches a distribution certificate
+      # and provisioning profile from Apple and injects them into Xcode.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.menotme.app
+
+      vars:
+        # ← EDIT: numeric Apple app ID from App Store Connect → App Information
+        APP_STORE_APPLE_ID: "XXXXXXXXXX"
+
+        # ← EDIT: your live Replit deployment URL (no trailing slash).
+        # Must be a VITE_ prefix so Vite exposes it as import.meta.env.VITE_PROD_API_ORIGIN.
+        # Must also match the PROD_API_ORIGIN guard in artifacts/menotme/src/cloud.ts.
+        VITE_PROD_API_ORIGIN: "https://YOUR-REPLIT-DOMAIN.replit.app"
+
+        # ← EDIT: your Clerk publishable key (pk_live_… or pk_test_…).
+        # Must be a VITE_ prefix so Vite bakes it into the bundle.
+        # Store it as an encrypted variable in Codemagic so it is not in
+        # plain text: App Settings → Environment variables → Add → Secure: on.
+        VITE_CLERK_PUBLISHABLE_KEY: Encrypted(YOUR_ENCRYPTED_VALUE_HERE)
+
+    scripts:
+      # ── Tooling ──────────────────────────────────────────────────────────────
+      - name: Install pnpm
+        script: npm install -g pnpm
+
+      # ── Fix Replit-specific pnpm config (CI machine only) ────────────────────
+      # Replit resolves packages through an internal proxy unreachable on
+      # Codemagic. Rewrite to the public npm registry.
+      # The committed lockfile is not modified — changes are CI-local.
+      - name: Rewrite lockfile registry
+        script: |
+          perl -i -pe \
+            's|https://[^/]*\.replit\.dev/[^/]*/|https://registry.npmjs.org/|g' \
+            pnpm-lock.yaml
+
+      # pnpm-workspace.yaml excludes non-Linux native binaries.
+      # The Mac build needs darwin variants; strip the exclusions.
+      # CI-local only.
+      - name: Strip Linux-only platform overrides
+        script: |
+          perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
+
+      # ── Install ───────────────────────────────────────────────────────────────
+      - name: Install dependencies
+        script: pnpm install
+
+      # ── Build ─────────────────────────────────────────────────────────────────
+      # Build shared workspace libs (@workspace/api-client-react, etc.) BEFORE
+      # the Vite build. TypeScript project references fail if lib outputs are
+      # missing.
+      - name: Build workspace libs
+        script: pnpm run typecheck:libs
+
+      # Build the MeNotMe web app.
+      #   BASE_PATH=./  → relative asset paths for capacitor://localhost
+      #   PORT=3000     → satisfies the vite.config.ts PORT guard
+      #   VITE_* vars   → injected from the environment block above
+      - name: Vite build
+        working_directory: artifacts/menotme
+        script: BASE_PATH=./ PORT=3000 pnpm run build
+
+      # ── Capacitor native project ──────────────────────────────────────────────
+      # Option A: generate the Xcode project on the cloud Mac each build.
+      - name: Add iOS platform
+        working_directory: artifacts/menotme
+        script: npx cap add ios
+
+      # Sync the web assets from dist/public into ios/.
+      - name: Capacitor copy
+        working_directory: artifacts/menotme
+        script: npx cap copy ios
+
+      # Generate all required icon and splash sizes from source PNGs in
+      # artifacts/menotme/assets/ (icon-only.png, splash.png, splash-dark.png).
+      - name: Generate icons and splash
+        working_directory: artifacts/menotme
+        script: npx @capacitor/assets generate
+
+      # ── Code signing ──────────────────────────────────────────────────────────
+      # Create a fresh macOS keychain for the signing certificate.
+      - name: Initialize keychain
+        script: keychain initialize
+
+      # Download the App Store distribution certificate and provisioning profile
+      # via the App Store Connect API key. --create mints them if absent.
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files com.menotme.app \
+            --type IOS_APP_STORE \
+            --create
+
+      # Import the downloaded certificate into the keychain.
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+
+      # Inject the provisioning profile into the Xcode project so Xcode uses it
+      # automatically during the build.
+      - name: Apply provisioning profiles
+        script: xcode-project use-profiles
+
+      # ── Build IPA ─────────────────────────────────────────────────────────────
+      # Archive and export a signed IPA in one step.
+      # The --workspace path includes the monorepo artifacts/menotme/ prefix.
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace artifacts/menotme/ios/App/App.xcworkspace \
+            --scheme App
+
+    # Collect build artifacts for download even if publishing fails.
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Logs/gym/*.log
+
+    # Publish to TestFlight using the app_store_connect integration.
+    # Change submit_to_app_store: true when ready to submit for App Store review.
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

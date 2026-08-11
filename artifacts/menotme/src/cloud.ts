@@ -9,14 +9,37 @@ import "./cloud.css";
 import { initTutorial, startTutorial, practiceActive } from "./tutorial";
 
 const KEY = "menotme_complete_v1";
-const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+// ── Native-shell detection ────────────────────────────────────────────────────
+// Pages served from capacitor://localhost cannot use window.location.origin
+// (non-routable scheme) or relative BASE_URL paths.
+// VITE_PROD_API_ORIGIN is injected at build time by codemagic.yaml (or .env.local
+// for a local native build). It must match the live Replit deployment URL.
+const PROD_API_ORIGIN: string = import.meta.env.VITE_PROD_API_ORIGIN || '';
+const isNativeShell =
+  typeof window !== 'undefined' && window.location.protocol === 'capacitor:';
+
+if (isNativeShell && !PROD_API_ORIGIN) {
+  console.error('[MNM] VITE_PROD_API_ORIGIN is not set — API calls will fail in the native shell.');
+}
+
+// API base: live origin in native shell; Vite BASE_URL on web.
+const BASE = isNativeShell
+  ? PROD_API_ORIGIN
+  : (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
-const clerkPubKey = publishableKeyFromHost(
-  window.location.hostname,
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
-);
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL || `${window.location.origin}/api/__clerk`;
+// Clerk publishable key: use the explicit env var in native shell
+// (hostname is "localhost" so publishableKeyFromHost cannot derive it).
+const clerkPubKey = isNativeShell
+  ? import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+  : publishableKeyFromHost(window.location.hostname, import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
+
+// Clerk proxy: skip in native shell (direct connection to Clerk avoids the
+// CORS ordering issue with the server proxy). Use proxy on web as before.
+const clerkProxyUrl = isNativeShell
+  ? undefined
+  : (import.meta.env.VITE_CLERK_PROXY_URL || `${window.location.origin}/api/__clerk`);
 
 declare global {
   interface Window {
