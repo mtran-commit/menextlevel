@@ -37,6 +37,12 @@ workflows:
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
+          # Ensure all packages that run build scripts on macOS are approved.
+          # Done inline so CI works regardless of the committed pnpm-workspace.yaml.
+          for pkg in browser-tabs-lock core-js esbuild; do
+            grep -q "^  - $pkg$" pnpm-workspace.yaml || \
+              perl -i -pe "s/^(onlyBuiltDependencies:)$/\$1\n  - $pkg/" pnpm-workspace.yaml
+          done
 
       # ── Install ───────────────────────────────────────────────────────────────
       - name: Install dependencies
