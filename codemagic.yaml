@@ -4,29 +4,23 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
 
-    # The Codemagic integration named in Step 5.
-    # Used for automatic code signing AND TestFlight publishing.
     integrations:
       app_store_connect: menextlevel_app_store
 
     environment:
-      # Node 24 bundles npm 11 and satisfies Capacitor's Node ≥ 22 requirement.
       node: "24"
 
-      # Automatic code signing: Codemagic fetches a distribution certificate
-      # and provisioning profile from Apple and injects them into Xcode.
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.menextlevel.app
-
-      # Environment group containing secrets — create this group in Codemagic:
-      # Team Settings → Global variables and secrets → Create group → "menextlevel_secrets"
-      # Add VITE_CLERK_PUBLISHABLE_KEY as a Secure variable inside that group.
+      # Secrets group — create in Codemagic: Team Settings → Global variables
+      # and secrets → Create group → "menextlevel_secrets". Add these variables:
+      #   VITE_CLERK_PUBLISHABLE_KEY — your Clerk pk_test_… or pk_live_… key (Secure)
+      #   APP_STORE_PRIVATE_KEY      — full contents of the .p8 file (Secure)
       groups:
-        - menextlevel
+        - menextlevel_secrets
 
       vars:
         APP_STORE_APPLE_ID: "6800945735"
+        APP_STORE_ISSUER_ID: "fedfbbf9-9319-4e24-8331-da672f91233c"
+        APP_STORE_KEY_ID: "6GAKLT9Y8B"
         VITE_PROD_API_ORIGIN: "https://asset-manager-chefonvespa.replit.app"
 
     scripts:
@@ -36,8 +30,7 @@ workflows:
 
       # ── Fix Replit-specific pnpm config (CI machine only) ────────────────────
       # Replit resolves packages through an internal proxy unreachable on
-      # Codemagic. Rewrite to the public npm registry.
-      # The committed lockfile is not modified — changes are CI-local.
+      # Codemagic. Rewrite to the public npm registry (CI-local only).
       - name: Rewrite lockfile registry
         script: |
           perl -i -pe \
@@ -45,8 +38,7 @@ workflows:
             pnpm-lock.yaml
 
       # pnpm-workspace.yaml excludes non-Linux native binaries.
-      # The Mac build needs darwin variants; strip the exclusions.
-      # CI-local only.
+      # The Mac build needs darwin variants; strip the exclusions (CI-local only).
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
@@ -56,76 +48,64 @@ workflows:
         script: pnpm install
 
       # ── Build ─────────────────────────────────────────────────────────────────
-      # Build shared workspace libs (@workspace/api-client-react, etc.) BEFORE
-      # the Vite build. TypeScript project references fail if lib outputs are
-      # missing.
+      # Build shared workspace libs first — TypeScript project references fail
+      # if lib outputs are missing.
       - name: Build workspace libs
         script: pnpm run typecheck:libs
 
-      # Build the Me Next Level web app.
-      #   BASE_PATH=./  → relative asset paths for capacitor://localhost
-      #   PORT=3000     → satisfies the vite.config.ts PORT guard
-      #   VITE_* vars   → injected from the environment block above
+      # BASE_PATH=./  → relative asset paths for capacitor://localhost
+      # PORT=3000     → satisfies the vite.config.ts PORT guard
       - name: Vite build
         working_directory: artifacts/menotme
         script: BASE_PATH=./ PORT=3000 pnpm run build
 
       # ── Capacitor native project ──────────────────────────────────────────────
-      # Option A: generate the Xcode project on the cloud Mac each build.
       - name: Add iOS platform
         working_directory: artifacts/menotme
         script: npx cap add ios
 
-      # Sync the web assets from dist/public into ios/.
       - name: Capacitor copy
         working_directory: artifacts/menotme
         script: npx cap copy ios
 
-      # Generate all required icon and splash sizes from source PNGs in
-      # artifacts/menotme/assets/ (icon-only.png, splash.png, splash-dark.png).
       - name: Generate icons and splash
         working_directory: artifacts/menotme
         script: npx @capacitor/assets generate
 
       # ── Code signing ──────────────────────────────────────────────────────────
-      # Create a fresh macOS keychain for the signing certificate.
       - name: Initialize keychain
         script: keychain initialize
 
-      # Download the App Store distribution certificate and provisioning profile
-      # via the App Store Connect API key. --create mints them if absent.
+      # Fetch (or create) the App Store certificate and provisioning profile.
+      # Credentials are passed explicitly so the CLI doesn't rely on the
+      # integration auto-injection, which conflicts with ios_signing auto-mode.
       - name: Fetch signing files
         script: |
           app-store-connect fetch-signing-files com.menextlevel.app \
             --type IOS_APP_STORE \
-            --create
+            --create \
+            --issuer-id "$APP_STORE_ISSUER_ID" \
+            --key-id "$APP_STORE_KEY_ID" \
+            --private-key "@env:APP_STORE_PRIVATE_KEY"
 
-      # Import the downloaded certificate into the keychain.
       - name: Add certificates to keychain
         script: keychain add-certificates
 
-      # Inject the provisioning profile into the Xcode project so Xcode uses it
-      # automatically during the build.
       - name: Apply provisioning profiles
         script: xcode-project use-profiles
 
       # ── Build IPA ─────────────────────────────────────────────────────────────
-      # Archive and export a signed IPA in one step.
-      # The --workspace path includes the monorepo artifacts/menotme/ prefix.
       - name: Build IPA
         script: |
           xcode-project build-ipa \
             --workspace artifacts/menotme/ios/App/App.xcworkspace \
             --scheme App
 
-    # Collect build artifacts for download even if publishing fails.
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Logs/gym/*.log
 
-    # Publish to TestFlight using the app_store_connect integration.
-    # Change submit_to_app_store: true when ready to submit for App Store review.
     publishing:
       app_store_connect:
         auth: integration
