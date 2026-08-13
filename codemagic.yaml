@@ -37,8 +37,6 @@ workflows:
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
-          awk '/^onlyBuiltDependencies:/{skip=1;next} skip && /^  - /{next} {skip=0;print}' \
-            pnpm-workspace.yaml > /tmp/ws_fixed.yaml && mv /tmp/ws_fixed.yaml pnpm-workspace.yaml
 
       # ── Install ───────────────────────────────────────────────────────────────
       - name: Install dependencies
