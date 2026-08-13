@@ -23,7 +23,7 @@ workflows:
       # Team Settings → Global variables and secrets → Create group → "menextlevel_secrets"
       # Add VITE_CLERK_PUBLISHABLE_KEY as a Secure variable inside that group.
       groups:
-        - menextlevel_secrets
+        - menextlevel
 
       vars:
         APP_STORE_APPLE_ID: "6800945735"
