@@ -238,8 +238,8 @@ Commit all of the following before the first Codemagic build.
 
   ```json
   {
-    "appId": "com.menotme.app",
-    "appName": "MeNotMe",
+    "appId": "com.menextlevel.app",
+    "appName": "Me Next Level",
     "webDir": "dist/public"
   }
   ```
@@ -264,7 +264,7 @@ Commit all of the following before the first Codemagic build.
 
 - **Apple Developer Program membership** — US$99/year at
   <https://developer.apple.com/programs/>. Enrollment can take 24–48 hours.
-- **App Store Connect app record** with bundle id **`com.menotme.app`**.
+- **App Store Connect app record** with bundle id **`com.menextlevel.app`**.
 - **Code hosted on GitHub** (or GitLab/Bitbucket).
 - **A free Codemagic account** — <https://codemagic.io>.
 - **No Mac required.**
@@ -303,11 +303,11 @@ Complete enrollment at <https://developer.apple.com/programs/>.
 
 At <https://appstoreconnect.apple.com> → **Apps → +**:
 
-- Platform: **iOS**, App name: **MeNotMe**
-- Bundle ID: **`com.menotme.app`** (register a new Explicit App ID in the
+- Platform: **iOS**, App name: **Me Next Level**
+- Bundle ID: **`com.menextlevel.app`** (register a new Explicit App ID in the
   Apple Developer portal first if it doesn't exist:
   <https://developer.apple.com/account/resources/identifiers/list>)
-- SKU: **`menotme-ios`**
+- SKU: **`menextlevel-ios`**
 
 Note the numeric **Apple ID** from App Information — paste it into
 `codemagic.yaml` as `APP_STORE_APPLE_ID`.
@@ -323,7 +323,7 @@ Note the **Key ID** and **Issuer ID**.
 **Codemagic → Teams / Settings → Integrations → Apple Developer Portal**:
 
 1. Upload the `.p8`, enter Key ID and Issuer ID
-2. Name the integration exactly: **`menotme_app_store`**
+2. Name the integration exactly: **`menextlevel_app_store`**
 
 That exact name is referenced in `codemagic.yaml`.
 
@@ -366,14 +366,14 @@ marked `# ← EDIT`.
 ```yaml
 workflows:
   ios-capacitor:
-    name: MeNotMe iOS
+    name: Me Next Level iOS
     max_build_duration: 60
     instance_type: mac_mini_m1
 
     # The Codemagic integration named in Step 5.
     # Used for automatic code signing AND TestFlight publishing.
     integrations:
-      app_store_connect: menotme_app_store
+      app_store_connect: menextlevel_app_store
 
     environment:
       # Node 24 bundles npm 11 and satisfies Capacitor's Node ≥ 22 requirement.
@@ -383,7 +383,7 @@ workflows:
       # and provisioning profile from Apple and injects them into Xcode.
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.menotme.app
+        bundle_identifier: com.menextlevel.app
 
       vars:
         # ← EDIT: numeric Apple app ID from App Store Connect → App Information
@@ -433,7 +433,7 @@ workflows:
       - name: Build workspace libs
         script: pnpm run typecheck:libs
 
-      # Build the MeNotMe web app.
+      # Build the Me Next Level web app.
       #   BASE_PATH=./  → relative asset paths for capacitor://localhost
       #   PORT=3000     → satisfies the vite.config.ts PORT guard
       #   VITE_* vars   → injected from the environment block above
@@ -467,7 +467,7 @@ workflows:
       # via the App Store Connect API key. --create mints them if absent.
       - name: Fetch signing files
         script: |
-          app-store-connect fetch-signing-files com.menotme.app \
+          app-store-connect fetch-signing-files com.menextlevel.app \
             --type IOS_APP_STORE \
             --create
 
@@ -511,7 +511,7 @@ workflows:
 | `APP_STORE_APPLE_ID` | App Store Connect → App Information (numeric ID) |
 | `VITE_PROD_API_ORIGIN` | Your published Replit deployment URL (Deployments tab) |
 | `VITE_CLERK_PUBLISHABLE_KEY` | Clerk dashboard → API Keys (`pk_live_…` or `pk_test_…`) |
-| `menotme_app_store` | The integration name from Step 5 — update both `integrations` and `publishing` if you chose a different name |
+| `menextlevel_app_store` | The integration name from Step 5 — update both `integrations` and `publishing` if you chose a different name |
 
 ---
 
@@ -578,7 +578,7 @@ account to see the full experience including cloud save and weekly streaks."
 | `Cannot find module '@workspace/api-client-react'` | Libs not built first | Run `pnpm run typecheck:libs` before Vite |
 | pnpm install 404s or hangs | Lockfile still points to Replit proxy | Confirm the `perl` registry rewrite ran before `pnpm install` |
 | esbuild native binary not found | Darwin overrides not stripped | Confirm the `perl -pe 's/: "-"$/: "*"/'` step ran before `pnpm install` |
-| `No bundle ID found` during signing | App ID not registered | Register `com.menotme.app` at developer.apple.com/account/resources/identifiers |
+| `No bundle ID found` during signing | App ID not registered | Register `com.menextlevel.app` at developer.apple.com/account/resources/identifiers |
 | API calls fail silently in TestFlight | `BASE` resolves to `capacitor://localhost` | Confirm `isNativeShell` / `VITE_PROD_API_ORIGIN` patch applied in `cloud.ts` |
 | Clerk sign-in fails in TestFlight | Proxy URL resolves to `capacitor://localhost` | Confirm `clerkProxyUrl = undefined` in native shell (same patch) |
 | CORS errors from API calls | API not accepting native origins | Check `app.ts` CORS config and republish |

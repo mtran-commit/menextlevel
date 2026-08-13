@@ -1,13 +1,13 @@
 workflows:
   ios-capacitor:
-    name: MeNotMe iOS
+    name: Me Next Level iOS
     max_build_duration: 60
     instance_type: mac_mini_m1
 
     # The Codemagic integration named in Step 5.
     # Used for automatic code signing AND TestFlight publishing.
     integrations:
-      app_store_connect: menotme_app_store
+      app_store_connect: menextlevel_app_store
 
     environment:
       # Node 24 bundles npm 11 and satisfies Capacitor's Node ≥ 22 requirement.
@@ -17,7 +17,7 @@ workflows:
       # and provisioning profile from Apple and injects them into Xcode.
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.menotme.app
+        bundle_identifier: com.menextlevel.app
 
       vars:
         # ← EDIT: numeric Apple app ID from App Store Connect → App Information
@@ -67,7 +67,7 @@ workflows:
       - name: Build workspace libs
         script: pnpm run typecheck:libs
 
-      # Build the MeNotMe web app.
+      # Build the Me Next Level web app.
       #   BASE_PATH=./  → relative asset paths for capacitor://localhost
       #   PORT=3000     → satisfies the vite.config.ts PORT guard
       #   VITE_* vars   → injected from the environment block above
@@ -101,7 +101,7 @@ workflows:
       # via the App Store Connect API key. --create mints them if absent.
       - name: Fetch signing files
         script: |
-          app-store-connect fetch-signing-files com.menotme.app \
+          app-store-connect fetch-signing-files com.menextlevel.app \
             --type IOS_APP_STORE \
             --create
 
