@@ -19,20 +19,15 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.menextlevel.app
 
+      # Environment group containing secrets — create this group in Codemagic:
+      # Team Settings → Global variables and secrets → Create group → "menextlevel_secrets"
+      # Add VITE_CLERK_PUBLISHABLE_KEY as a Secure variable inside that group.
+      groups:
+        - menextlevel_secrets
+
       vars:
-        # ← EDIT: numeric Apple app ID from App Store Connect → App Information
         APP_STORE_APPLE_ID: "6800945735"
-
-        # ← EDIT: your live Replit deployment URL (no trailing slash).
-        # Must be a VITE_ prefix so Vite exposes it as import.meta.env.VITE_PROD_API_ORIGIN.
-        # Must also match the PROD_API_ORIGIN guard in artifacts/menotme/src/cloud.ts.
         VITE_PROD_API_ORIGIN: "https://asset-manager-chefonvespa.replit.app"
-
-        # ← EDIT: your Clerk publishable key (pk_live_… or pk_test_…).
-        # Must be a VITE_ prefix so Vite bakes it into the bundle.
-        # Store it as an encrypted variable in Codemagic so it is not in
-        # plain text: App Settings → Environment variables → Add → Secure: on.
-        VITE_CLERK_PUBLISHABLE_KEY: Encrypted(YOUR_ENCRYPTED_VALUE_HERE)
 
     scripts:
       # ── Tooling ──────────────────────────────────────────────────────────────
