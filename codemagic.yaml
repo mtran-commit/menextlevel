@@ -32,9 +32,17 @@ workflows:
             pnpm-lock.yaml
 
       # Strip Linux-only native binary exclusions so macOS gets the right binaries.
+      # All "-" exclusions become "*" first, then we re-pin esbuild's platform
+      # binaries to the exact version declared in the overrides so the JS host
+      # package and the binary package versions always match.
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
+          ESBUILD_VER=$(grep -E '^\s+esbuild:\s+"[0-9]' pnpm-workspace.yaml \
+            | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          echo "Pinning esbuild platform binaries to $ESBUILD_VER"
+          perl -i -pe "s|(\"esbuild>\@esbuild/[^\"]+\"): \"\*\"|\$1: \"$ESBUILD_VER\"|g" \
+            pnpm-workspace.yaml
 
       # ── Install ───────────────────────────────────────────────────────────────
       # --ignore-scripts skips all postinstall scripts, bypassing pnpm v10's
