@@ -26,7 +26,7 @@ workflows:
         # ← EDIT: your live Replit deployment URL (no trailing slash).
         # Must be a VITE_ prefix so Vite exposes it as import.meta.env.VITE_PROD_API_ORIGIN.
         # Must also match the PROD_API_ORIGIN guard in artifacts/menotme/src/cloud.ts.
-        VITE_PROD_API_ORIGIN: "https://YOUR-REPLIT-DOMAIN.replit.app"
+        VITE_PROD_API_ORIGIN: "https://asset-manager-chefonvespa.replit.app"
 
         # ← EDIT: your Clerk publishable key (pk_live_… or pk_test_…).
         # Must be a VITE_ prefix so Vite bakes it into the bundle.
