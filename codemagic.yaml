@@ -37,19 +37,8 @@ workflows:
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
-          python3 << 'PYEOF'
-          lines = open('pnpm-workspace.yaml').readlines()
-          out, skip = [], False
-          for line in lines:
-              if line.startswith('onlyBuiltDependencies:'):
-                  skip = True
-                  continue
-              if skip and line.startswith('  - '):
-                  continue
-              skip = False
-              out.append(line)
-          open('pnpm-workspace.yaml', 'w').writelines(out)
-          PYEOF
+          awk '/^onlyBuiltDependencies:/{skip=1;next} skip && /^  - /{next} {skip=0;print}' \
+            pnpm-workspace.yaml > /tmp/ws_fixed.yaml && mv /tmp/ws_fixed.yaml pnpm-workspace.yaml
 
       # ── Install ───────────────────────────────────────────────────────────────
       - name: Install dependencies
