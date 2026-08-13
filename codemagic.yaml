@@ -39,9 +39,19 @@ workflows:
 
       # pnpm-workspace.yaml excludes non-Linux native binaries.
       # The Mac build needs darwin variants; strip the exclusions (CI-local only).
+      # Also add macOS packages that need build scripts to onlyBuiltDependencies.
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
+          python3 -c "
+          content = open('pnpm-workspace.yaml').read()
+          if 'browser-tabs-lock' not in content:
+              content = content.replace(
+                  'onlyBuiltDependencies:',
+                  'onlyBuiltDependencies:\n  - browser-tabs-lock\n  - core-js'
+              )
+          open('pnpm-workspace.yaml', 'w').write(content)
+          "
 
       # ── Install ───────────────────────────────────────────────────────────────
       - name: Install dependencies
