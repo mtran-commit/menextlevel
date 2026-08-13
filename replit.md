@@ -1,4 +1,4 @@
-# MeNotMe
+# Me Next Level
 
 A black-and-white premium neon basketball habit game: complete Assets to shoot for Team Me, address Liabilities daily, and beat Team Not Me at the Final Bell. Slogan: "Play for the person you want to become."
 
@@ -49,8 +49,7 @@ A black-and-white premium neon basketball habit game: complete Assets to shoot f
 
 ## User preferences
 
-- Do NOT redesign, restyle, simplify, or reinterpret the MeNotMe interface. It must remain black and white exactly as the uploaded prototype.
-- Do not rename MeNotMe or change the slogan "Play for the person you want to become."
+- Do NOT redesign, restyle, simplify, or reinterpret the game interface. It must remain black and white exactly as the uploaded prototype.
 - Do not make unsolicited improvements — ask for approval before any visual or functional modification.
 - Auth/database/cloud sync were approved and added later — but only as an *additive* layer (`src/cloud.ts`, styled black/white); `public/app.js` and the game markup remain untouched.
 
@@ -61,6 +60,7 @@ A black-and-white premium neon basketball habit game: complete Assets to shoot f
 - After changing `lib/db` schema: `pnpm --filter @workspace/db run push`, and rebuild declarations (`npx tsc -b lib/db`) or api-server typecheck sees stale types.
 - Vite build for menotme needs `PORT` and `BASE_PATH` env vars set (deployment sets them).
 - Clerk dev-instance test emails: `*+clerk_test@...`, verification code 424242 (used by e2e testers; programmatic claim-override login also works).
+- The localStorage key `menotme_complete_v1` must NOT be renamed — it is the live data key for all existing users.
 
 ## Pointers
 

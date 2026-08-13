@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "MeNotMe"
+title = "Me Next Level"
 version = "1.0.0"
 id = "artifacts/menotme"
 router = "path"

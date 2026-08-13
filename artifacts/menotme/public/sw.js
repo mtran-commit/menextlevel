@@ -1,14 +1,14 @@
 self.addEventListener("push", (event) => {
-  let data = { title: "MeNotMe", body: "" };
+  let data = { title: "Me Next Level", body: "" };
   try {
     data = event.data.json();
   } catch (e) {}
   event.waitUntil(
-    self.registration.showNotification(data.title || "MeNotMe", {
+    self.registration.showNotification(data.title || "Me Next Level", {
       body: data.body || "",
       icon: undefined,
       badge: undefined,
-      tag: data.type || "menotme",
+      tag: data.type || "menextlevel",
     }),
   );
 });

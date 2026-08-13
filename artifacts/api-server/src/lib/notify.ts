@@ -36,7 +36,7 @@ export async function getVapidKeys() {
     const [row2] = await db.select().from(appConfigTable).where(eq(appConfigTable.key, "vapid"));
     vapid = (row2?.value as typeof keys) ?? keys;
   }
-  webpush.setVapidDetails("mailto:admin@menotme.app", vapid.publicKey, vapid.privateKey);
+  webpush.setVapidDetails("mailto:admin@menextlevel.com", vapid.publicKey, vapid.privateKey);
   return vapid;
 }
 
