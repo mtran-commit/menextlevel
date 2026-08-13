@@ -1,0 +1,104 @@
+Rewrite lockfile registry
+< 1s
+Strip Linux-only platform overrides
+< 1s
+Install dependencies
+22s
+
+
+
+Show command
+Scope: all 9 workspace projects
+? Verifying lockfile against supply-chain policies (718 entries)...
+✓ Lockfile passes supply-chain policies (718 entries in 2.1s)
+Progress: resolved 1, reused 0, downloaded 0, added 0
+artifacts/menotme                        | [WARN] deprecated recharts@2.15.4
+Progress: resolved 92, reused 0, downloaded 85, added 0
+Progress: resolved 99, reused 0, downloaded 99, added 0
+Progress: resolved 100, reused 0, downloaded 100, added 0
+Progress: resolved 101, reused 0, downloaded 100, added 0
+Progress: resolved 342, reused 0, downloaded 273, added 0
+Progress: resolved 495, reused 0, downloaded 388, added 0
+Progress: resolved 666, reused 0, downloaded 532, added 0
+Progress: resolved 720, reused 0, downloaded 632, added 0
+Progress: resolved 732, reused 0, downloaded 663, added 0
+Progress: resolved 740, reused 0, downloaded 675, added 0
+Progress: resolved 769, reused 0, downloaded 699, added 0
+[WARN] 3 deprecated subdependencies found: crypto-js@4.2.0, node-domexception@1.0.0, uuid@9.0.1
+Packages: +717
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Packages are cloned from the content-addressable store to the virtual store.
+  Content-addressable store is at: /Users/builder/Library/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 782, reused 0, downloaded 717, added 231
+Progress: resolved 782, reused 0, downloaded 717, added 394
+Progress: resolved 782, reused 0, downloaded 717, added 481
+Progress: resolved 782, reused 0, downloaded 717, added 707
+Progress: resolved 782, reused 0, downloaded 717, added 717, done
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+. preinstall: Done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ @replit/connectors-sdk 0.4.1 (0.4.2 is available)
++ stripe 22.4.0 (22.5.0 is available)
++ stripe-replit-sync 1.0.0
+
+devDependencies:
++ prettier 3.9.5 (3.9.6 is available)
++ typescript 5.9.3 (7.0.2 is available)
+
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: browser-tabs-lock@1.3.0, core-js@3.47.0, esbuild@0.27.3
+
+Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.
+Scope: all 9 workspace projects
+? Verifying lockfile against supply-chain policies (718 entries)...
+✓ Lockfile passes supply-chain policies (718 entries in 2.1s)
+Progress: resolved 1, reused 0, downloaded 0, added 0
+artifacts/menotme                        | [WARN] deprecated recharts@2.15.4
+Progress: resolved 92, reused 0, downloaded 85, added 0
+Progress: resolved 99, reused 0, downloaded 99, added 0
+Progress: resolved 100, reused 0, downloaded 100, added 0
+Progress: resolved 101, reused 0, downloaded 100, added 0
+Progress: resolved 342, reused 0, downloaded 273, added 0
+Progress: resolved 495, reused 0, downloaded 388, added 0
+Progress: resolved 666, reused 0, downloaded 532, added 0
+Progress: resolved 720, reused 0, downloaded 632, added 0
+Progress: resolved 732, reused 0, downloaded 663, added 0
+Progress: resolved 740, reused 0, downloaded 675, added 0
+Progress: resolved 769, reused 0, downloaded 699, added 0
+[WARN] 3 deprecated subdependencies found: crypto-js@4.2.0, node-domexception@1.0.0, uuid@9.0.1
+Packages: +717
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Packages are cloned from the content-addressable store to the virtual store.
+  Content-addressable store is at: /Users/builder/Library/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 782, reused 0, downloaded 717, added 231
+Progress: resolved 782, reused 0, downloaded 717, added 394
+Progress: resolved 782, reused 0, downloaded 717, added 481
+Progress: resolved 782, reused 0, downloaded 717, added 707
+Progress: resolved 782, reused 0, downloaded 717, added 717, done
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+. preinstall: Done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ @replit/connectors-sdk 0.4.1 (0.4.2 is available)
++ stripe 22.4.0 (22.5.0 is available)
++ stripe-replit-sync 1.0.0
+
+devDependencies:
++ prettier 3.9.5 (3.9.6 is available)
++ typescript 5.9.3 (7.0.2 is available)
+
+[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: browser-tabs-lock@1.3.0, core-js@3.47.0, esbuild@0.27.3
+
+Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.
+
+
+Build failed :|
+Step 5 script `Install dependencies` exited with status code 1
+
+
+Build failed :|
+Step 5 script `Install dependencies` exited with status code 1

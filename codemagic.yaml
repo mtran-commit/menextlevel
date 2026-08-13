@@ -32,21 +32,18 @@ workflows:
             pnpm-lock.yaml
 
       # Strip Linux-only native binary exclusions so macOS gets the right binaries.
-      # Also remove onlyBuiltDependencies — a Replit/Linux security measure that
-      # blocks build scripts on macOS. Codemagic runs in an isolated VM; it's safe.
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
-          # Ensure all packages that run build scripts on macOS are approved.
-          # Done inline so CI works regardless of the committed pnpm-workspace.yaml.
-          for pkg in browser-tabs-lock core-js esbuild; do
-            grep -q "^  - $pkg$" pnpm-workspace.yaml || \
-              perl -i -pe "s/^(onlyBuiltDependencies:)$/\$1\n  - $pkg/" pnpm-workspace.yaml
-          done
 
       # ── Install ───────────────────────────────────────────────────────────────
+      # --ignore-scripts skips all postinstall scripts, bypassing pnpm v10's
+      # onlyBuiltDependencies approval system entirely. Safe here because:
+      #   - esbuild gets its macOS binary via @esbuild/darwin-arm64 (optional dep,
+      #     enabled by the platform strip above) — not via its postinstall script.
+      #   - browser-tabs-lock and core-js postinstalls are non-essential on CI.
       - name: Install dependencies
-        script: pnpm install --no-frozen-lockfile
+        script: pnpm install --no-frozen-lockfile --ignore-scripts
 
       # ── Build ─────────────────────────────────────────────────────────────────
       - name: Build workspace libs
