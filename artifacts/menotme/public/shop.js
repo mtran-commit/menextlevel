@@ -21,6 +21,13 @@ function esc(s){
 }
 function fmtPrice(p,cur){return"$"+esc(p)+" "+esc(cur||"AUD")}
 
+// Shared shipping constants — update here to affect every card and modal.
+const SHIPPING_HTML=`
+  <div class="shop-shipping">
+    <span class="shop-postage">FREE POSTAGE</span>
+    <span class="shop-delivery">Delivery: 10–14 days</span>
+  </div>`;
+
 function buildCard(product){
   const card=document.createElement("div");
   card.className="shop-card"+(product.soldOut?" sold-out":"");
@@ -34,8 +41,9 @@ function buildCard(product){
     </div>
     <div class="shop-card-body">
       <div class="shop-card-name">${esc(product.name)}</div>
-      <div class="shop-card-price">${fmtPrice(product.price,product.currency)}</div>
+      <div class="shop-card-price">${fmtPrice(product.price,product.currency)}<span class="shop-gst">inc. GST</span></div>
       <p class="shop-card-desc">${esc(product.shortDescription)}</p>
+      ${SHIPPING_HTML}
       <button class="shop-card-btn${product.soldOut?" shop-card-btn-soldout":""}" type="button"${product.soldOut?' disabled':''}>
         ${btnLabel}
       </button>
@@ -55,7 +63,9 @@ function openModal(product){
   currentProduct=product;qty=1;
   document.getElementById("shopQtyNum").textContent="1";
   document.getElementById("shopModalName").textContent=product.name;
-  document.getElementById("shopModalPrice").textContent=fmtPrice(product.price,product.currency);
+  document.getElementById("shopModalPrice").innerHTML=
+    fmtPrice(product.price,product.currency)+
+    '<span class="shop-gst shop-modal-gst">inc. GST</span>';
   document.getElementById("shopModalDesc").textContent=product.description||product.shortDescription||"";
 
   const imgWrap=document.getElementById("shopModalImgWrap");
