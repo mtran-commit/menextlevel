@@ -1,0 +1,102 @@
+workflows:
+  ios-capacitor:
+    name: Izzy Bin-Y iOS (Capacitor)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      node: 24                      # Node 24 bundles npm 11 (avoids the npm "Exit handler" bug); also satisfies Capacitor 8's Node >= 22
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "com.izzybiny.app"
+        APP_STORE_APPLE_ID: 0000000000   # numeric Apple ID of the app from App Store Connect
+      groups: []
+    integrations:
+      app_store_connect: izzybiny_app_store   # the integration name from step 5
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          # The committed package-lock.json pins Replit's internal package proxy
+          # (package-firewall.replit.local), which is unreachable on Codemagic and
+          # makes npm hang. Rewrite those URLs to the public npm registry for CI.
+          perl -pi -e 's{https?://package-firewall\.replit\.local/npm/}{https://registry.npmjs.org/}g' package-lock.json
+          npm config set registry https://registry.npmjs.org/
+          npm ci --no-audit --no-fund   # fast, deterministic install from package-lock.json
+      - name: Build the web app
+        script: npm run build           # outputs to dist/public
+      - name: Add iOS platform (cloud Mac)
+        script: |
+          set -e   # fail (and stop) the moment any command errors, so we see the real failure
+          if [ ! -d "ios/App" ]; then
+            # Capacitor 8 defaults to Swift Package Manager (no Podfile / no .xcworkspace).
+            # Force the CocoaPods template so `pod install` can generate App.xcworkspace.
+            npx cap add ios --packagemanager CocoaPods
+          fi
+          echo "=== ios/ contents after cap add ==="
+          ls -la ios
+          ls -la ios/App
+      - name: Generate icons & splash
+        script: npx capacitor-assets generate --ios || true
+      - name: Sync web build into iOS
+        script: npx cap sync ios
+      - name: Install CocoaPods (generates App.xcworkspace)
+        script: |
+          set -e   # without this, a failed `cd`/`pod install` is masked and the step still exits 0
+          # Capacitor runs `pod install` during sync, but skips it silently if it can't
+          # invoke CocoaPods -> no App.xcworkspace -> build-ipa fails with
+          # "Path ios/App/App.xcworkspace does not exist". Run it explicitly to be sure.
+          cd ios/App
+          echo "=== Podfile present? ==="; ls -la Podfile
+          pod install --repo-update   # --repo-update refreshes the spec repo (fixes stale-spec failures)
+          echo "=== ios/App contents after pod install ==="; ls -la
+          test -d App.xcworkspace   # hard-fail here (not at build-ipa) if the workspace wasn't created
+      - name: Create signing certificate + provisioning profile
+        script: |
+          set -e
+          keychain initialize
+          # --- Clear Apple's distribution-certificate cap --------------------------
+          # Each build generates a fresh private key, so it can never reuse an existing
+          # (keyless) certificate and must create a new one. Apple caps distribution
+          # certs and returns 409 "You already have a current Distribution certificate"
+          # once full. Delete every existing certificate first so there is always room
+          # to mint a fresh one. Safe for App Store / TestFlight: Apple re-signs on
+          # distribution, so the signing certificate can rotate freely between builds.
+          # (</dev/null so a delete can never hang waiting on a confirmation prompt.)
+          echo "=== Listing existing certificates ==="
+          app-store-connect certificates list --json > /tmp/certs.json 2>/tmp/certs.err \
+            || { echo "certificates list failed:"; cat /tmp/certs.err; echo "[]" > /tmp/certs.json; }
+          CERT_IDS=$(python3 -c "import json; print(' '.join(c.get('id','') for c in json.load(open('/tmp/certs.json'))))" || true)
+          echo "Certificate IDs found: [$CERT_IDS]"
+          for CID in $CERT_IDS; do
+            echo ">>> Deleting certificate $CID"
+            app-store-connect certificates delete "$CID" </dev/null || echo "WARN: could not delete $CID"
+          done
+          # --- Create a fresh cert + matching App Store provisioning profile -------
+          # fetch-signing-files --create needs a private key to actually MINT a cert
+          # (without --certificate-key it can only download an existing keyless one).
+          # Requires: App ID "com.izzybiny.app" registered in the Apple Developer portal.
+          openssl genrsa -out /tmp/ios_cert_key.pem 2048
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --certificate-key @file:/tmp/ios_cert_key.pem \
+            --create
+          keychain add-certificates
+      - name: Apply provisioning profiles to the project
+        script: xcode-project use-profiles
+      - name: Increment build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $(($BUILD_NUMBER))
+      - name: Build & archive (.ipa)
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/App/App.xcworkspace" \
+            --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # submit_to_app_store: false   # set true when ready to push to review

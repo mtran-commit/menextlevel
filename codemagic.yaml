@@ -3,51 +3,43 @@ workflows:
     name: Me Next Level iOS
     max_build_duration: 60
     instance_type: mac_mini_m1
-
-    integrations:
-      app_store_connect: menextlevel_app_store
-
     environment:
       node: "24"
-
-      # Secrets group — create in Codemagic: Team Settings → Global variables
-      # and secrets → Create group → "menextlevel_secrets". Add these variables:
-      #   VITE_CLERK_PUBLISHABLE_KEY — your Clerk pk_test_… or pk_live_… key (Secure)
-      #   APP_STORE_PRIVATE_KEY      — full contents of the .p8 file (Secure)
-      groups:
-        - menextlevel
-
+      xcode: latest
+      cocoapods: default
       vars:
+        BUNDLE_ID: "com.menextlevel.app"
         APP_STORE_APPLE_ID: "6800945735"
         APP_STORE_ISSUER_ID: "fedfbbf9-9319-4e24-8331-da672f91233c"
         APP_STORE_KEY_ID: "6GAKLT9Y8B"
         VITE_PROD_API_ORIGIN: "https://asset-manager-chefonvespa.replit.app"
+      groups:
+        - menextlevel
+    integrations:
+      app_store_connect: menextlevel_app_store
 
     scripts:
-      # ── Tooling ──────────────────────────────────────────────────────────────
+      # ── Tooling ───────────────────────────────────────────────────────────────
       - name: Install pnpm
         script: npm install -g pnpm --force
 
-      # ── Fix Replit-specific pnpm config (CI machine only) ────────────────────
-      # Replit resolves packages through an internal proxy unreachable on
-      # Codemagic. Rewrite to the public npm registry (CI-local only).
+      # ── Fix Replit-specific lockfile (CI machine only) ────────────────────────
+      # Replit resolves packages through an internal proxy unreachable on Codemagic.
       - name: Rewrite lockfile registry
         script: |
           perl -i -pe \
             's|https://[^/]*\.replit\.dev/[^/]*/|https://registry.npmjs.org/|g' \
             pnpm-lock.yaml
 
-      # pnpm-workspace.yaml excludes non-Linux native binaries.
-      # The Mac build needs darwin variants; strip the exclusions (CI-local only).
-      # Also add macOS packages that need build scripts to onlyBuiltDependencies.
+      # Strip Linux-only native binary exclusions so macOS gets the right binaries.
+      # Also remove onlyBuiltDependencies — a Replit/Linux security measure that
+      # blocks build scripts on macOS. Codemagic runs in an isolated VM; it's safe.
       - name: Strip Linux-only platform overrides
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
           python3 -c "
           import re
           content = open('pnpm-workspace.yaml').read()
-          # Remove onlyBuiltDependencies — it is a Replit/Linux security measure.
-          # Codemagic runs in an isolated Mac VM so all build scripts are safe.
           content = re.sub(r'\nonlyBuiltDependencies:(\n  - .+)+', '', content)
           open('pnpm-workspace.yaml', 'w').write(content)
           "
@@ -57,13 +49,9 @@ workflows:
         script: pnpm install --no-frozen-lockfile
 
       # ── Build ─────────────────────────────────────────────────────────────────
-      # Build shared workspace libs first — TypeScript project references fail
-      # if lib outputs are missing.
       - name: Build workspace libs
         script: pnpm run typecheck:libs
 
-      # BASE_PATH=./  → relative asset paths for capacitor://localhost
-      # PORT=3000     → satisfies the vite.config.ts PORT guard
       - name: Vite build
         working_directory: artifacts/menotme
         script: BASE_PATH=./ PORT=3000 pnpm run build
@@ -71,44 +59,69 @@ workflows:
       # ── Capacitor native project ──────────────────────────────────────────────
       - name: Add iOS platform
         working_directory: artifacts/menotme
-        script: npx cap add ios
-
-      - name: Capacitor copy
-        working_directory: artifacts/menotme
-        script: npx cap copy ios
+        script: |
+          set -e
+          if [ ! -d "ios/App" ]; then
+            npx cap add ios --packagemanager CocoaPods
+          fi
 
       - name: Generate icons and splash
         working_directory: artifacts/menotme
-        script: npx @capacitor/assets generate
+        script: npx @capacitor/assets generate || true
+
+      - name: Sync web build into iOS
+        working_directory: artifacts/menotme
+        script: npx cap sync ios
+
+      - name: Install CocoaPods
+        working_directory: artifacts/menotme/ios/App
+        script: |
+          set -e
+          pod install --repo-update
+          test -d App.xcworkspace
 
       # ── Code signing ──────────────────────────────────────────────────────────
-      - name: Initialize keychain
-        script: keychain initialize
-
-      # Fetch (or create) the App Store certificate and provisioning profile.
-      # Credentials are passed explicitly so the CLI doesn't rely on the
-      # integration auto-injection, which conflicts with ios_signing auto-mode.
-      - name: Fetch signing files
+      - name: Create signing certificate and provisioning profile
         script: |
-          app-store-connect fetch-signing-files com.menextlevel.app \
-            --type IOS_APP_STORE \
-            --create \
-            --issuer-id "$APP_STORE_ISSUER_ID" \
-            --key-id "$APP_STORE_KEY_ID" \
-            --private-key "@env:APP_STORE_PRIVATE_KEY"
+          set -e
+          keychain initialize
 
-      - name: Add certificates to keychain
-        script: keychain add-certificates
+          # Apple caps distribution certificates. Delete existing ones so there
+          # is always room to mint a fresh one. Safe: Apple re-signs on distribution.
+          echo "=== Listing existing certificates ==="
+          app-store-connect certificates list --json > /tmp/certs.json 2>/tmp/certs.err \
+            || { echo "certificates list failed:"; cat /tmp/certs.err; echo "[]" > /tmp/certs.json; }
+          CERT_IDS=$(python3 -c "import json; print(' '.join(c.get('id','') for c in json.load(open('/tmp/certs.json'))))" || true)
+          echo "Certificate IDs to delete: [$CERT_IDS]"
+          for CID in $CERT_IDS; do
+            app-store-connect certificates delete "$CID" </dev/null \
+              || echo "WARN: could not delete $CID"
+          done
+
+          # Generate a fresh private key for the new certificate.
+          # --certificate-key is required for --create to actually mint a cert.
+          openssl genrsa -out /tmp/ios_cert_key.pem 2048
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --certificate-key @file:/tmp/ios_cert_key.pem \
+            --create
+
+          keychain add-certificates
 
       - name: Apply provisioning profiles
         script: xcode-project use-profiles
 
       # ── Build IPA ─────────────────────────────────────────────────────────────
+      - name: Increment build number
+        script: |
+          cd artifacts/menotme/ios/App
+          agvtool new-version -all $(($BUILD_NUMBER))
+
       - name: Build IPA
         script: |
           xcode-project build-ipa \
-            --workspace artifacts/menotme/ios/App/App.xcworkspace \
-            --scheme App
+            --workspace "artifacts/menotme/ios/App/App.xcworkspace" \
+            --scheme "App"
 
     artifacts:
       - build/ios/ipa/*.ipa
