@@ -44,12 +44,11 @@ workflows:
         script: |
           perl -i -pe 's/: "-"$/: "*"/g' pnpm-workspace.yaml
           python3 -c "
+          import re
           content = open('pnpm-workspace.yaml').read()
-          if 'browser-tabs-lock' not in content:
-              content = content.replace(
-                  'onlyBuiltDependencies:',
-                  'onlyBuiltDependencies:\n  - browser-tabs-lock\n  - core-js'
-              )
+          # Remove onlyBuiltDependencies — it is a Replit/Linux security measure.
+          # Codemagic runs in an isolated Mac VM so all build scripts are safe.
+          content = re.sub(r'\nonlyBuiltDependencies:(\n  - .+)+', '', content)
           open('pnpm-workspace.yaml', 'w').write(content)
           "
 
